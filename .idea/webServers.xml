@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="1e17afe8-a0a3-4139-a3a2-042adfa36fc6" name="safeapp-API">
+        <fileTransfer rootFolder="/home" accessType="SFTP" host="158.247.197.51" port="22" sshConfigId="6db5d669-05c2-4673-9fe4-4bfad8a64b3f" sshConfig="root@158.247.197.51:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
