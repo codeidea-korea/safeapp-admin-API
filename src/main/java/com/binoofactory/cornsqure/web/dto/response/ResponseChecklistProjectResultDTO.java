@@ -1,5 +1,6 @@
 package com.binoofactory.cornsqure.web.dto.response;
 
+import com.binoofactory.cornsqure.web.data.CheckType;
 import com.binoofactory.cornsqure.web.data.ChecklistProjectResultStatus;
 import com.binoofactory.cornsqure.web.data.YN;
 import com.binoofactory.cornsqure.web.model.entity.ChecklistProjectResult;
@@ -21,7 +22,7 @@ public class ResponseChecklistProjectResultDTO {
     Long id;
     @Schema(description = "체크여부")
     @NotBlank(message = NOT_NULL)
-    YN checkYn;
+    CheckType checkYn;
 
     @Schema(description = "메모")
     String memo;
