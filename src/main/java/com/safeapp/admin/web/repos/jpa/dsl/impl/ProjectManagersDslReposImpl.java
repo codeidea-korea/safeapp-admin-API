@@ -5,7 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import com.binoofactory.cornsqure.web.model.entity.QProjectManager;
+import com.safeapp.admin.web.model.entity.QProjectManager;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.ProjectManager;
 import org.springframework.beans.factory.annotation.Autowired;

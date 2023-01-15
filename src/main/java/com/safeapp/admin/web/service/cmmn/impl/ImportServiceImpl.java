@@ -195,7 +195,7 @@ public class ImportServiceImpl implements ImportService {
             // 현재 유효한 권한
             UserAuth efectiveAuth = userAuthService.getEfectiveAuthByUserId(importPayment.getCustomerUid());
             LocalDateTime now = dateUtil.getThisTime();
-            Users user = userRepos.findByUserId(importPayment.getCustomerUid());
+            Users user = userRepos.findByUserID(importPayment.getCustomerUid());
 
             if (efectiveAuth == null) {
                 // 유효값이 없으면 신규 권한으로 적용

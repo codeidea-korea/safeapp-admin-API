@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.ConcernAccidentExp;
 import com.safeapp.admin.web.repos.jpa.ConcernAccidentExpRepos;
@@ -75,13 +75,13 @@ public class ConcernAccidentExpServiceImpl implements ConcernAccidentExpService 
     }
 
     @Override
-    public BfListResponse<ConcernAccidentExp> findAll(ConcernAccidentExp instance, BfPage bfPage,
-                                                      HttpServletRequest httpServletRequest) throws Exception {
+    public ListResponse<ConcernAccidentExp> findAll(ConcernAccidentExp instance, BfPage bfPage,
+                                                    HttpServletRequest httpServletRequest) throws Exception {
 
         List<ConcernAccidentExp> list = dslRepos.findAll(instance, bfPage);
         long count = dslRepos.countAll(instance);
 
-        return new BfListResponse<ConcernAccidentExp>(list, count, bfPage);
+        return new ListResponse<ConcernAccidentExp>(list, count, bfPage);
     }
 
     @Override

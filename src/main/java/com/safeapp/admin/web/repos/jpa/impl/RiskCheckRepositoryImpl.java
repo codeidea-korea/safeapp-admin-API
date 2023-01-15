@@ -2,10 +2,10 @@ package com.safeapp.admin.web.repos.jpa.impl;
 
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.dto.response.ResponseRiskcheckDTO;
-import com.binoofactory.cornsqure.web.model.entity.QProject;
-import com.binoofactory.cornsqure.web.model.entity.QRiskCheck;
-import com.binoofactory.cornsqure.web.model.entity.QRiskCheckDetail;
-import com.binoofactory.cornsqure.web.model.entity.QUsers;
+import com.safeapp.admin.web.model.entity.QProject;
+import com.safeapp.admin.web.model.entity.QRiskCheck;
+import com.safeapp.admin.web.model.entity.QRiskCheckDetail;
+import com.safeapp.admin.web.model.entity.QUsers;
 import com.safeapp.admin.web.repos.jpa.custom.RIskCheckRepositoryCustom;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.OrderSpecifier;

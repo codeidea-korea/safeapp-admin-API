@@ -9,7 +9,7 @@ import com.safeapp.admin.web.repos.jpa.RiskCheckRepository;
 import com.safeapp.admin.web.repos.jpa.UserRepos;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.RiskCheckDetail;
 import com.safeapp.admin.web.repos.jpa.RiskCheckDetailRepos;
@@ -78,8 +78,8 @@ public class RiskCheckDetailServiceImpl implements RiskCheckDetailService {
     }
 
     @Override
-    public BfListResponse<RiskCheckDetail> findAll(RiskCheckDetail instance, BfPage bfPage,
-                                                   HttpServletRequest httpServletRequest) throws Exception {
+    public ListResponse<RiskCheckDetail> findAll(RiskCheckDetail instance, BfPage bfPage,
+                                                 HttpServletRequest httpServletRequest) throws Exception {
         return null;
     }
 

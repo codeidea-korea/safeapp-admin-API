@@ -6,7 +6,7 @@ import com.safeapp.admin.web.dto.request.RequestAccidentCaseDTO;
 import com.safeapp.admin.web.dto.response.ResponseAccidentCaseDTO;
 import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.AccidentExp;
 import lombok.RequiredArgsConstructor;
@@ -74,7 +74,7 @@ public class AccidentExpController {
 
     @GetMapping(value = "")
     @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
-    public ResponseEntity<BfListResponse> findAll(
+    public ResponseEntity<ListResponse> findAll(
         BfPage bfPage,
         @RequestParam(value = "name", required = false) @ApiParam("이름") String name,
         @RequestParam(value = "title", required = false) @ApiParam("제목") String title,

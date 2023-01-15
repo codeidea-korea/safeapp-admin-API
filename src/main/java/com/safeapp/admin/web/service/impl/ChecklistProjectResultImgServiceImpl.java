@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.ChecklistProjectResultImg;
 import com.safeapp.admin.web.repos.jpa.ChecklistProjectResultImgRepos;
@@ -81,8 +81,8 @@ public class ChecklistProjectResultImgServiceImpl implements ChecklistProjectRes
     }
 
     @Override
-    public BfListResponse<ChecklistProjectResultImg> findAll(ChecklistProjectResultImg instance, BfPage bfPage,
-                                                             HttpServletRequest httpServletRequest) throws Exception {
+    public ListResponse<ChecklistProjectResultImg> findAll(ChecklistProjectResultImg instance, BfPage bfPage,
+                                                           HttpServletRequest httpServletRequest) throws Exception {
         return null;
     }
 

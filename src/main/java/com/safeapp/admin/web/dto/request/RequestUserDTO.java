@@ -13,39 +13,41 @@ import java.time.LocalDateTime;
 @Setter
 @Schema(description = "유저")
 public class RequestUserDTO {
-    @Schema(description = "타입")
-    UserType type;
 
-    @Schema(description = "유저ID")
-    String userId;
-
-    @Schema(description = "핸드폰번호")
-    String phoneNo;
-
-    @Schema(description = "유저 이름")
-    String userName;
-
-    @Schema(description = "이메일주소")
+    @Schema(description = "이메일")
     String email;
-
-    @Schema(description = "SNS동의여부")
-    YN snsAllowed;
-
-    @Schema(description = "마케팅유무")
-    YN marketingAllowed;
-
-    @Schema(description = "마케팅유무시간")
-    LocalDateTime marketingAllowedAt;
-
-    @Schema(description = "메시지동의여부")
-    YN messageAllowed;
-
-    @Schema(description = "메시지동의시각")
-    LocalDateTime messageAllowedAt;
 
     @Schema(description = "비밀번호")
     String password;
 
-    @Schema(description = "SNS타입")
+    @Schema(description = "휴대폰번호")
+    String phoneNo;
+
+    @Schema(description = "회원 유형")
+    UserType type;
+
+    @Schema(description = "회원 아이디")
+    String userID;
+
+    @Schema(description = "회원명")
+    String userName;
+
+    @Schema(description = "SNS 동의 여부")
+    YN snsAllowed;
+
+    @Schema(description = "SNS 유형")
     SNSType snsType = SNSType.NORMAL;
+
+    @Schema(description = "마케팅 유무")
+    YN marketingAllowed;
+
+    @Schema(description = "마케팅 유무 시간")
+    LocalDateTime marketingAllowedAt;
+
+    @Schema(description = "메세지 동의 여부")
+    YN messageAllowed;
+
+    @Schema(description = "메세지 동의 시각")
+    LocalDateTime messageAllowedAt;
+    
 }

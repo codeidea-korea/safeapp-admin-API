@@ -56,7 +56,7 @@ public class ProjectManagersController {
         HttpServletRequest request) throws Exception {
 
 //        for (String user_id : user_ids) {
-//            Users user = userService.findByUserId(user_id);
+//            Users user = userService.findByUserID(user_id);
 //
 //            projectManagersService.add(ProjectManager.builder()
 //                .projectId(project_id)
@@ -77,7 +77,7 @@ public class ProjectManagersController {
         projectManagersService.removeByProjectId(project_id, request);
         
 //        for (String user_id : user_ids) {
-//            Users user = userService.findByUserId(user_id);
+//            Users user = userService.findByUserID(user_id);
 //
 //            projectManagersService.add(ProjectManager.builder()
 //                .projectId(project_id)

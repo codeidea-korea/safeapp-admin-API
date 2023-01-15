@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.ProjectManager;
 import com.safeapp.admin.web.repos.jpa.ProjectManagersRepos;
@@ -91,13 +91,13 @@ public class ProjectManagersServiceImpl implements ProjectManagersService {
     }
 
     @Override
-    public BfListResponse<ProjectManager> findAll(ProjectManager instance, BfPage bfPage,
-                                                  HttpServletRequest httpServletRequest) throws Exception {
+    public ListResponse<ProjectManager> findAll(ProjectManager instance, BfPage bfPage,
+                                                HttpServletRequest httpServletRequest) throws Exception {
 
         List<ProjectManager> list = dslRepos.findAll(instance, bfPage);
         long count = dslRepos.countAll(instance);
 
-        return new BfListResponse<ProjectManager>(list, count, bfPage);
+        return new ListResponse<ProjectManager>(list, count, bfPage);
     }
 
     @Override

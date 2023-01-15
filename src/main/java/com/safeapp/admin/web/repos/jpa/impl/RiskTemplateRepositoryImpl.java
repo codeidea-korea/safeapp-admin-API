@@ -2,7 +2,7 @@ package com.safeapp.admin.web.repos.jpa.impl;
 
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.dto.response.ResponseRiskTemplateDTO;
-import com.binoofactory.cornsqure.web.model.entity.*;
+import com.safeapp.admin.web.model.entity.*;
 import com.safeapp.admin.web.repos.jpa.custom.RIskTemplateRepositoryCustom;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.OrderSpecifier;

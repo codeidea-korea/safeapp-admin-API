@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.Inquiry;
 import com.safeapp.admin.web.repos.jpa.InquiryRepos;
@@ -86,13 +86,13 @@ public class InquiryServiceImpl implements InquiryService {
     }
 
     @Override
-    public BfListResponse<Inquiry> findAll(Inquiry instance, BfPage bfPage,
-                                           HttpServletRequest httpServletRequest) throws Exception {
+    public ListResponse<Inquiry> findAll(Inquiry instance, BfPage bfPage,
+                                         HttpServletRequest httpServletRequest) throws Exception {
 
         List<Inquiry> list = dslRepos.findAll(instance, bfPage);
         long count = dslRepos.countAll(instance);
 
-        return new BfListResponse<Inquiry>(list, count, bfPage);
+        return new ListResponse<Inquiry>(list, count, bfPage);
     }
 
     @Override

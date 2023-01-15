@@ -32,13 +32,16 @@ public enum UserType implements GrantedAuthority {
         return description;
     }
     
-    public Collection<GrantedAuthority> getAuthorities(){
-        Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+    public Collection<GrantedAuthority> getAuthorities() {
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+
         for(UserType type : UserType.values()) {
             if(type.code < this.code) {
                 authorities.add(new SimpleGrantedAuthority(description));
             }
         }
+
         return authorities;
     }
+
 }

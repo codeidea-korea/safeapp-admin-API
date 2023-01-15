@@ -10,7 +10,7 @@ import com.safeapp.admin.web.data.StatusType;
 import com.safeapp.admin.web.dto.request.RequestDetailModifyDTO;
 import com.safeapp.admin.web.dto.request.RequestStatusChangeDTO;
 import com.safeapp.admin.utils.ResponseUtil;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.Project;
 import com.safeapp.admin.web.model.entity.ProjectGroup;
@@ -96,7 +96,7 @@ public class ProjectController {
 
     @GetMapping(value = "/projects")
     @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
-    public ResponseEntity<BfListResponse> findAll(
+    public ResponseEntity<ListResponse> findAll(
         BfPage bfPage,
         HttpServletRequest request) throws Exception {
         return ResponseUtil.sendResponse(projectService.findAll(
@@ -108,12 +108,12 @@ public class ProjectController {
 
     @GetMapping(value = "/projects/me")
     @ApiOperation(value = "나의 목록 조회 (다건)", notes = "나의 목록 조회 (다건)")
-    public ResponseEntity<BfListResponse> findAllByMe(
+    public ResponseEntity<ListResponse> findAllByMe(
         BfPage bfPage,
         HttpServletRequest request) throws Exception {
         Users user = jwtService.getUserInfoByToken(request);
         
-        BfListResponse<ProjectGroup> groups = projectGroupService.findAll(ProjectGroup.builder()
+        ListResponse<ProjectGroup> groups = projectGroupService.findAll(ProjectGroup.builder()
             .user(user)
             .build(), new BfPage(1, 100), request);
         
@@ -124,7 +124,7 @@ public class ProjectController {
             projects.add(project);
         }
         
-        return ResponseUtil.sendResponse(new BfListResponse(projects, projects.size(), bfPage));
+        return ResponseUtil.sendResponse(new ListResponse(projects, projects.size(), bfPage));
     }
 
 

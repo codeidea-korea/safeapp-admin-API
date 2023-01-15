@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 @ComponentScan
 @EnableJpaAuditing
-@MapperScan("com.binoofactory.cornsqure.mapper")
+@MapperScan("com.safeapp.admin.mapper")
 @PropertySource(value = {"classpath:/application-local.properties"})
 public class CornsqureApplication extends SpringBootServletInitializer {
 

@@ -7,8 +7,6 @@ import com.safeapp.admin.web.dto.response.ResponseRiskCheckDetailDTO;
 import com.safeapp.admin.web.data.DocumentType;
 import com.safeapp.admin.web.data.StatusType;
 import com.safeapp.admin.web.model.cmmn.service.CRUDService;
-import com.binoofactory.cornsqure.web.model.entity.*;
-import com.cornsqure.admin.web.model.entity.*;
 import com.safeapp.admin.web.model.entity.*;
 import org.apache.ibatis.javassist.NotFoundException;
 

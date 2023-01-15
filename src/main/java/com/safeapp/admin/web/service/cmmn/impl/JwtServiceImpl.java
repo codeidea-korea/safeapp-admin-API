@@ -7,11 +7,14 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.safeapp.admin.utils.BfJwtUtil;
+import com.safeapp.admin.utils.JwtUtil;
 import com.safeapp.admin.utils.DateUtil;
+import com.safeapp.admin.web.data.AdminType;
 import com.safeapp.admin.web.data.UserType;
 import com.safeapp.admin.web.model.cmmn.Token;
+import com.safeapp.admin.web.model.entity.Admins;
 import com.safeapp.admin.web.model.entity.Users;
+import com.safeapp.admin.web.repos.jpa.AdminRepos;
 import com.safeapp.admin.web.repos.jpa.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,113 +29,120 @@ import io.jsonwebtoken.ExpiredJwtException;
 @Service
 public class JwtServiceImpl implements JwtService {
 
-    private final BfJwtUtil jwtUtil;
-
-    private final UserRepos userRepos;
-
+    private final JwtUtil jwtUtil;
+    private final AdminRepos adminRepos;
     private final DateUtil dateUtil;
 
     @Autowired
-    public JwtServiceImpl(BfJwtUtil jwtUtil, UserRepos userRepos, DateUtil dateUtil) {
+    public JwtServiceImpl(JwtUtil jwtUtil, AdminRepos adminRepos, DateUtil dateUtil) {
         this.jwtUtil = jwtUtil;
-        this.userRepos = userRepos;
+        this.adminRepos = adminRepos;
         this.dateUtil = dateUtil;
     }
 
     private void checkToken(String token) {
-        if (StringUtils.isNullOrEmpty(token)) {
-            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "토큰/사용자 코드는 반드시 필요한 값입니다.");
+        if(StringUtils.isNullOrEmpty(token)) {
+            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "[토큰] 또는 [관리자 코드]는 반드시 필요합니다.");
         }
-        if (jwtUtil.isExpired(token)) {
-            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "사용이 만료된 토큰입니다. 재발급 받아 주시기 바랍니다.");
+
+        if(jwtUtil.isExpired(token)) {
+            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.");
         }
-        String userId = jwtUtil.getUserId(token);
-        if (StringUtils.isNullOrEmpty(userId)) {
-            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다.");
+
+        String adminID = jwtUtil.getAdminIDByAccessToken(token);
+        if(StringUtils.isNullOrEmpty(adminID)) {
+            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "인증되지 않은 관리자입니다.");
         }
-        Users user = userRepos.findByUserId(userId);
-        if (Objects.isNull(user)) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "없는 사용자입니다.");
+
+        Admins admin = adminRepos.findByAdminID(adminID);
+        if(Objects.isNull(admin)) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다.");
         }
     }
     
     private String removeBearer(String token) {
-        if(StringUtils.isNullOrEmpty(token) || (!token.toLowerCase().contains("bearer "))) {
-            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "토큰을 넣어주세요.");
+        if(StringUtils.isNullOrEmpty(token) || (!token.toLowerCase().contains("Bearer "))) {
+            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "토큰은 반드시 넣어주셔야 합니다.");
         }
-        return token.replace("bearer ", "").replace("Bearer ", "");
+        
+        return token.replace("Bearer ", "").replace("Bearer ", "");
     }
 
     @Override
-    public Users getUserInfoByToken(HttpServletRequest httpServletRequest) {
+    public Admins getAdminInfoByToken(HttpServletRequest httpServletRequest) {
         String token = removeBearer(httpServletRequest.getHeader("Authorization"));
-
         checkToken(token);
 
-        String userId = jwtUtil.getUserId(token);
-        Users user = userRepos.findByUserId(userId);
-        return user;
+        String adminID = jwtUtil.getAdminIDByAccessToken(token);
+        Admins admin = adminRepos.findByAdminID(adminID);
+
+        return admin;
     }
 
     @Override
-    public boolean checkUserTokenPriority(HttpServletRequest httpServletRequest, UserType lessType) {
-        Users user;
+    public Admins getAdminInfoByTokenAnyway(HttpServletRequest httpServletRequest) {
         try {
-            user = getUserInfoByToken(httpServletRequest);
-            if (user.getType().getCode() > lessType.getCode()) {
+            return getAdminInfoByToken(httpServletRequest);
+        } catch (HttpServerErrorException e) {
+            e.getStackTrace();
+        }
+
+        Admins admin = new Admins();
+        admin.setType(AdminType.NONE);
+
+        return admin;
+    }
+
+    @Override
+    public boolean checkAdminTokenPriority(HttpServletRequest httpServletRequest, AdminType lessType) {
+        Admins admin;
+
+        try {
+            admin = getAdminInfoByToken(httpServletRequest);
+            if(admin.getType().getCode() >= lessType.getCode()) {
                 return true;
             }
         } catch (Exception e) {
             e.getStackTrace();
         }
+
         return false;
     }
 
     @Override
-    public Users getUserInfoByTokenAnyway(HttpServletRequest httpServletRequest) {
-        try {
-            return getUserInfoByToken(httpServletRequest);
-        } catch (HttpServerErrorException e) {
-            e.getStackTrace();
-        }
+    public Token generateAccessToken(Admins admin, String adminCode) {
+        Token token = new Token(admin);
 
-        Users user = new Users();
-        user.setType(UserType.NONE);
-        return user;
-    }
-
-    @Override
-    public Token generateToken(Users user, String userCode) {
-        Token token = new Token(user);
-        token.setAccessToken(jwtUtil.generateAccessToken(user));
-        token.setRefreshToken(jwtUtil.generateRefreshToken(user));
+        token.setAccessToken(jwtUtil.generateAccessToken(admin));
+        token.setRefreshToken(jwtUtil.generateRefreshToken(admin));
         
-        Date date = new Date(System.currentTimeMillis() + BfJwtUtil.ACCESS_TOKEN_ALIVE_TIME);
-        LocalDateTime localDateTime = date.toInstant() 
-            .atZone(ZoneId.systemDefault()) 
-            .toLocalDateTime(); 
+        Date date = new Date(System.currentTimeMillis() + JwtUtil.ACCESS_TOKEN_ALIVE_TIME);
+        LocalDateTime localDateTime =
+                date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
         token.setExpiredAt(localDateTime);
         
         return token;
     }
 
     @Override
-    public Token generateTokenByRefreshToken(String refreshToken) {
-        
+    public Token generateAccessTokenByRefreshToken(String refreshToken) {
         if(jwtUtil.isExpired(refreshToken)) {
-            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다. 다시 로그인하여주세요.");
+            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.");
         }
         
-        String userId = jwtUtil.getUserIdByRefresh(refreshToken);
-        Users user = userRepos.findByUserId(userId);
+        String adminID = jwtUtil.getAdminIDByRefreshToken(refreshToken);
+        Admins admin = adminRepos.findByAdminID(adminID);
         
-        if(user == null) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "없는 사용자입니다.");
+        if(admin == null) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다.");
         }
         
-        Token token = new Token(user);
-        token.setAccessToken(jwtUtil.generateAccessToken(user));
-        token.setRefreshToken(jwtUtil.generateRefreshToken(user));
+        Token token = new Token(admin);
+
+        token.setAccessToken(jwtUtil.generateAccessToken(admin));
+        token.setRefreshToken(jwtUtil.generateRefreshToken(admin));
         
         return token;
     }
@@ -145,7 +155,9 @@ public class JwtServiceImpl implements JwtService {
             return jwtUtil.isExpired(token);
         } catch (ExpiredJwtException e1) {
             e1.getStackTrace();
+
             return true;
         }
     }
+
 }

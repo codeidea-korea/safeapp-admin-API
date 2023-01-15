@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.docs.InviteHistory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,8 +99,8 @@ public class InviteHistoryServiceImpl implements InviteHistoryService {
     }
 
     @Override
-    public BfListResponse<InviteHistory> findAll(InviteHistory instance, BfPage bfPage,
-                                                 HttpServletRequest httpServletRequest) throws Exception {
+    public ListResponse<InviteHistory> findAll(InviteHistory instance, BfPage bfPage,
+                                               HttpServletRequest httpServletRequest) throws Exception {
 
         Page<InviteHistory> pages = repos.findAll(bfPage.generatePageable());
         List<InviteHistory> list = new ArrayList<InviteHistory>();
@@ -109,7 +109,7 @@ public class InviteHistoryServiceImpl implements InviteHistoryService {
         }
         long count = repos.count();
 
-        return new BfListResponse<InviteHistory>(list, count, bfPage);
+        return new ListResponse<InviteHistory>(list, count, bfPage);
     }
 
     @Override

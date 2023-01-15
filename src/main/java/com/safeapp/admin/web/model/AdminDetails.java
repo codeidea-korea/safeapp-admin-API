@@ -2,6 +2,7 @@ package com.safeapp.admin.web.model;
 
 import java.util.Collection;
 
+import com.safeapp.admin.web.model.entity.Admins;
 import com.safeapp.admin.web.model.entity.Users;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,10 +10,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import lombok.Setter;
 
 @Setter
-public class BfUserDetails extends Users implements UserDetails {
+public class AdminDetails extends Admins implements UserDetails {
     
     private boolean enabled = false;
-    
     private boolean expired = false;
 
     @Override
@@ -22,7 +22,12 @@ public class BfUserDetails extends Users implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.getUserId();
+        return this.getAdminID();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override
@@ -40,8 +45,4 @@ public class BfUserDetails extends Users implements UserDetails {
         return true;
     }
 
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
 }

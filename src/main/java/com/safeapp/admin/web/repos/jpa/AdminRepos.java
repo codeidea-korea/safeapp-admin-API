@@ -12,8 +12,6 @@ public interface AdminRepos extends JpaRepository<Admins, Long> {
 
     Admins findByEmail(String email);
 
-    Admins findByUserNameAndPhoneNoAndDeleted(String adminID, String phoneNo, YN deleted);
-
-    Admins findUsersBySnsValueAndSnsType(String snsValue, SNSType snsType);
+    Admins findByAdminID(String adminID);
 
 }

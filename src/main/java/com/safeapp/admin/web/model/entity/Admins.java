@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import com.safeapp.admin.web.data.AdminType;
 import com.safeapp.admin.web.data.SNSType;
 import com.safeapp.admin.web.data.UserType;
 import com.safeapp.admin.web.data.YN;
@@ -39,15 +40,6 @@ public class Admins extends BaseTimeEntity {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "marketing_allowed")
-    private YN marketingAllowed;
-
-    @Column(name = "marketing_allowed_at")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime marketingAllowedAt;
-
     @Column(name = "password")
     private String password;
 
@@ -55,7 +47,7 @@ public class Admins extends BaseTimeEntity {
     private String phoneNo;
 
     @Column(name = "type")
-    private UserType type;
+    private AdminType type;
 
     @Column(name = "user_id")
     private String adminID;
@@ -67,8 +59,6 @@ public class Admins extends BaseTimeEntity {
         this.id = admins.id;
         this.deleted = admins.deleted;
         this.email = admins.email;
-        this.marketingAllowed = admins.marketingAllowed;
-        this.marketingAllowedAt = admins.marketingAllowedAt;
         this.password = admins.password;
         this.phoneNo = admins.phoneNo;
         this.type = admins.type;
@@ -77,13 +67,12 @@ public class Admins extends BaseTimeEntity {
     }
 
     @Builder
-    public Admins(long id, String email, YN marketingAllowed, LocalDateTime marketingAllowedAt, String password,
-                  String phoneNo, UserType type, String adminID, String adminName) {
+    public Admins(long id, String email, String password, String phoneNo, AdminType type,
+                  String adminID, String adminName) {
+
         this.id = id;
         this.deleted = YN.N;
         this.email = email;
-        this.marketingAllowed = marketingAllowed;
-        this.marketingAllowedAt = marketingAllowedAt;
         this.password = password;
         this.phoneNo = phoneNo;
         this.type = type;

@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.UserAuth;
 import com.safeapp.admin.web.model.entity.Users;
@@ -87,8 +87,8 @@ public class UserAuthServiceImpl implements UserAuthService {
     }
 
     @Override
-    public BfListResponse<UserAuth> findAll(UserAuth instance, BfPage bfPage,
-                                            HttpServletRequest httpServletRequest) throws Exception {
+    public ListResponse<UserAuth> findAll(UserAuth instance, BfPage bfPage,
+                                          HttpServletRequest httpServletRequest) throws Exception {
         return null;
     }
 
@@ -107,7 +107,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public UserAuth getEfectiveAuthByUserId(String userId) {
-        Users user = userRepos.findByUserId(userId);
+        Users user = userRepos.findByUserID(userId);
         List<UserAuth> auths = repos.findAllByUserIdAndEfectiveEndAtAfter(user.getId(), dateUtil.getThisTime());
         return auths == null || auths.size() < 1 ? null : auths.get(0);
     }

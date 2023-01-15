@@ -17,6 +17,6 @@ import java.util.Objects;
 
 public interface LoginService {
 
-    Token login(String email, String password, HttpServletRequest httpServletRequest) throws Exception;
+    ResponseEntity login(String email, String password, HttpServletRequest httpServletRequest) throws Exception;
 
 }

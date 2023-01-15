@@ -11,6 +11,7 @@ import lombok.Getter;
 @Getter
 public enum AdminType implements GrantedAuthority {
 
+    NONE("비관리자", 1),
     ADMIN("관리자", 201);
 
     private final String description;

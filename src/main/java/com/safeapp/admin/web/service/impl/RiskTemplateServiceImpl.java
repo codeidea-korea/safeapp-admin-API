@@ -7,12 +7,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.web.dto.request.RequestRiskTemplateDTO;
 import com.safeapp.admin.web.dto.response.ResponseRiskTemplateDTO;
+import com.safeapp.admin.web.model.entity.Admins;
 import com.safeapp.admin.web.repos.jpa.ProjectRepos;
 import com.safeapp.admin.web.repos.jpa.UserRepos;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.docs.LikeHistory;
 import com.safeapp.admin.web.model.entity.RiskTemplate;
@@ -102,16 +103,16 @@ public class RiskTemplateServiceImpl implements RiskTemplateService {
     }
 
     @Override
-    public BfListResponse<RiskTemplate> findAll(RiskTemplate instance, BfPage bfPage,
-                                                HttpServletRequest httpServletRequest) throws Exception {
+    public ListResponse<RiskTemplate> findAll(RiskTemplate instance, BfPage bfPage,
+                                              HttpServletRequest httpServletRequest) throws Exception {
 
         List<RiskTemplate> list = dslRepos.findAll(instance, bfPage);
         long count = dslRepos.countAll(instance);
 
-        Users user = jwtService.getUserInfoByTokenAnyway(httpServletRequest);
-        if(user != null) {
+        Admins admin = jwtService.getAdminInfoByTokenAnyway(httpServletRequest);
+        if(admin != null) {
             for(RiskTemplate item : list) {
-                LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(item.getUser().getId(), "risk-template", item.getId());
+                LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(item.getUser().getId(), "risk-template", item.getId());
                 
                 if(liked != null) {
                     item.setLiked(liked.getLiked());
@@ -119,7 +120,7 @@ public class RiskTemplateServiceImpl implements RiskTemplateService {
             }
         }
 
-        return new BfListResponse<RiskTemplate>(list, count, bfPage);
+        return new ListResponse<RiskTemplate>(list, count, bfPage);
     }
 
     @Override
@@ -156,7 +157,7 @@ public class RiskTemplateServiceImpl implements RiskTemplateService {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "먼저 로그인하여주세요.");
         }
         
-        LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(user.getId(), "risk-template", id);
+        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(user.getId(), "risk-template", id);
         if(liked != null) {
             if(liked.getLiked() == YN.Y) {
                 throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "이미 좋아요 하셨습니다.");
@@ -181,7 +182,7 @@ public class RiskTemplateServiceImpl implements RiskTemplateService {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "먼저 로그인하여주세요.");
         }
 
-        LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(user.getId(), "risk-template", id);
+        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(user.getId(), "risk-template", id);
         if(liked != null) {
             likeRepos.delete(liked);
         } else {
@@ -194,7 +195,7 @@ public class RiskTemplateServiceImpl implements RiskTemplateService {
         
         Users user = jwtService.getUserInfoByToken(httpServletRequest);
 
-        LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(user.getId(), "risk-template", id);
+        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(user.getId(), "risk-template", id);
         return liked != null && liked.getLiked() == YN.Y;
     }
 

@@ -6,7 +6,9 @@ import com.safeapp.admin.web.model.entity.AccidentExp;
 import org.apache.ibatis.javassist.NotFoundException;
 
 public interface AccidentExpService extends CRUDService<AccidentExp> {
+
     AccidentExp generate(AccidentExp userSeq);
 
     AccidentExp toEntity(RequestAccidentCaseDTO dto) throws NotFoundException;
+
 }

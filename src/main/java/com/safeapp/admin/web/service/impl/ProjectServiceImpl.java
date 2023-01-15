@@ -12,20 +12,16 @@ import com.safeapp.admin.web.dto.request.RequestDetailModifyDTO;
 import com.safeapp.admin.web.dto.request.RequestStatusChangeDTO;
 import com.safeapp.admin.web.dto.response.ResponseChecklistProjectDetailDTO;
 import com.safeapp.admin.web.dto.response.ResponseRiskCheckDetailDTO;
-import com.binoofactory.cornsqure.web.model.entity.*;
+import com.safeapp.admin.web.model.entity.*;
 import com.safeapp.admin.web.repos.jpa.ChecklistProjectRepository;
 import com.safeapp.admin.web.repos.jpa.RiskCheckRepository;
 import com.safeapp.admin.web.data.DocumentType;
 import com.safeapp.admin.web.data.StatusType;
-import com.binoofactory.cornsqure.web.repos.jpa.*;
+import com.safeapp.admin.web.repos.jpa.*;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
-import com.cornsqure.admin.web.model.entity.*;
-import com.cornsqure.admin.web.repos.jpa.*;
-import com.safeapp.admin.web.model.entity.*;
-import com.safeapp.admin.web.repos.jpa.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -103,13 +99,13 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public BfListResponse<Project> findAll(Project instance, BfPage bfPage,
-                                           HttpServletRequest httpServletRequest) throws Exception {
+    public ListResponse<Project> findAll(Project instance, BfPage bfPage,
+                                         HttpServletRequest httpServletRequest) throws Exception {
 
         List<Project> list = dslRepos.findAll(instance, bfPage);
         long count = dslRepos.countAll(instance);
 
-        return new BfListResponse<Project>(list, count, bfPage);
+        return new ListResponse<Project>(list, count, bfPage);
     }
 
     @Override

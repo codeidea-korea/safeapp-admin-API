@@ -1,21 +1,22 @@
 package com.safeapp.admin.web.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.safeapp.admin.web.dto.request.RequestUserDTO;
+import com.safeapp.admin.web.data.AdminType;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
-import com.safeapp.admin.web.data.UserType;
 import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.Admins;
-import com.safeapp.admin.web.model.entity.Users;
+import com.safeapp.admin.web.model.entity.SmsAuthHistory;
 import com.safeapp.admin.web.repos.jpa.AdminRepos;
 import com.safeapp.admin.web.repos.jpa.SmsAuthHistoryRepos;
-import com.safeapp.admin.web.repos.jpa.UserRepos;
 import com.safeapp.admin.web.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,36 +24,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpServerErrorException;
 
-import com.safeapp.admin.web.repos.mongo.LoginHistoryRepos;
 import com.safeapp.admin.web.service.cmmn.DirectSendAPIService;
-import com.safeapp.admin.web.service.cmmn.JwtService;
 import com.querydsl.core.util.StringUtils;
 
 @Service
 public class AdminServiceImpl implements AdminService {
 
     private final AdminRepos adminRepos;
-
-    private final LoginHistoryRepos loginHistoryRepos;
-
     private final SmsAuthHistoryRepos smsAuthHistoryRepos;
-
     private final DirectSendAPIService directSendAPIService;
-
-    private final JwtService jwtService;
-
     private final PasswordUtil passwordUtil;
-
     private final DateUtil dateUtil;
 
     @Autowired
-    public AdminServiceImpl(UserRepos userRepos, LoginHistoryRepos loginHistoryRepos,
-                           SmsAuthHistoryRepos smsAuthHistoryRepos, DirectSendAPIService directSendAPIService,
-                           JwtService jwtService, PasswordUtil passwordUtil, DateUtil dateUtil) {
+    public AdminServiceImpl(AdminRepos adminRepos, SmsAuthHistoryRepos smsAuthHistoryRepos, DirectSendAPIService directSendAPIService,
+                           PasswordUtil passwordUtil, DateUtil dateUtil) {
 
-        this.userRepos = userRepos;
-        this.loginHistoryRepos = loginHistoryRepos;
-        this.jwtService = jwtService;
+        this.adminRepos = adminRepos;
         this.smsAuthHistoryRepos = smsAuthHistoryRepos;
         this.directSendAPIService = directSendAPIService;
         this.passwordUtil = passwordUtil;
@@ -61,9 +49,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public boolean chkAdminID(String adminID) {
-        Users userInfos = userRepos.findByUserId(userId);
+        Admins adminInfo = adminRepos.findByAdminID(adminID);
 
-        if (! Objects.isNull(userInfos)) {
+        if(!Objects.isNull(adminInfo)) {
             return false;
         }
 
@@ -73,155 +61,155 @@ public class AdminServiceImpl implements AdminService {
     @Transactional
     @Override
     public Admins add(Admins admin, HttpServletRequest httpServletRequest) throws Exception {
-
-        if(Objects.isNull(admin)) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "관리자 정보가 없습니다.");
+        if(StringUtils.isNullOrEmpty(admin.getAdminID())) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "아이디를 입력해주세요.");
         }
-
-        if(admin.getType() != UserType.ADMIN) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "관리자 정보가 아닌 정보로는 가입하실 수 없습니다.");
-        }
-
-        if(StringUtils.isNullOrEmpty(admin.getUserId())){
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "ID를 입력해주세요.");
-        }
-
-        if(!chkAdminID(admin.getUserId())){
+        if(!chkAdminID(admin.getAdminID())) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "중복된 아이디입니다.");
         }
 
-        // TODO: validation
-        user.setType(UserType.NORMAL);
-        user.setDeleted(YN.N);
-        if (user.getMarketingAllowed() == YN.Y) {
-            user.setMarketingAllowedAt(dateUtil.getThisTime());
-        }
-        if (user.getMessageAllowed() == YN.Y) {
-            user.setMessageAllowedAt(dateUtil.getThisTime());
-        }
-        user.setPassword(passwordUtil.encode(user.getPassword()));
-        Users userInfo = userRepos.save(user);
+        admin.setType(AdminType.ADMIN);
+        admin.setDeleted(YN.N);
 
-        if (Objects.isNull(userInfo)) {
-            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "저장중 오류가 발생했습니다.");
+        admin.setPassword(passwordUtil.encode(admin.getPassword()));
+        Admins adminInfo = adminRepos.save(admin);
+
+        if(Objects.isNull(adminInfo)) {
+            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "저장 중 오류가 발생하였습니다.");
         }
 
-        return userInfo;
-    }\
+        return adminInfo;
+    }
+
+    @Override
+    public Admins find(long seq, HttpServletRequest httpServletRequest) throws Exception {
+        Admins oldAdmin = adminRepos.findById(seq).orElse(null);
+        //if(Objects.isNull(oldAdmin) || oldAdmin.getType() != AdminType.ADMIN) {
+        if(Objects.isNull(oldAdmin)) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다.");
+        }
+
+        return oldAdmin;
+    }
 
     @Transactional
     @Override
-    public Users edit(Users user, HttpServletRequest httpServletRequest) throws Exception {
-        Users userInfos = userRepos.findByUserId(user.getUserId());
+    public Admins editPassword(String adminID, String password, String newPassword,
+                               HttpServletRequest httpServletRequest) throws Exception {
 
-        if (Objects.isNull(userInfos)) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "정보가 없습니다.");
+        Admins myInfo = adminRepos.findByAdminID(adminID);
+        if(myInfo == null) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다.");
         }
 
-        Users accessUser = jwtService.getUserInfoByToken(httpServletRequest); // 현재 접근 유저
-        if (userInfos.getId() != accessUser.getId()
-                && accessUser.getType().getCode() < UserType.ADMIN.getCode()) {
-            // NOTICE: 접근한 사람이 본인이 아니면서, 일반 회원이거나 비회원인 경우 수정 불가능함 <-- 남의 정보 수정 X
-
-            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "권한이 부족합니다.");
+        String passwordChk = passwordUtil.encode(password);
+        String passwordConfirm = passwordUtil.encode(newPassword);
+        if(!passwordChk.equals(passwordConfirm)) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "두 비밀번호가 일치하지 않습니다.");
         }
 
-        user.setPassword(passwordUtil.encode(user.getPassword()));
-        user = userRepos.save(user);
-        return user;
+        myInfo.setPassword(passwordChk);
+        return adminRepos.save(myInfo);
+    }
+
+    @Transactional
+    @Override
+    public Admins edit(Admins admin, HttpServletRequest httpServletRequest) throws Exception {
+        Admins adminInfo = adminRepos.findByAdminID(admin.getAdminID());
+        if(Objects.isNull(adminInfo)) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다.");
+        }
+
+        admin.setPassword(passwordUtil.encode(admin.getPassword()));
+        admin = adminRepos.save(admin);
+
+        return admin;
     }
 
     @Override
     public void remove(long seq, HttpServletRequest httpServletRequest) {
-        Users userInfos = userRepos.findById(seq).orElse(null);
-
-        if (Objects.isNull(userInfos)) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "정보가 없습니다.");
-        }
-        // TODO 관리자이거나 자기 자신인 경우만 수정이 가능함. 토큰으로 확인할 예정
-
-        Users accessUser = jwtService.getUserInfoByToken(httpServletRequest); // 현재 접근 유저
-        if (userInfos.getId() != accessUser.getId()
-                && accessUser.getType().getCode() < UserType.ADMIN.getCode()) {
-            // NOTICE: 접근한 사람이 본인이 아니면서, 일반 회원이거나 비회원인 경우 수정 불가능함 <-- 남의 정보 수정 X
-
-            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "권한이 부족합니다.");
+        Admins adminInfo = adminRepos.findById(seq).orElse(null);
+        if(Objects.isNull(adminInfo)) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다.");
         }
 
-        if (userInfos.getType() == UserType.NORMAL) {
-            userInfos.setDeleted(YN.Y);
-            userRepos.save(userInfos);
+        if(adminInfo.getType() == AdminType.ADMIN) {
+            adminInfo.setDeleted(YN.Y);
+            adminRepos.save(adminInfo);
         }
     }
 
     @Override
-    public Users find(long seq, HttpServletRequest httpServletRequest) throws Exception {
-        boolean isUseable = jwtService.checkUserTokenPriority(httpServletRequest, UserType.ADMIN);
-        if (!isUseable) {
-            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "권한이 부족합니다.");
-        }
-        Users oldUser = userRepos.findById(seq).orElse(null);
-        if (Objects.isNull(oldUser) || oldUser.getType() != UserType.ADMIN) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "가입되지 않은 회원입니다.");
-        }
-        return oldUser;
-    }
-
-    @Override
-    public BfListResponse<Users> findAll(Users user, BfPage bfPage, HttpServletRequest httpServletRequest)
+    public ListResponse<Admins> findAll(Admins admin, BfPage bfPage, HttpServletRequest httpServletRequest)
             throws Exception {
-
-        boolean isUseable = jwtService.checkUserTokenPriority(httpServletRequest, UserType.ADMIN);
-        if (!isUseable) {
-            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "권한이 부족합니다.");
-        }
 
         return null;
     }
 
-    @Transactional
     @Override
-    public Users modifyPassword(String userId, String password, String newpassword, HttpServletRequest httpServletRequest) throws Exception {
-        Users myInfo = jwtService.getUserInfoByTokenAnyway(httpServletRequest);
-        if (myInfo == null || myInfo.getType() == UserType.NONE) {
-            // 회원가입/로그인에서 진입시 토큰 없을 수 있음.
-            myInfo = userRepos.findByUserId(userId);
-            if(myInfo == null) {
-                throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 계정입니다.");
-            }
-            String passwordCheck = passwordUtil.encode(password);
-            String passwordConfirm = passwordUtil.encode(newpassword);
-            if(!passwordCheck.equals(passwordConfirm)) {
-                throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
-            }
-            myInfo.setPassword(passwordCheck);
-            return userRepos.save(myInfo);
-        }
+    public boolean sendAuthSMSCode(String phoneNo) throws Exception {
+        LocalDateTime thisTime = dateUtil.getThisTime();
+        String authCode = Math.round(Math.random() * 1000000) + "";
 
-        // 마이페이지 같은 곳에서 진입시
-        if(myInfo.getPassword().equals(passwordUtil.encode(password))) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "기존 비밀번호가 일치하지 않습니다.");
-        }
-        myInfo.setPassword(passwordUtil.encode(newpassword));
-        return userRepos.save(myInfo);
+        SmsAuthHistory smsAuthHistory =
+                SmsAuthHistory.builder()
+                .createdAt(thisTime)
+                .efectedEndedAt(thisTime.plusMinutes(3))
+                .phoneNo(phoneNo)
+                .authCode(authCode)
+                .build();
+
+        Map<String, String> bodyMap = new HashMap<>();
+        bodyMap.put("title", "인증번호입니다.");
+        bodyMap.put("message", "인증번호는 [" + authCode + "]입니다.");
+        bodyMap.put("name", "인증자");
+        bodyMap.put("phoneNo", phoneNo);
+
+        smsAuthHistoryRepos.save(smsAuthHistory);
+
+        return directSendAPIService.sendSMS(phoneNo, bodyMap);
     }
 
-    public Users toEntity (RequestUserDTO dto){
-        Users user = new Users();
-        user.setType(dto.getType());
-        user.setUserId(dto.getUserId());
-        user.setPhoneNo(dto.getPhoneNo());
-        user.setUserName(dto.getUserName());
-        user.setEmail(dto.getEmail());
-        user.setSnsAllowed(dto.getSnsAllowed());
-        user.setMarketingAllowed(dto.getMarketingAllowed());
-        user.setMarketingAllowedAt(dto.getMarketingAllowedAt());
-        user.setMessageAllowed(dto.getMessageAllowed());
-        user.setMessageAllowedAt(dto.getMessageAllowedAt());
-        user.setPassword(dto.getPassword());
-        user.setSnsType(dto.getSnsType());
+    @Override
+    public boolean isCorrectSMSCode(String phoneNo, String authNo) {
+        LocalDateTime thisTime = dateUtil.getThisTime();
+        SmsAuthHistory smsAuthHistory =
+                smsAuthHistoryRepos.findFirstByPhoneNoAndEfectedEndedAtAfterOrderByIdDesc(phoneNo, thisTime);
+
+        if(smsAuthHistory == null) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "먼저 인증을 요청해주세요.");
+        }
+        if(smsAuthHistory.getAuthCode().equals(authNo)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /*
+    public Admins toEntity(RequestUserDTO dto) {
+        Admins admin = new Admins();
+
+        admin.setType(dto.getType());
+        admin.setAdminID(dto.getUserId());
+        admin.setPhoneNo(dto.getPhoneNo());
+        admin.setUserName(dto.getUserName());
+        admin.setEmail(dto.getEmail());
+        admin.setSnsAllowed(dto.getSnsAllowed());
+        admin.setMarketingAllowed(dto.getMarketingAllowed());
+        admin.setMarketingAllowedAt(dto.getMarketingAllowedAt());
+        admin.setMessageAllowed(dto.getMessageAllowed());
+        admin.setMessageAllowedAt(dto.getMessageAllowedAt());
+        admin.setPassword(dto.getPassword());
+        admin.setSnsType(dto.getSnsType());
 
         return user;
+    }
+    */
+
+    @Override
+    public Admins generate(Admins obj) {
+        return null;
     }
 
 }

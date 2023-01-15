@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.Messages;
 import com.safeapp.admin.web.repos.jpa.MessagesRepos;
@@ -86,13 +86,13 @@ public class MessagesServiceImpl implements MessagesService {
     }
 
     @Override
-    public BfListResponse<Messages> findAll(Messages instance, BfPage bfPage,
-                                            HttpServletRequest httpServletRequest) throws Exception {
+    public ListResponse<Messages> findAll(Messages instance, BfPage bfPage,
+                                          HttpServletRequest httpServletRequest) throws Exception {
 
         List<Messages> list = dslRepos.findAll(instance, bfPage);
         long count = dslRepos.countAll(instance);
 
-        return new BfListResponse<Messages>(list, count, bfPage);
+        return new ListResponse<Messages>(list, count, bfPage);
     }
 
     @Override

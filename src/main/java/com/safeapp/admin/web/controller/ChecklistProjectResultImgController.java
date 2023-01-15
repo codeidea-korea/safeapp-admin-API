@@ -2,7 +2,7 @@ package com.safeapp.admin.web.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.ChecklistProjectResultImg;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +70,7 @@ public class ChecklistProjectResultImgController {
 
     @GetMapping(value = "")
     @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
-    public BfListResponse findAll(
+    public ListResponse findAll(
         BfPage bfPage,
         HttpServletRequest request) throws Exception {
         return checklistProjectResultImgService.findAll(

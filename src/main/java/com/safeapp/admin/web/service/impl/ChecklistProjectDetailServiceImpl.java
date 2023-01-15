@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.safeapp.admin.web.dto.request.RequestChecklistProjectDetailDTO;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.ChecklistProjectDetail;
 import com.safeapp.admin.web.repos.jpa.ChecklistProjectDetailRepository;
@@ -82,8 +82,8 @@ public class ChecklistProjectDetailServiceImpl implements ChecklistProjectDetail
     }
 
     @Override
-    public BfListResponse<ChecklistProjectDetail> findAll(ChecklistProjectDetail instance, BfPage bfPage,
-                                                          HttpServletRequest httpServletRequest) throws Exception {
+    public ListResponse<ChecklistProjectDetail> findAll(ChecklistProjectDetail instance, BfPage bfPage,
+                                                        HttpServletRequest httpServletRequest) throws Exception {
         return null;
     }
 

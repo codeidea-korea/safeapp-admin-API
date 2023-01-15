@@ -9,7 +9,7 @@ import com.safeapp.admin.web.model.entity.ChecklistProjectDetail;
 import com.safeapp.admin.web.repos.jpa.ChecklistProjectDetailRepository;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.ChecklistProjectResult;
 import com.safeapp.admin.web.repos.jpa.ChecklistProjectResultRepos;
@@ -87,8 +87,8 @@ public class ChecklistProjectResultServiceImpl implements ChecklistProjectResult
     }
 
     @Override
-    public BfListResponse<ChecklistProjectResult> findAll(ChecklistProjectResult instance, BfPage bfPage,
-                                                          HttpServletRequest httpServletRequest) throws Exception {
+    public ListResponse<ChecklistProjectResult> findAll(ChecklistProjectResult instance, BfPage bfPage,
+                                                        HttpServletRequest httpServletRequest) throws Exception {
         return null;
     }
 

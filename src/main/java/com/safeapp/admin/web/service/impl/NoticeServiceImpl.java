@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.Notice;
 import com.safeapp.admin.web.repos.jpa.NoticeRepos;
@@ -85,13 +85,13 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public BfListResponse<Notice> findAll(Notice instance, BfPage bfPage,
-                                          HttpServletRequest httpServletRequest) throws Exception {
+    public ListResponse<Notice> findAll(Notice instance, BfPage bfPage,
+                                        HttpServletRequest httpServletRequest) throws Exception {
 
         List<Notice> list = dslRepos.findAll(instance, bfPage);
         long count = dslRepos.countAll(instance);
 
-        return new BfListResponse<Notice>(list, count, bfPage);
+        return new ListResponse<Notice>(list, count, bfPage);
     }
 
     @Override

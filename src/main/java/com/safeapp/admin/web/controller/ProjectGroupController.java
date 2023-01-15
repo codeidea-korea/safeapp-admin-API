@@ -6,7 +6,7 @@ import com.safeapp.admin.web.model.entity.Project;
 import com.safeapp.admin.web.model.entity.Users;
 import com.safeapp.admin.web.service.ProjectService;
 import com.safeapp.admin.web.service.cmmn.JwtService;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.ProjectGroup;
 import lombok.AllArgsConstructor;
@@ -73,7 +73,7 @@ public class ProjectGroupController {
 
     @GetMapping(value = "")
     @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
-    public BfListResponse findAll(
+    public ListResponse findAll(
         BfPage bfPage,
         @RequestParam(value = "userId", required = false, defaultValue = "1") Long userId,
         @RequestParam(value = "projectId", required = false, defaultValue = "1") Long projectId,

@@ -27,28 +27,45 @@ import static javax.persistence.EnumType.STRING;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Users extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "type")
-    private UserType type;
+    @Column(name = "deleted")
+    private YN deleted;
 
-    @Column(name = "sns_allowed")
-    private YN snsAllowed;
+    @Column(name = "email")
+    private String email;
 
-    @Column(name = "user_id")
-    private String userId;
+    @Column(name = "password")
+    private String password;
 
     @Column(name = "phone_no")
     private String phoneNo;
 
+    @Column(name = "type")
+    private UserType type;
+
+    @Column(name = "user_id")
+    private String userID;
+
     @Column(name = "user_name")
     private String userName;
 
-    @Column(name = "email")
-    private String email;
+    @Column(name = "image")
+    private String image;
+
+    @Column(name = "sns_allowed")
+    private YN snsAllowed;
+
+    @Enumerated(STRING)
+    @Column(name = "sns_type")
+    SNSType snsType = SNSType.NORMAL;
+
+    @Column(name = "sns_value")
+    String snsValue;
 
     @Column(name = "marketing_allowed")
     private YN marketingAllowed;
@@ -68,22 +85,6 @@ public class Users extends BaseTimeEntity {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime messageAllowedAt;
 
-    @Column(name = "image")
-    private String image;
-
-    @Column(name = "password")
-    private String password;
-
-    @Column(name = "deleted")
-    private YN deleted;
-
-    @Enumerated(STRING)
-    @Column(name = "sns_type")
-    SNSType snsType = SNSType.NORMAL;
-
-    @Column(name = "sns_value")
-    String snsValue;
-
     // 자식 테이블 맵핑
     @OneToMany(mappedBy = "user")
     private List<AccidentExp> accidentExps = new ArrayList<>();
@@ -94,39 +95,39 @@ public class Users extends BaseTimeEntity {
     
     public Users(Users users) {
         this.id = users.id;
-        this.type = users.type;
-        this.snsAllowed = users.snsAllowed;
-        this.userId = users.userId;
-        this.phoneNo = users.phoneNo;
-        this.userName = users.userName;
+        this.deleted = users.deleted;
         this.email = users.email;
+        this.password = users.password;
+        this.phoneNo = users.phoneNo;
+        this.type = users.type;
+        this.userID = users.userID;
+        this.userName = users.userName;
+        this.image = users.image;
+        this.snsAllowed = users.snsAllowed;
         this.marketingAllowed = users.marketingAllowed;
         this.marketingAllowedAt = users.marketingAllowedAt;
         this.messageAllowed = users.messageAllowed;
         this.messageAllowedAt = users.messageAllowedAt;
-        this.image = users.image;
-        this.password = users.password;
-        this.deleted = users.deleted;
     }
 
     @Builder
-    public Users(long id, UserType type, YN snsAllowed, String userId, String phoneNo, String userName, String email,
-        YN marketingAllowed, LocalDateTime marketingAllowedAt, YN messageAllowed, LocalDateTime messageAllowedAt,
-        String image, String password) {
+    public Users(long id, String email, String password, String phoneNo, UserType type, String userID, String userName, String image,
+                 YN snsAllowed, YN marketingAllowed, LocalDateTime marketingAllowedAt, YN messageAllowed, LocalDateTime messageAllowedAt) {
         
         this.id = id;
-        this.type = type;
-        this.snsAllowed = snsAllowed;
-        this.userId = userId;
-        this.phoneNo = phoneNo;
-        this.userName = userName;
+        this.deleted = YN.N;
         this.email = email;
+        this.password = password;
+        this.phoneNo = phoneNo;
+        this.type = type;
+        this.userID = userID;
+        this.userName = userName;
+        this.image = image;
+        this.snsAllowed = snsAllowed;
         this.marketingAllowed = marketingAllowed;
         this.marketingAllowedAt = marketingAllowedAt;
         this.messageAllowed = messageAllowed;
         this.messageAllowedAt = messageAllowedAt;
-        this.image = image;
-        this.password = password;
-        this.deleted = YN.N;
     }
+
 }

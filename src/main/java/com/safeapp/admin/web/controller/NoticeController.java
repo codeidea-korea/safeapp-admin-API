@@ -3,7 +3,7 @@ package com.safeapp.admin.web.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.utils.ResponseUtil;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.Notice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +74,7 @@ public class NoticeController {
 
     @GetMapping(value = "/notices")
     @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
-    public ResponseEntity<BfListResponse> findAll(
+    public ResponseEntity<ListResponse> findAll(
         BfPage bfPage,
         @RequestParam(value = "title", required = false, defaultValue = "아이언맨") String title,
         HttpServletRequest request) throws Exception {

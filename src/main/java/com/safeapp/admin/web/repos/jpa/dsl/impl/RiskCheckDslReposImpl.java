@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
-import com.binoofactory.cornsqure.web.model.entity.QChecklistProject;
-import com.binoofactory.cornsqure.web.model.entity.QRiskCheck;
+import com.safeapp.admin.web.model.entity.QChecklistProject;
+import com.safeapp.admin.web.model.entity.QRiskCheck;
 import com.safeapp.admin.web.repos.jpa.dsl.RiskCheckDslRepos;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.PathBuilder;

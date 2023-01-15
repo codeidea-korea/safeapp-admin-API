@@ -6,7 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.utils.ResponseUtil;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.docs.InviteHistory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +101,7 @@ public class InviteHistoryController {
 
     @GetMapping(value = "/invite/users")
     @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
-    public ResponseEntity<BfListResponse> findAll(
+    public ResponseEntity<ListResponse> findAll(
         BfPage bfPage,
         HttpServletRequest request) throws Exception {
         return ResponseUtil.sendResponse(inviteHistoryService.findAll(

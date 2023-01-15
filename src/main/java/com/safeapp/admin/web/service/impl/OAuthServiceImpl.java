@@ -2,9 +2,12 @@ package com.safeapp.admin.web.service.impl;
 
 import java.util.Objects;
 
+import com.safeapp.admin.web.data.AdminType;
 import com.safeapp.admin.web.data.UserType;
-import com.safeapp.admin.web.model.BfUserDetails;
+import com.safeapp.admin.web.model.AdminDetails;
+import com.safeapp.admin.web.model.entity.Admins;
 import com.safeapp.admin.web.model.entity.Users;
+import com.safeapp.admin.web.repos.jpa.AdminRepos;
 import com.safeapp.admin.web.repos.jpa.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,22 +24,23 @@ import net.minidev.json.parser.ParseException;
 @Service("userDetailsService")
 public class OAuthServiceImpl implements OAuthService {
 
-    private final UserRepos userRepos;
-
+    private final AdminRepos adminRepos;
     private final RedisCacheService redisCacheService;
 
     @Autowired
-    public OAuthServiceImpl(UserRepos userRepos, RedisCacheService redisCacheService) {
-        this.userRepos = userRepos;
+    public OAuthServiceImpl(AdminRepos adminRepos, RedisCacheService redisCacheService) {
+        this.adminRepos = adminRepos;
         this.redisCacheService = redisCacheService;
     }
 
-    private Users convertString2User(String userInfo) {
+    private Admins convertString2User(String adminInfo) {
         JSONParser parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
+
         try {
-            return parser.parse(userInfo, Users.class);
+            return parser.parse(adminInfo, Admins.class);
         } catch (ParseException e) {
             e.printStackTrace();
+
             return null;
         }
     }
@@ -44,27 +48,31 @@ public class OAuthServiceImpl implements OAuthService {
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
 
-        BfUserDetails details = new BfUserDetails();
-        details.setType(UserType.NONE);
-        details.setExpired(true);
+        AdminDetails details = new AdminDetails();
+        details.setType(AdminType.NONE);
         details.setEnabled(false);
+        details.setExpired(true);
 
-        Users users = userRepos.findByUserId(id);
-        if (Objects.isNull(users)) {
+        Admins admin = adminRepos.findByAdminID(id);
+        if(Objects.isNull(admin)) {
             return details;
         }
+
         details.setEnabled(true);
 
         String cacheUserInfo = redisCacheService.getValue("user-id" + id);
-        if (StringUtils.isNullOrEmpty(cacheUserInfo)) {
+        if(StringUtils.isNullOrEmpty(cacheUserInfo)) {
             return details;
         }
-        Users user = convertString2User(cacheUserInfo);
-        if (Objects.isNull(user)) {
+
+        admin = convertString2User(cacheUserInfo);
+        if(Objects.isNull(admin)) {
             return details;
         }
+
         details.setExpired(false);
 
         return details;
     }
+
 }

@@ -17,7 +17,7 @@ import com.safeapp.admin.web.repos.jpa.UserRepos;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.docs.LikeHistory;
 import com.safeapp.admin.web.model.entity.ChecklistProject;
@@ -107,8 +107,8 @@ public class ChecklistProjectServiceImpl implements ChecklistProjectService {
     }
 
     @Override
-    public BfListResponse<ChecklistProject> findAll(ChecklistProject instance, BfPage bfPage,
-                                                    HttpServletRequest httpServletRequest) throws Exception {
+    public ListResponse<ChecklistProject> findAll(ChecklistProject instance, BfPage bfPage,
+                                                  HttpServletRequest httpServletRequest) throws Exception {
 
         List<ChecklistProject> list = dslRepos.findAll(instance, bfPage);
         long count = dslRepos.countAll(instance);
@@ -116,7 +116,7 @@ public class ChecklistProjectServiceImpl implements ChecklistProjectService {
         Users user = jwtService.getUserInfoByTokenAnyway(httpServletRequest);
         if(user != null) {
             for(ChecklistProject item : list) {
-                LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(item.getUser().getId(), "checklist", item.getId());
+                LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(item.getUser().getId(), "checklist", item.getId());
 
                 if(liked != null) {
                     item.setLiked(liked.getLiked());
@@ -124,7 +124,7 @@ public class ChecklistProjectServiceImpl implements ChecklistProjectService {
             }
         }
 
-        return new BfListResponse<>(list, count, bfPage);
+        return new ListResponse<>(list, count, bfPage);
     }
 
     @Override
@@ -153,7 +153,7 @@ public class ChecklistProjectServiceImpl implements ChecklistProjectService {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "먼저 로그인하여주세요.");
         }
 
-        LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(user.getId(), "checklist", id);
+        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(user.getId(), "checklist", id);
         if(liked != null) {
             if(liked.getLiked() == YN.Y) {
                 throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "이미 좋아요 하셨습니다.");
@@ -180,7 +180,7 @@ public class ChecklistProjectServiceImpl implements ChecklistProjectService {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "먼저 로그인하여주세요.");
         }
 
-        LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(user.getId(), "checklist", id);
+        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(user.getId(), "checklist", id);
 
         if(liked != null) {
             yn = YN.Y;
@@ -197,7 +197,7 @@ public class ChecklistProjectServiceImpl implements ChecklistProjectService {
         if(user == null) {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "먼저 로그인하여주세요.");        }
 
-        LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(user.getId(), "checklist", id);
+        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(user.getId(), "checklist", id);
         if(liked != null) {
             likeRepos.delete(liked);
         } else {
@@ -210,7 +210,7 @@ public class ChecklistProjectServiceImpl implements ChecklistProjectService {
 
         Users user = jwtService.getUserInfoByToken(httpServletRequest);
 
-        LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(user.getId(), "checklist", id);
+        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(user.getId(), "checklist", id);
         return liked != null && liked.getLiked() == YN.Y;
     }
 

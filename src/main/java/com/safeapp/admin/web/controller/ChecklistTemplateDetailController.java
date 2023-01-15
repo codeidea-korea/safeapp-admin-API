@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.safeapp.admin.web.dto.request.RequestChecklistTemplateDetailDTO;
 import com.safeapp.admin.web.dto.response.ResponseChecklistTemplateDetailDTO;
 import com.safeapp.admin.web.service.ChecklistTemplateService;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.ChecklistTemplateDetail;
 import lombok.AllArgsConstructor;
@@ -81,7 +81,7 @@ public class ChecklistTemplateDetailController {
 
     @GetMapping(value = "")
     @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
-    public BfListResponse findAll(
+    public ListResponse findAll(
         BfPage bfPage,
         HttpServletRequest request) throws Exception {
         return checklistTemplateDetailService.findAll(

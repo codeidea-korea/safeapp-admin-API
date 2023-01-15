@@ -9,9 +9,7 @@ import com.safeapp.admin.web.model.entity.Users;
 
 @Repository
 public interface UserRepos extends JpaRepository<Users, Long> {
-    Users findByUserId(String userId);
 
-    Users findByUserNameAndPhoneNoAndDeleted(String userId, String phoneNo, YN deleted);
+    Users findByUserID(String userID);
 
-    Users findUsersBySnsValueAndSnsType(String snsValue, SNSType snsType);
 }

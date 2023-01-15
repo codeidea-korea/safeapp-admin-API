@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
-import com.safeapp.admin.web.model.cmmn.BfListResponse;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.BfPage;
 import com.safeapp.admin.web.model.entity.ProjectGroup;
 import com.safeapp.admin.web.repos.jpa.ProjectGroupRepos;
@@ -80,8 +80,8 @@ public class ProjectGroupServiceImpl implements ProjectGroupService {
     }
 
     @Override
-    public BfListResponse<ProjectGroup> findAll(ProjectGroup instance, BfPage bfPage,
-                                                HttpServletRequest httpServletRequest) throws Exception {
+    public ListResponse<ProjectGroup> findAll(ProjectGroup instance, BfPage bfPage,
+                                              HttpServletRequest httpServletRequest) throws Exception {
         return null;
     }
 
