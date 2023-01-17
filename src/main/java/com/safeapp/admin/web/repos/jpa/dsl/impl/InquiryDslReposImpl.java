@@ -5,7 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Inquiry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -54,7 +54,7 @@ public class InquiryDslReposImpl extends QuerydslRepositorySupport implements In
     }
 
     @Override
-    public List<Inquiry> findAll(Inquiry instance, BfPage bfPage) {
+    public List<Inquiry> findAll(Inquiry instance, Pages bfPage) {
         QInquiry qInquiry = QInquiry.inquiry;
         JPAQuery query = selectFromWhere(instance, qInquiry);
 

@@ -21,7 +21,7 @@ import com.safeapp.admin.web.repos.jpa.*;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -99,13 +99,13 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ListResponse<Project> findAll(Project instance, BfPage bfPage,
+    public ListResponse<Project> findAll(Project instance, Pages bfPage,
                                          HttpServletRequest httpServletRequest) throws Exception {
 
         List<Project> list = dslRepos.findAll(instance, bfPage);
         long count = dslRepos.countAll(instance);
 
-        return new ListResponse<Project>(list, count, bfPage);
+        return new ListResponse<Project>(count, list, bfPage);
     }
 
     @Override

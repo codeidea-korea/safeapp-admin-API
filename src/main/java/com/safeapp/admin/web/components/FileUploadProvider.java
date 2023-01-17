@@ -3,7 +3,7 @@ package com.safeapp.admin.web.components;
 import java.io.File;
 
 import com.safeapp.admin.utils.DateUtil;
-import com.safeapp.admin.web.model.entity.cmmn.BfFile;
+import com.safeapp.admin.web.model.entity.cmmn.Files;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +13,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
 @Component
-public class BfFileUploadProvider {
+public class FileUploadProvider {
 
     @Value("${user.upload.path}")
     public String uploadPath;
@@ -27,7 +27,7 @@ public class BfFileUploadProvider {
     private final DateUtil dateUtil;
 
     @Autowired
-    public BfFileUploadProvider(DateUtil dateUtil) {
+    public FileUploadProvider(DateUtil dateUtil) {
         this.dateUtil = dateUtil;
     }
 
@@ -51,7 +51,7 @@ public class BfFileUploadProvider {
         return FilenameUtils.getBaseName(file.getOriginalFilename());
     }
 
-    public BfFile save(MultipartFile file) throws Exception {
+    public Files save(MultipartFile file) throws Exception {
         if (!chkFileType(file)) {
             throw new Exception("허용된 파일 타입이 아닙니다.");
         }
@@ -72,7 +72,7 @@ public class BfFileUploadProvider {
         serverFilePath.append("." + getExt(file));
         file.transferTo(new File(serverFilePath.toString()));
 
-        return BfFile.builder()
+        return Files.builder()
             .fileGroupNo(1)
             .webPath(webPath + "/" + now + "/" + now + "." + getExt(file))
             .fileName(serverFilePath.toString())

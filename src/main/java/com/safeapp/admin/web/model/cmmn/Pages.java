@@ -11,11 +11,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class BfPage {
+public class Pages {
     private int pageNo = 1;
     private int pageSize = 10;
 
-    public BfPage(int pageNo, int pageSize) {
+    public Pages(int pageNo, int pageSize) {
         this.pageNo = pageNo;
         this.pageSize = pageSize;
     }

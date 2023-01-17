@@ -5,7 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.RiskTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -54,7 +54,7 @@ public class RiskTemplateDslReposImpl extends QuerydslRepositorySupport implemen
     }
 
     @Override
-    public List<RiskTemplate> findAll(RiskTemplate instance, BfPage bfPage) {
+    public List<RiskTemplate> findAll(RiskTemplate instance, Pages bfPage) {
         QRiskTemplate qRiskTemplate = QRiskTemplate.riskTemplate;
         JPAQuery query = selectFromWhere(instance, qRiskTemplate);
 

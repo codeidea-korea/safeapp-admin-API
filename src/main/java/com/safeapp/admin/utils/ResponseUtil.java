@@ -10,8 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 public class ResponseUtil {
-    public static ResponseEntity sendResponse(Object obj) {
 
+    public static ResponseEntity sendResponse(Object obj) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
@@ -20,9 +20,7 @@ public class ResponseUtil {
         body.put("msg", null);
         body.put("data", obj);
 
-        return ResponseEntity.ok()
-            .headers(headers)
-            .body(body);
+        return ResponseEntity.ok().headers(headers).body(body);
     }
 
     public static ResponseEntity sendResponse(HttpStatus httpStatus, String cause) {
@@ -35,4 +33,5 @@ public class ResponseUtil {
 
         return ResponseEntity.status(httpStatus).headers(headers).body(body);
     }
+
 }

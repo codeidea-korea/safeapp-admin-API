@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.safeapp.admin.web.dto.request.RequestUserDTO;
 import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -92,7 +92,7 @@ public class UsersController {
             @RequestParam(value = "pageSize", required = false, defaultValue = "100") @ApiParam("한번에 보여줄 크기") int pageSize,
             HttpServletRequest request) throws Exception {
 
-        return ResponseUtil.sendResponse(userService.findAll(new Users(), new BfPage(pageNo, pageSize),request));
+        return ResponseUtil.sendResponse(userService.findAll(new Users(), new Pages(pageNo, pageSize),request));
     }
     
     @GetMapping(value = "/user/requestNumber")

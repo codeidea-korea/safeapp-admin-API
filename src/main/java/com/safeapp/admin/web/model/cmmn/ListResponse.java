@@ -25,7 +25,7 @@ public class ListResponse<T> {
         private long requestPage;
         private long requestSize;
 
-        Page(BfPage bfPage) {
+        Page(Pages bfPage) {
             totalDataCnt = count;
             totalPages = count / bfPage.getPageSize() + (count % bfPage.getPageSize() == 0 ? 0 : 1);
             requestPage = bfPage.getPageNo();
@@ -35,7 +35,7 @@ public class ListResponse<T> {
         }
     }
     
-    public ListResponse(long count, List<T> list, BfPage page) {
+    public ListResponse(long count, List<T> list, Pages page) {
         this.list = list;
         this.count = count;
         

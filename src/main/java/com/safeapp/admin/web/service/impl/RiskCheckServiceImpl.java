@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.safeapp.admin.web.data.StatusType;
 import com.safeapp.admin.web.dto.request.RequestRiskCheckDTO;
 import com.safeapp.admin.web.dto.response.ResponseRiskcheckDTO;
+import com.safeapp.admin.web.model.entity.Admins;
 import com.safeapp.admin.web.repos.jpa.AccidentExpRepos;
 import com.safeapp.admin.web.repos.jpa.ProjectRepos;
 import com.safeapp.admin.web.repos.jpa.RiskCheckRepository;
@@ -17,7 +18,7 @@ import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.docs.LikeHistory;
 import com.safeapp.admin.web.model.entity.RiskCheck;
 import com.safeapp.admin.web.model.entity.Users;
@@ -113,7 +114,7 @@ public class RiskCheckServiceImpl implements RiskCheckService {
     }
 
     @Override
-    public ListResponse<RiskCheck> findAll(RiskCheck instance, BfPage bfPage,
+    public ListResponse<RiskCheck> findAll(RiskCheck instance, Pages bfPage,
                                            HttpServletRequest httpServletRequest) throws Exception {
 
         List<RiskCheck> list = dslRepos.findAll(instance, bfPage);
@@ -135,7 +136,7 @@ public class RiskCheckServiceImpl implements RiskCheckService {
 //                }
 //            }
 //        }
-        return new ListResponse<RiskCheck>(list, count, bfPage);
+        return new ListResponse<RiskCheck>(count, list, bfPage);
     }
 
     @Override
@@ -164,13 +165,13 @@ public class RiskCheckServiceImpl implements RiskCheckService {
     @Override
     public void addLike(long id, HttpServletRequest httpServletRequest) {
         
-        Users user = jwtService.getUserInfoByToken(httpServletRequest);
+        Admins admin = jwtService.getAdminInfoByToken(httpServletRequest);
         
-        if(user == null) {
+        if(admin == null) {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "먼저 로그인하여주세요.");
         }
         
-        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(user.getId(), "risk", id);
+        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(admin.getId(), "risk", id);
         if(liked != null) {
             if(liked.getLiked() == YN.Y) {
                 throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "이미 좋아요 하셨습니다.");
@@ -181,7 +182,7 @@ public class RiskCheckServiceImpl implements RiskCheckService {
                 .liked(YN.Y)
                 .type("risk")
                 .boardId(id)
-                .userId(user.getId())
+                .userID(admin.getId())
                 .build());
         }
     }
@@ -191,13 +192,13 @@ public class RiskCheckServiceImpl implements RiskCheckService {
 
         YN yn = YN.N;
 
-        Users user = jwtService.getUserInfoByToken(httpServletRequest);
+        Admins admin = jwtService.getAdminInfoByToken(httpServletRequest);
 
-        if(user == null) {
+        if(admin == null) {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "먼저 로그인하여주세요.");
         }
 
-        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(user.getId(), "checklist", id);
+        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(admin.getId(), "checklist", id);
 
         if(liked != null) {
             yn = YN.Y;
@@ -209,13 +210,13 @@ public class RiskCheckServiceImpl implements RiskCheckService {
     @Override
     public void removeLike(long id, HttpServletRequest httpServletRequest) {
         
-        Users user = jwtService.getUserInfoByToken(httpServletRequest);
+        Admins admin = jwtService.getAdminInfoByToken(httpServletRequest);
         
-        if(user == null) {
+        if(admin == null) {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "먼저 로그인하여주세요.");
         }
 
-        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(user.getId(), "risk", id);
+        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(admin.getId(), "risk", id);
         if(liked != null) {
             likeRepos.delete(liked);
         } else {
@@ -226,9 +227,9 @@ public class RiskCheckServiceImpl implements RiskCheckService {
     @Override
     public boolean isLiked(long id, HttpServletRequest httpServletRequest) {
         
-        Users user = jwtService.getUserInfoByToken(httpServletRequest);
+        Admins admin = jwtService.getAdminInfoByToken(httpServletRequest);
 
-        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(user.getId(), "risk", id);
+        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(admin.getId(), "risk", id);
         return liked != null && liked.getLiked() == YN.Y;
     }
 

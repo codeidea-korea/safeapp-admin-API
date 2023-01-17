@@ -31,12 +31,14 @@ public class JwtServiceImpl implements JwtService {
 
     private final JwtUtil jwtUtil;
     private final AdminRepos adminRepos;
+    private final UserRepos userRepos;
     private final DateUtil dateUtil;
 
     @Autowired
-    public JwtServiceImpl(JwtUtil jwtUtil, AdminRepos adminRepos, DateUtil dateUtil) {
+    public JwtServiceImpl(JwtUtil jwtUtil, AdminRepos adminRepos, UserRepos userRepos, DateUtil dateUtil) {
         this.jwtUtil = jwtUtil;
         this.adminRepos = adminRepos;
+        this.userRepos = userRepos;
         this.dateUtil = dateUtil;
     }
 
@@ -44,12 +46,11 @@ public class JwtServiceImpl implements JwtService {
         if(StringUtils.isNullOrEmpty(token)) {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "[토큰] 또는 [관리자 코드]는 반드시 필요합니다.");
         }
-
         if(jwtUtil.isExpired(token)) {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.");
         }
 
-        String adminID = jwtUtil.getAdminIDByAccessToken(token);
+        String adminID = jwtUtil.getAdminIDOrUserIDByAccessToken(token);
         if(StringUtils.isNullOrEmpty(adminID)) {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "인증되지 않은 관리자입니다.");
         }
@@ -62,7 +63,7 @@ public class JwtServiceImpl implements JwtService {
     
     private String removeBearer(String token) {
         if(StringUtils.isNullOrEmpty(token) || (!token.toLowerCase().contains("Bearer "))) {
-            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "토큰은 반드시 넣어주셔야 합니다.");
+            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "반드시 토큰을 넣어주셔야 합니다.");
         }
         
         return token.replace("Bearer ", "").replace("Bearer ", "");
@@ -73,7 +74,7 @@ public class JwtServiceImpl implements JwtService {
         String token = removeBearer(httpServletRequest.getHeader("Authorization"));
         checkToken(token);
 
-        String adminID = jwtUtil.getAdminIDByAccessToken(token);
+        String adminID = jwtUtil.getAdminIDOrUserIDByAccessToken(token);
         Admins admin = adminRepos.findByAdminID(adminID);
 
         return admin;
@@ -88,7 +89,7 @@ public class JwtServiceImpl implements JwtService {
         }
 
         Admins admin = new Admins();
-        admin.setType(AdminType.NONE);
+        admin.setType(AdminType.ADMIN);
 
         return admin;
     }
@@ -100,6 +101,47 @@ public class JwtServiceImpl implements JwtService {
         try {
             admin = getAdminInfoByToken(httpServletRequest);
             if(admin.getType().getCode() >= lessType.getCode()) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.getStackTrace();
+        }
+
+        return false;
+    }
+
+    @Override
+    public Users getUserInfoByToken(HttpServletRequest httpServletRequest) {
+        String token = removeBearer(httpServletRequest.getHeader("Authorization"));
+        checkToken(token);
+
+        String userID = jwtUtil.getAdminIDOrUserIDByAccessToken(token);
+        Users user = userRepos.findByUserID(userID);
+
+        return user;
+    }
+
+    @Override
+    public Users getUserInfoByTokenAnyway(HttpServletRequest httpServletRequest) {
+        try {
+            return getUserInfoByToken(httpServletRequest);
+        } catch (HttpServerErrorException e) {
+            e.getStackTrace();
+        }
+
+        Users user = new Users();
+        user.setType(UserType.NONE);
+
+        return user;
+    }
+
+    @Override
+    public boolean checkUserTokenPriority(HttpServletRequest httpServletRequest, UserType lessType) {
+        Users user;
+
+        try {
+            user = getUserInfoByToken(httpServletRequest);
+            if(user.getType().getCode() >= lessType.getCode()) {
                 return true;
             }
         } catch (Exception e) {
@@ -132,7 +174,7 @@ public class JwtServiceImpl implements JwtService {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.");
         }
         
-        String adminID = jwtUtil.getAdminIDByRefreshToken(refreshToken);
+        String adminID = jwtUtil.getAdminIDOrUserIDByRefreshToken(refreshToken);
         Admins admin = adminRepos.findByAdminID(adminID);
         
         if(admin == null) {

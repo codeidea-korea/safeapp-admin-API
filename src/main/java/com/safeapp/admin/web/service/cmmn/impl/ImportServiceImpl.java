@@ -85,7 +85,7 @@ public class ImportServiceImpl implements ImportService {
         // 고객 주문번호 생성(채번)
         Users loginUser = jwtService.getUserInfoByToken(httpServletRequest);
 
-        payment.setCustomerUid(loginUser.getUserId());
+        payment.setCustomerUid(loginUser.getUserID());
         payment.setMerchantUid(
             "consqure-" + dateUtil.getDatetimeDetail() + "-" + loginUser.getId());
         // 비회원 결제 불가

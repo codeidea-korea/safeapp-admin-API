@@ -3,8 +3,8 @@ package com.safeapp.admin.web.service.cmmn.impl;
 import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.utils.DateUtil;
-import com.safeapp.admin.web.components.BfFileUploadProvider;
-import com.safeapp.admin.web.model.entity.cmmn.BfFile;
+import com.safeapp.admin.web.components.FileUploadProvider;
+import com.safeapp.admin.web.model.entity.cmmn.Files;
 import com.safeapp.admin.web.repos.jpa.FileRepos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,18 +21,18 @@ public class FileServiceImpl implements FileService {
 
     private final DateUtil dateUtil;
 
-    private final BfFileUploadProvider bfFileUploadProvider;
+    private final FileUploadProvider bfFileUploadProvider;
 
     @Autowired
-    public FileServiceImpl(FileRepos repos, DateUtil dateUtil, BfFileUploadProvider bfFileUploadProvider) {
+    public FileServiceImpl(FileRepos repos, DateUtil dateUtil, FileUploadProvider bfFileUploadProvider) {
         this.repos = repos;
         this.dateUtil = dateUtil;
         this.bfFileUploadProvider = bfFileUploadProvider;
     }
 
     @Override
-    public BfFile uploadAllowedFile(MultipartFile file, HttpServletRequest httpServletRequest) {
-        BfFile inputFile;
+    public Files uploadAllowedFile(MultipartFile file, HttpServletRequest httpServletRequest) {
+        Files inputFile;
         try {
             inputFile = bfFileUploadProvider.save(file);
         } catch (Exception e) {
@@ -43,7 +43,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public BfFile findById(long id, HttpServletRequest httpServletRequest) {
+    public Files findById(long id, HttpServletRequest httpServletRequest) {
 
         return repos.getById(id);
     }

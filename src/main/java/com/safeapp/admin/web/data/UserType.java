@@ -10,6 +10,7 @@ import lombok.Getter;
 
 @Getter
 public enum UserType implements GrantedAuthority {
+
 	NONE("비회원", 1), 
     NORMAL("로그인 사용자", 101), 
     PERSONAL("Personal 사용자", 110), 
@@ -19,7 +20,6 @@ public enum UserType implements GrantedAuthority {
 	ADMIN("관리자", 201);
 	
 	private final String description;
-    
     private final int code;
 	
 	UserType(String description, int code) {
@@ -34,7 +34,6 @@ public enum UserType implements GrantedAuthority {
     
     public Collection<GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-
         for(UserType type : UserType.values()) {
             if(type.code < this.code) {
                 authorities.add(new SimpleGrantedAuthority(description));

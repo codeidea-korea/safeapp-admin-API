@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.ProjectGroup;
 import com.safeapp.admin.web.repos.jpa.ProjectGroupRepos;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +80,7 @@ public class ProjectGroupServiceImpl implements ProjectGroupService {
     }
 
     @Override
-    public ListResponse<ProjectGroup> findAll(ProjectGroup instance, BfPage bfPage,
+    public ListResponse<ProjectGroup> findAll(ProjectGroup instance, Pages bfPage,
                                               HttpServletRequest httpServletRequest) throws Exception {
         return null;
     }

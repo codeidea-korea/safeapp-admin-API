@@ -5,7 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.ChecklistTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -51,7 +51,7 @@ public class ChecklistTemplateDslReposImpl extends QuerydslRepositorySupport imp
     }
 
     @Override
-    public List<ChecklistTemplate> findAll(ChecklistTemplate instance, BfPage bfPage) {
+    public List<ChecklistTemplate> findAll(ChecklistTemplate instance, Pages bfPage) {
         QChecklistTemplate qChecklistTemplate = QChecklistTemplate.checklistTemplate;
         JPAQuery query = selectFromWhere(instance, qChecklistTemplate);
 

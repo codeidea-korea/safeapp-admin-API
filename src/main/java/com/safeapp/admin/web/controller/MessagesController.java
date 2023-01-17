@@ -3,10 +3,12 @@ package com.safeapp.admin.web.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.utils.ResponseUtil;
+import com.safeapp.admin.web.data.AdminType;
 import com.safeapp.admin.web.data.UserType;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
+import com.safeapp.admin.web.model.entity.Admins;
 import com.safeapp.admin.web.model.entity.Messages;
 import com.safeapp.admin.web.model.entity.Users;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,15 +100,17 @@ public class MessagesController {
     @GetMapping(value = "")
     @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
     public ResponseEntity<ListResponse> findAll(
-        BfPage bfPage,
+        Pages bfPage,
         HttpServletRequest request) throws Exception {
 
-        Users user = jwtService.getUserInfoByToken(request);
+        Admins admin = jwtService.getAdminInfoByToken(request);
 
         Messages searchParam = new Messages();
-        if (user.getType() != UserType.ADMIN) {
-            searchParam.setUser(user);
+        /*
+        if (admin.getType() == AdminType.ADMIN) {
+            searchParam.setUser(admin);
         }
+        */
         // 내 모든 알림
         return ResponseUtil.sendResponse(messagesService.findAll(
             searchParam,

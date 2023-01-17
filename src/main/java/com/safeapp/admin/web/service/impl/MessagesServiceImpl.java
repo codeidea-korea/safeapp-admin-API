@@ -9,7 +9,7 @@ import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Messages;
 import com.safeapp.admin.web.repos.jpa.MessagesRepos;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,13 +86,13 @@ public class MessagesServiceImpl implements MessagesService {
     }
 
     @Override
-    public ListResponse<Messages> findAll(Messages instance, BfPage bfPage,
+    public ListResponse<Messages> findAll(Messages instance, Pages bfPage,
                                           HttpServletRequest httpServletRequest) throws Exception {
 
         List<Messages> list = dslRepos.findAll(instance, bfPage);
         long count = dslRepos.countAll(instance);
 
-        return new ListResponse<Messages>(list, count, bfPage);
+        return new ListResponse<Messages>(count, list, bfPage);
     }
 
     @Override

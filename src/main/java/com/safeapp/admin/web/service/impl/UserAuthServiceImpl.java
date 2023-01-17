@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.UserAuth;
 import com.safeapp.admin.web.model.entity.Users;
 import com.safeapp.admin.web.repos.jpa.UserAuthRepos;
@@ -87,7 +87,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     }
 
     @Override
-    public ListResponse<UserAuth> findAll(UserAuth instance, BfPage bfPage,
+    public ListResponse<UserAuth> findAll(UserAuth instance, Pages bfPage,
                                           HttpServletRequest httpServletRequest) throws Exception {
         return null;
     }

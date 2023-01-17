@@ -2,7 +2,7 @@ package com.safeapp.admin.web.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.safeapp.admin.web.model.entity.cmmn.BfFile;
+import com.safeapp.admin.web.model.entity.cmmn.Files;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +32,7 @@ public class FileController {
 
     @PostMapping(value = "", consumes = "multipart/form-data")
     @ApiOperation(value = "파일 업로드", notes = "파일 업로드")
-    public BfFile uploadAllowedFile(
+    public Files uploadAllowedFile(
         @RequestParam(required = true, value = "file") MultipartFile file,
         HttpServletRequest request) throws Exception {
         return fileService.uploadAllowedFile(file, request);
@@ -40,7 +40,7 @@ public class FileController {
 
     @GetMapping(value = "/{id}")
     @ApiOperation(value = "파일 찾기 (단건)", notes = "파일 찾기 (단건)")
-    public BfFile find(
+    public Files find(
         @PathVariable("id") @ApiParam(value = "파일 일련번호", required = true) long id,
         HttpServletRequest request) throws Exception {
         return fileService.findById(id, request);

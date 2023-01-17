@@ -9,7 +9,7 @@ import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Inquiry;
 import com.safeapp.admin.web.repos.jpa.InquiryRepos;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,13 +86,13 @@ public class InquiryServiceImpl implements InquiryService {
     }
 
     @Override
-    public ListResponse<Inquiry> findAll(Inquiry instance, BfPage bfPage,
+    public ListResponse<Inquiry> findAll(Inquiry instance, Pages bfPage,
                                          HttpServletRequest httpServletRequest) throws Exception {
 
         List<Inquiry> list = dslRepos.findAll(instance, bfPage);
         long count = dslRepos.countAll(instance);
 
-        return new ListResponse<Inquiry>(list, count, bfPage);
+        return new ListResponse<Inquiry>(count, list, bfPage);
     }
 
     @Override

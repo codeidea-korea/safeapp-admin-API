@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,7 +20,7 @@ public class DirectQuery {
     }
 
     public List<Map<String, Object>> findAllUnionChecklistAndRisk(String title, String type, YN createdAtDescended,
-        YN nameDescended, YN userIdDescended, Long projectId, BfPage bfPage) {
+        YN nameDescended, YN userIdDescended, Long projectId, Pages bfPage) {
 
         try {
             String whereOption = "";
@@ -112,7 +112,7 @@ public class DirectQuery {
     }
 
     public List<Map<String, Object>> findAllUnionChecklistTemplateAndRiskTemplate(String title, String type,
-        YN createdAtDescended, YN nameDescended, YN userIdDescended, Long projectId, BfPage bfPage) {
+        YN createdAtDescended, YN nameDescended, YN userIdDescended, Long projectId, Pages bfPage) {
 
         try {
             String whereOption = "";

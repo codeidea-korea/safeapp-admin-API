@@ -18,11 +18,11 @@ import org.hibernate.annotations.ColumnDefault;
 
 import static javax.persistence.FetchType.LAZY;
 
-@Entity
-@Table(name = "accident_exps")
+@Entity(name = "accident_exps")
 @Data
 @NoArgsConstructor
 public class AccidentExp extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -32,8 +32,8 @@ public class AccidentExp extends BaseTimeEntity {
     private String title;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "user")
-    private Users user;
+    @JoinColumn(name = "admin")
+    private Admins admin;
     
     @Column(name = "views" )
     @ColumnDefault("0")
@@ -79,14 +79,14 @@ public class AccidentExp extends BaseTimeEntity {
     private String detailContents;
 
     @Builder
-    public AccidentExp(long id, String title, long userId, Users user, int views, String image,
+    public AccidentExp(long id, String title, long adminID, Admins admin, int views, String image,
         String tags, String name, LocalDateTime accidentAt, String accidentUid, String accidentReason,
         String accidentCause, String causeDetail, String response, YN createdAtDescended, YN viewsDescended,
         String detailContents) {
         super();
         this.id = id;
         this.title = title;
-        this.user = user;
+        this.admin = admin;
         this.views = views;
         this.image = image;
         this.tags = tags;

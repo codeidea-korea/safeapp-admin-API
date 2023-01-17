@@ -6,7 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.AccidentExp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -52,8 +52,8 @@ public class AccidentExpDslReposImpl extends QuerydslRepositorySupport implement
         if (!StringUtil.isNullOrEmpty(instance.getTags())) {
             query.where(qAccidentExp.tags.contains(instance.getTags()));
         }
-        if (instance.getUser().getId() > 0) {
-            query.where(qAccidentExp.user.id.eq(instance.getUser().getId()));
+        if (instance.getAdmin().getId() > 0) {
+            query.where(qAccidentExp.admin.id.eq(instance.getAdmin().getId()));
         }
         if (instance.getId() > 0) {
             query.where(qAccidentExp.id.eq(instance.getId()));
@@ -82,7 +82,7 @@ public class AccidentExpDslReposImpl extends QuerydslRepositorySupport implement
     }
 
     @Override
-    public List<AccidentExp> findAll(AccidentExp instance, BfPage bfPage) {
+    public List<AccidentExp> findAll(AccidentExp instance, Pages bfPage) {
         QAccidentExp qAccidentExp = QAccidentExp.accidentExp;
         JPAQuery query = selectFromWhere(instance, qAccidentExp);
 

@@ -13,7 +13,7 @@ import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.docs.LikeHistory;
 import com.safeapp.admin.web.model.entity.ChecklistTemplate;
 import com.safeapp.admin.web.model.entity.Users;
@@ -93,7 +93,7 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
     }
 
     @Override
-    public ListResponse<ChecklistTemplate> findAll(ChecklistTemplate instance, BfPage bfPage,
+    public ListResponse<ChecklistTemplate> findAll(ChecklistTemplate instance, Pages bfPage,
                                                    HttpServletRequest httpServletRequest) throws Exception {
 
         List<ChecklistTemplate> list = dslRepos.findAll(instance, bfPage);
@@ -110,7 +110,7 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
             }
         }
 
-        return new ListResponse<ChecklistTemplate>(list, count, bfPage);
+        return new ListResponse<ChecklistTemplate>(count, list, bfPage);
     }
 
     @Override
@@ -145,7 +145,7 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
                 .liked(YN.Y)
                 .type("checklist-template")
                 .boardId(id)
-                .userId(user.getId())
+                .userID(user.getId())
                 .build());
         }
     }

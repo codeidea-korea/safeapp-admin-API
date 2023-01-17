@@ -6,7 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.RiskCheck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -80,7 +80,7 @@ public class RiskCheckDslReposImpl extends QuerydslRepositorySupport implements 
     }
 
     @Override
-    public List<RiskCheck> findAll(RiskCheck instance, BfPage bfPage) {
+    public List<RiskCheck> findAll(RiskCheck instance, Pages bfPage) {
         QRiskCheck qRiskCheck = QRiskCheck.riskCheck;
         JPAQuery query = selectFromWhere(instance, qRiskCheck);
 

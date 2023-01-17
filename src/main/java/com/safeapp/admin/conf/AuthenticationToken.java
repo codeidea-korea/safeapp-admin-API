@@ -4,21 +4,23 @@ import java.util.Collection;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
-public class BFAuthenticationToken extends AbstractAuthenticationToken {
+public class AuthenticationToken extends AbstractAuthenticationToken {
 
     private String time;
     private String id;
     private String credentials;
 
-    public BFAuthenticationToken(String time, String id, String credentials,
-        Collection<? extends GrantedAuthority> authorities) {
+    public AuthenticationToken(String time, String id, String credentials,
+                               Collection<? extends GrantedAuthority> authorities) {
+
         super(authorities);
+
         this.time = time;
         this.id = id;
         this.credentials = credentials;
     }
 
-    public BFAuthenticationToken(Collection<? extends GrantedAuthority> authorities) {
+    public AuthenticationToken(Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
     }
 
@@ -31,4 +33,5 @@ public class BFAuthenticationToken extends AbstractAuthenticationToken {
     public Object getPrincipal() {
         return this.id;
     }
+
 }

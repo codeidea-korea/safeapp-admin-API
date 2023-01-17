@@ -28,13 +28,13 @@ public class ProjectGroup extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "user", columnDefinition = "bigint COMMENT '유저'")
-    private Users user;
+    private Admins admin;
 
     @Builder
-    public ProjectGroup(long id, String name, Users user, Project project) {
+    public ProjectGroup(long id, String name, Admins admin, Project project) {
         super();
         this.id = id;
-        this.user = user;
+        this.admin = admin;
         this.project = project;
         this.name = name;
     }

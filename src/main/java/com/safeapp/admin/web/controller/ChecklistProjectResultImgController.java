@@ -3,7 +3,7 @@ package com.safeapp.admin.web.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.ChecklistProjectResultImg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -71,7 +71,7 @@ public class ChecklistProjectResultImgController {
     @GetMapping(value = "")
     @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
     public ListResponse findAll(
-        BfPage bfPage,
+        Pages bfPage,
         HttpServletRequest request) throws Exception {
         return checklistProjectResultImgService.findAll(
             ChecklistProjectResultImg.builder()

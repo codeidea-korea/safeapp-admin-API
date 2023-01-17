@@ -1,6 +1,6 @@
 package com.safeapp.admin.conf.handler;
 
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -8,7 +8,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-public class BfPageableHandlerInArgument implements HandlerMethodArgumentResolver {
+public class PageableHandlerInArgument implements HandlerMethodArgumentResolver {
 
     private static final int MIN_OFFSET_VALUE = 1;
     private static final int MIN_SIZE_VALUE = 1;
@@ -17,7 +17,7 @@ public class BfPageableHandlerInArgument implements HandlerMethodArgumentResolve
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return BfPage.class.isAssignableFrom(parameter.getParameterType());
+        return Pages.class.isAssignableFrom(parameter.getParameterType());
     }
 
     @Override
@@ -43,6 +43,6 @@ public class BfPageableHandlerInArgument implements HandlerMethodArgumentResolve
             }
         }
 
-        return new BfPage(offset, limit);
+        return new Pages(offset, limit);
     }
 }

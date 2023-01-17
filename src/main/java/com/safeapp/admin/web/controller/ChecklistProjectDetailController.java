@@ -6,7 +6,7 @@ import com.safeapp.admin.web.dto.request.RequestChecklistProjectDetailDTO;
 import com.safeapp.admin.web.dto.response.ResponseChecklistProjectDetailDTO;
 import com.safeapp.admin.web.service.ChecklistProjectService;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.ChecklistProjectDetail;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -94,7 +94,7 @@ public class ChecklistProjectDetailController {
     @GetMapping(value = "")
     @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
     public ListResponse findAll(
-        BfPage bfPage,
+        Pages bfPage,
         HttpServletRequest request) throws Exception {
         return checklistProjectDetailService.findAll(
             ChecklistProjectDetail.builder()

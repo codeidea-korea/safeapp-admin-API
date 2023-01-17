@@ -10,7 +10,7 @@ import com.safeapp.admin.web.repos.jpa.UserRepos;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.RiskTemplateDetail;
 import com.safeapp.admin.web.repos.jpa.RiskTemplateDetailRepos;
 import lombok.AllArgsConstructor;
@@ -79,7 +79,7 @@ public class RiskTemplateDetailServiceImpl implements RiskTemplateDetailService 
     }
 
     @Override
-    public ListResponse<RiskTemplateDetail> findAll(RiskTemplateDetail instance, BfPage bfPage,
+    public ListResponse<RiskTemplateDetail> findAll(RiskTemplateDetail instance, Pages bfPage,
                                                     HttpServletRequest httpServletRequest) throws Exception {
         return null;
     }

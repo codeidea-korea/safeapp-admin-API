@@ -5,7 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -51,7 +51,7 @@ public class ProjectDslReposImpl extends QuerydslRepositorySupport implements Pr
     }
 
     @Override
-    public List<Project> findAll(Project instance, BfPage bfPage) {
+    public List<Project> findAll(Project instance, Pages bfPage) {
         QProject qProject = QProject.project;
         JPAQuery query = selectFromWhere(instance, qProject);
 

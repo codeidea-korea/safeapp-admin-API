@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "sy_file_dtl")
 @Data
 @NoArgsConstructor
-public class BfFile {
+public class Files {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,7 +57,7 @@ public class BfFile {
     private LocalDateTime createTime;
 
     @Builder
-    public BfFile(String fileName, String webPath, String type, Integer fileGroupNo) {
+    public Files(String fileName, String webPath, String type, Integer fileGroupNo) {
         this.fileName = fileName;
         this.webPath = webPath;
         this.type = type;

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LikeHistoryRepos extends MongoRepository<LikeHistory, String> {
-    LikeHistory findByUserIDAndTypeAndBoardId(long userId, String type, long boardId);
+    LikeHistory findByUserIDAndTypeAndBoardId(long userID, String type, long boardId);
 }

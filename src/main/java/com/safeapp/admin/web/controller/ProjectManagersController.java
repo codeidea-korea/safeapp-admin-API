@@ -5,7 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.utils.ResponseUtil;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -107,7 +107,7 @@ public class ProjectManagersController {
     @GetMapping(value = "/projects/{projectId}/managers")
     @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
     public ResponseEntity findAllByProjectId(
-        BfPage bfPage,
+        Pages bfPage,
         @RequestParam(value = "projectId", required = false, defaultValue = "1") long projectId,
         HttpServletRequest request) throws Exception {
 //        return ResponseUtil.sendResponse(projectManagersService.findAll(
@@ -122,7 +122,7 @@ public class ProjectManagersController {
     @GetMapping(value = "/project/managers")
     @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
     public ResponseEntity findAll(
-        BfPage bfPage,
+        Pages bfPage,
         HttpServletRequest request) throws Exception {
 //        return ResponseUtil.sendResponse(projectManagersService.findAll(
 //                ProjectManager.builder()

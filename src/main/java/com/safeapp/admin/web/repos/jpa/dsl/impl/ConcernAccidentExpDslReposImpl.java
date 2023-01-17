@@ -6,7 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.ConcernAccidentExp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -84,7 +84,7 @@ public class ConcernAccidentExpDslReposImpl extends QuerydslRepositorySupport im
     }
 
     @Override
-    public List<ConcernAccidentExp> findAll(ConcernAccidentExp instance, BfPage bfPage) {
+    public List<ConcernAccidentExp> findAll(ConcernAccidentExp instance, Pages bfPage) {
         QConcernAccidentExp qConcernAccidentExp = QConcernAccidentExp.concernAccidentExp;
         JPAQuery query = selectFromWhere(instance, qConcernAccidentExp);
 

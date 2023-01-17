@@ -12,7 +12,7 @@ import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Admins;
 import com.safeapp.admin.web.model.entity.SmsAuthHistory;
 import com.safeapp.admin.web.repos.jpa.AdminRepos;
@@ -140,7 +140,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ListResponse<Admins> findAll(Admins admin, BfPage bfPage, HttpServletRequest httpServletRequest)
+    public ListResponse<Admins> findAll(Admins admin, Pages bfPage, HttpServletRequest httpServletRequest)
             throws Exception {
 
         return null;

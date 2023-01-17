@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.safeapp.admin.web.dto.request.RequestRiskcheckDetailDTO;
 import com.safeapp.admin.web.dto.response.ResponseRiskCheckDetailDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.RiskCheckDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -85,7 +85,7 @@ public class RiskCheckDetailController {
     @GetMapping(value = "")
     @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
     public ListResponse findAll(
-        BfPage bfPage,
+        Pages bfPage,
         HttpServletRequest request) throws Exception {
         return riskCheckDetailService.findAll(
             RiskCheckDetail.builder()

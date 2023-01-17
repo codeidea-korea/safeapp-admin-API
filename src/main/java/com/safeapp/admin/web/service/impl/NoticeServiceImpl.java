@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Notice;
 import com.safeapp.admin.web.repos.jpa.NoticeRepos;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,13 +85,13 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public ListResponse<Notice> findAll(Notice instance, BfPage bfPage,
+    public ListResponse<Notice> findAll(Notice instance, Pages bfPage,
                                         HttpServletRequest httpServletRequest) throws Exception {
 
         List<Notice> list = dslRepos.findAll(instance, bfPage);
         long count = dslRepos.countAll(instance);
 
-        return new ListResponse<Notice>(list, count, bfPage);
+        return new ListResponse<Notice>(count, list, bfPage);
     }
 
     @Override

@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Auth;
 import com.safeapp.admin.web.repos.jpa.AuthRepos;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +79,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ListResponse<Auth> findAll(Auth instance, BfPage bfPage,
+    public ListResponse<Auth> findAll(Auth instance, Pages bfPage,
                                       HttpServletRequest httpServletRequest) throws Exception {
         return null;
     }

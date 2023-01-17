@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.safeapp.admin.web.dto.request.RequestAccidentCaseDTO;
 import com.safeapp.admin.web.repos.jpa.AdminRepos;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.AccidentExp;
 import com.safeapp.admin.web.repos.jpa.AccidentExpRepos;
 import lombok.AllArgsConstructor;
@@ -79,7 +79,7 @@ public class AccidentExpServiceImpl implements AccidentExpService {
     }
 
     @Override
-    public ListResponse<AccidentExp> findAll(AccidentExp instance, BfPage bfPage,
+    public ListResponse<AccidentExp> findAll(AccidentExp instance, Pages bfPage,
             HttpServletRequest httpServletRequest) throws Exception {
 
         long count = dslRepos.countAll(instance);
@@ -102,7 +102,7 @@ public class AccidentExpServiceImpl implements AccidentExpService {
             .response(instance.getResponse())
             .tags(instance.getTags())
             .title(instance.getTitle())
-            .userId(instance.getUser().getId())
+            .id(instance.getAdmin().getId())
             .views(instance.getViews())
             .build();
     }
@@ -111,7 +111,7 @@ public class AccidentExpServiceImpl implements AccidentExpService {
     public AccidentExp toEntity(RequestAccidentCaseDTO dto) throws NotFoundException {
         AccidentExp accidentExp = new AccidentExp();
         accidentExp.setTitle(dto.getTitle());
-        accidentExp.setUser(userRepos.findById(dto.getUserId()).orElseThrow(() -> new NotFoundException("dueuser does not exist. input checker id: " + dto.getUserId())));
+        accidentExp.setAdmin(adminRepos.findById(dto.getUserId()).orElseThrow(() -> new NotFoundException("dueuser does not exist. input checker id: " + dto.getUserId())));
         accidentExp.setTags(dto.getTags());
         accidentExp.setName(dto.getName());
         accidentExp.setAccidentAt(dto.getAccidentAt());

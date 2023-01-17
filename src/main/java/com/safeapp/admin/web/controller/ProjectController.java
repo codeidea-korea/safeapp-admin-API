@@ -11,7 +11,8 @@ import com.safeapp.admin.web.dto.request.RequestDetailModifyDTO;
 import com.safeapp.admin.web.dto.request.RequestStatusChangeDTO;
 import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
+import com.safeapp.admin.web.model.entity.Admins;
 import com.safeapp.admin.web.model.entity.Project;
 import com.safeapp.admin.web.model.entity.ProjectGroup;
 import com.safeapp.admin.web.model.entity.Users;
@@ -97,7 +98,7 @@ public class ProjectController {
     @GetMapping(value = "/projects")
     @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
     public ResponseEntity<ListResponse> findAll(
-        BfPage bfPage,
+        Pages bfPage,
         HttpServletRequest request) throws Exception {
         return ResponseUtil.sendResponse(projectService.findAll(
             Project.builder()
@@ -109,13 +110,13 @@ public class ProjectController {
     @GetMapping(value = "/projects/me")
     @ApiOperation(value = "나의 목록 조회 (다건)", notes = "나의 목록 조회 (다건)")
     public ResponseEntity<ListResponse> findAllByMe(
-        BfPage bfPage,
+        Pages bfPage,
         HttpServletRequest request) throws Exception {
-        Users user = jwtService.getUserInfoByToken(request);
+        Admins admin = jwtService.getAdminInfoByToken(request);
         
         ListResponse<ProjectGroup> groups = projectGroupService.findAll(ProjectGroup.builder()
-            .user(user)
-            .build(), new BfPage(1, 100), request);
+            .admin(admin)
+            .build(), new Pages(1, 100), request);
         
         List<Project> projects = new ArrayList<Project>();
         
@@ -124,7 +125,7 @@ public class ProjectController {
             projects.add(project);
         }
         
-        return ResponseUtil.sendResponse(new ListResponse(projects, projects.size(), bfPage));
+        return ResponseUtil.sendResponse(new ListResponse(projects.size(), projects, bfPage));
     }
 
 

@@ -49,7 +49,7 @@ public class OAuthServiceImpl implements OAuthService {
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
 
         AdminDetails details = new AdminDetails();
-        details.setType(AdminType.NONE);
+        details.setType(AdminType.ADMIN);
         details.setEnabled(false);
         details.setExpired(true);
 

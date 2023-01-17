@@ -10,7 +10,7 @@ import com.safeapp.admin.web.repos.jpa.UserRepos;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.RiskCheckDetail;
 import com.safeapp.admin.web.repos.jpa.RiskCheckDetailRepos;
 import lombok.AllArgsConstructor;
@@ -78,7 +78,7 @@ public class RiskCheckDetailServiceImpl implements RiskCheckDetailService {
     }
 
     @Override
-    public ListResponse<RiskCheckDetail> findAll(RiskCheckDetail instance, BfPage bfPage,
+    public ListResponse<RiskCheckDetail> findAll(RiskCheckDetail instance, Pages bfPage,
                                                  HttpServletRequest httpServletRequest) throws Exception {
         return null;
     }

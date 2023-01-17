@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.ConcernAccidentExp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -76,7 +76,7 @@ public class ConcernAccidentExpController {
     @GetMapping(value = "")
     @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
     public ResponseEntity<ListResponse> findAll(
-        BfPage bfPage,
+        Pages bfPage,
         @RequestParam(value = "name", required = false) String name,
         @RequestParam(value = "title", required = false) String title,
         @RequestParam(value = "tags", required = false) String tags,

@@ -13,12 +13,12 @@ import org.springframework.stereotype.Component;
 import com.safeapp.admin.web.service.RedisCacheService;
 
 @Component
-public class BFRedisCacheWriter implements RedisCacheWriter {
+public class RedisCacheWriterImpl implements org.springframework.data.redis.cache.RedisCacheWriter {
 
 	private final RedisCacheService redisCacheService;
 
 	@Autowired
-	public BFRedisCacheWriter(RedisCacheService redisCacheService) {
+	public RedisCacheWriterImpl(RedisCacheService redisCacheService) {
 		this.redisCacheService = redisCacheService;
 	}
 
@@ -63,7 +63,7 @@ public class BFRedisCacheWriter implements RedisCacheWriter {
     }
 
     @Override
-    public RedisCacheWriter withStatisticsCollector(CacheStatisticsCollector cacheStatisticsCollector) {
+    public org.springframework.data.redis.cache.RedisCacheWriter withStatisticsCollector(CacheStatisticsCollector cacheStatisticsCollector) {
         // TODO Auto-generated method stub
         return null;
     }

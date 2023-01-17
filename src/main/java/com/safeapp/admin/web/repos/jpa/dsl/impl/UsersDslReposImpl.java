@@ -5,7 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -66,7 +66,7 @@ public class UsersDslReposImpl extends QuerydslRepositorySupport implements User
     }
 
     @Override
-    public List<Users> findAll(Users instance, BfPage bfPage) {
+    public List<Users> findAll(Users instance, Pages bfPage) {
         QUsers qUsers = QUsers.users;
         JPAQuery query = selectFromWhere(instance, qUsers);
 

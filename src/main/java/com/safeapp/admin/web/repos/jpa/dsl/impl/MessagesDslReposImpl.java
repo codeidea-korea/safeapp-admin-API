@@ -5,7 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -54,7 +54,7 @@ public class MessagesDslReposImpl extends QuerydslRepositorySupport implements M
     }
 
     @Override
-    public List<Messages> findAll(Messages instance, BfPage bfPage) {
+    public List<Messages> findAll(Messages instance, Pages bfPage) {
         QMessages qMessages = QMessages.messages;
         JPAQuery query = selectFromWhere(instance, qMessages);
 

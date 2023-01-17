@@ -16,17 +16,15 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import static javax.persistence.EnumType.STRING;
 
-@Entity(name = "users")
+@Entity(name = "admins")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = "type")
 public class Admins extends BaseTimeEntity {
 
     @Id
@@ -49,10 +47,10 @@ public class Admins extends BaseTimeEntity {
     @Column(name = "type")
     private AdminType type;
 
-    @Column(name = "user_id")
+    @Column(name = "admin_id")
     private String adminID;
 
-    @Column(name = "user_name")
+    @Column(name = "admin_name")
     private String adminName;
 
     public Admins(Admins admins) {

@@ -25,10 +25,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @EnableCaching
 public class CacheConfiguration extends CachingConfigurerSupport {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CacheConfiguration.class);
-	private final BFRedisCacheWriter bfRedisCacheWriter;
+	private final RedisCacheWriterImpl bfRedisCacheWriter;
 
 	@Autowired
-	public CacheConfiguration(BFRedisCacheWriter bfRedisCacheWriter) {
+	public CacheConfiguration(RedisCacheWriterImpl bfRedisCacheWriter) {
 		this.bfRedisCacheWriter = bfRedisCacheWriter;
 	}
 

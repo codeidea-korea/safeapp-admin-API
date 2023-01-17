@@ -8,7 +8,7 @@ import com.safeapp.admin.web.dto.request.RequestChecklistTemplateDetailDTO;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.ChecklistTemplateDetail;
 import com.safeapp.admin.web.repos.jpa.ChecklistTemplateDetailRepos;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +82,7 @@ public class ChecklistTemplateDetailServiceImpl implements ChecklistTemplateDeta
     }
 
     @Override
-    public ListResponse<ChecklistTemplateDetail> findAll(ChecklistTemplateDetail instance, BfPage bfPage,
+    public ListResponse<ChecklistTemplateDetail> findAll(ChecklistTemplateDetail instance, Pages bfPage,
                                                          HttpServletRequest httpServletRequest) throws Exception {
 
         return null;

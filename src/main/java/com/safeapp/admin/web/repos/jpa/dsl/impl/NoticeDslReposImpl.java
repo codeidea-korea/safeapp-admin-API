@@ -5,7 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Notice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -54,7 +54,7 @@ public class NoticeDslReposImpl extends QuerydslRepositorySupport implements Not
     }
 
     @Override
-    public List<Notice> findAll(Notice instance, BfPage bfPage) {
+    public List<Notice> findAll(Notice instance, Pages bfPage) {
         QNotice qNotice = QNotice.notice;
         JPAQuery query = selectFromWhere(instance, qNotice);
 

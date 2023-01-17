@@ -14,7 +14,7 @@ import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.UserType;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.SmsAuthHistory;
 import com.safeapp.admin.web.model.entity.Users;
 import com.safeapp.admin.web.repos.jpa.SmsAuthHistoryRepos;
@@ -148,7 +148,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ListResponse<Users> findAll(Users user, BfPage bfPage, HttpServletRequest httpServletRequest)
+    public ListResponse<Users> findAll(Users user, Pages bfPage, HttpServletRequest httpServletRequest)
             throws Exception {
 
         return null;

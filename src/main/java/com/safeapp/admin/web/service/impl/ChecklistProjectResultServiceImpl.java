@@ -10,7 +10,7 @@ import com.safeapp.admin.web.repos.jpa.ChecklistProjectDetailRepository;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
-import com.safeapp.admin.web.model.cmmn.BfPage;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.ChecklistProjectResult;
 import com.safeapp.admin.web.repos.jpa.ChecklistProjectResultRepos;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +87,7 @@ public class ChecklistProjectResultServiceImpl implements ChecklistProjectResult
     }
 
     @Override
-    public ListResponse<ChecklistProjectResult> findAll(ChecklistProjectResult instance, BfPage bfPage,
+    public ListResponse<ChecklistProjectResult> findAll(ChecklistProjectResult instance, Pages bfPage,
                                                         HttpServletRequest httpServletRequest) throws Exception {
         return null;
     }

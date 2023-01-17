@@ -86,7 +86,7 @@ public class Users extends BaseTimeEntity {
     private LocalDateTime messageAllowedAt;
 
     // 자식 테이블 맵핑
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "admin")
     private List<AccidentExp> accidentExps = new ArrayList<>();
     @OneToMany(mappedBy = "user")
     private List<ChecklistProject> checklistProjectList = new ArrayList<>();

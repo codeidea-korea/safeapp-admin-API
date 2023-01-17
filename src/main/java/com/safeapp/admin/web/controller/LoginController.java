@@ -14,7 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 @RestController
-@Api(tags = "Login")
+@Api(tags = {"Login"}, description = "로그인")
 public class LoginController {
 
     private final LoginService loginService;
@@ -27,8 +27,8 @@ public class LoginController {
     @PostMapping(value = "/login")
     @ApiOperation(value = "로그인", notes = "로그인")
     public ResponseEntity login(
-            @RequestParam(value = "email", defaultValue = "admin@email.com") @ApiParam("이메일") String email,
-            @RequestParam(value = "password", defaultValue = "admin0809_") @ApiParam("비밀번호") String password,
+            @RequestParam(value = "email", defaultValue = "admin1@codeidea.dev") @ApiParam("이메일") String email,
+            @RequestParam(value = "password", defaultValue = "admin1_") @ApiParam("비밀번호") String password,
             HttpServletRequest httpServletRequest) throws Exception {
 
         return loginService.login(email, password, httpServletRequest);
