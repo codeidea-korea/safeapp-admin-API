@@ -112,10 +112,10 @@ public class ProjectController {
     public ResponseEntity<ListResponse> findAllByMe(
         Pages bfPage,
         HttpServletRequest request) throws Exception {
-        Admins admin = jwtService.getAdminInfoByToken(request);
+        Users user = jwtService.getUserInfoByToken(request);
         
         ListResponse<ProjectGroup> groups = projectGroupService.findAll(ProjectGroup.builder()
-            .admin(admin)
+            .user(user)
             .build(), new Pages(1, 100), request);
         
         List<Project> projects = new ArrayList<Project>();

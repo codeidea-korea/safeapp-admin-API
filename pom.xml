@@ -9,11 +9,11 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.safeapp.admin</groupId>
-	<artifactId>cornsqure-api</artifactId>
+	<artifactId>safeapp-admin-API</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>cornsqure-api</name>
-	<description>cornsqure-api</description>
+	<name>safeapp-admin-API</name>
+	<description>safeapp-admin-API</description>
 	<properties>
 		<java.version>1.8</java.version>
 		<swagger.version>3.0.0</swagger.version>

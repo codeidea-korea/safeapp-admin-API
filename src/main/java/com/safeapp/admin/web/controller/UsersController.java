@@ -4,10 +4,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.web.dto.request.RequestUserDTO;
 import com.safeapp.admin.utils.ResponseUtil;
+import com.safeapp.admin.web.dto.response.ResponseUsersDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Users;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +26,8 @@ import com.safeapp.admin.web.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+
+import java.util.List;
 
 @RestController
 @Api(tags = {"User"}, description = "회원 관리")
@@ -103,12 +107,13 @@ public class UsersController {
 
     @GetMapping(value = "/user/list")
     @ApiOperation(value = "회원 목록 조회", notes = "회원 목록 조회")
-    public ResponseEntity<ListResponse<Users>> findAll(
-            @RequestParam(value = "pageNo", required = false, defaultValue = "1") @ApiParam("페이지 번호") int pageNo,
-            @RequestParam(value = "pageSize", required = false, defaultValue = "100") @ApiParam("한번에 보여줄 크기") int pageSize,
-            HttpServletRequest request) throws Exception {
+    public ResponseEntity<List<ResponseUsersDTO>> findAllByCondition(
+            @RequestParam(value = "userID", required = false) String userID,
+            @RequestParam(value = "userName", required = false) String userName,
+            @RequestParam(value = "email", required = false) String email,
+            Pageable page) throws Exception {
 
-        return ResponseUtil.sendResponse(userService.findAll(new Users(), new Pages(pageNo, pageSize),request));
+        return ResponseUtil.sendResponse(userService.findAllByCondition(userID, userName, email, page));
     }
 
 }

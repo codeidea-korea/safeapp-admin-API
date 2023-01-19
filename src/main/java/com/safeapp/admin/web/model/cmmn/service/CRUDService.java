@@ -15,7 +15,7 @@ public interface CRUDService<T> {
 
     void remove(long seq, HttpServletRequest httpServletRequest) throws Exception;
 
-    ListResponse<T> findAll(T obj, Pages bfPage, HttpServletRequest httpServletRequest) throws Exception;
+    ListResponse<T> findAll(T obj, Pages pages, HttpServletRequest httpServletRequest) throws Exception;
 
     T generate(T obj);
 

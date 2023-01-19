@@ -2,6 +2,7 @@ package com.safeapp.admin.web.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -12,14 +13,17 @@ import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.UserType;
 import com.safeapp.admin.web.data.YN;
+import com.safeapp.admin.web.dto.response.ResponseUsersDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.SmsAuthHistory;
 import com.safeapp.admin.web.model.entity.Users;
 import com.safeapp.admin.web.repos.jpa.SmsAuthHistoryRepos;
 import com.safeapp.admin.web.repos.jpa.UserRepos;
+import com.safeapp.admin.web.repos.jpa.custom.UserReposCustom;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,26 +33,17 @@ import com.safeapp.admin.web.service.UserService;
 import com.safeapp.admin.web.service.cmmn.DirectSendAPIService;
 import com.querydsl.core.util.StringUtils;
 
+@AllArgsConstructor
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepos userRepos;
+    private final UserReposCustom userReposCustom;
     private final PasswordUtil passwordUtil;
     private final DateUtil dateUtil;
     private final SmsAuthHistoryRepos smsAuthHistoryRepos;
     private final DirectSendAPIService directSendAPIService;
-
-    @Autowired
-    public UserServiceImpl(UserRepos userRepos, PasswordUtil passwordUtil, DateUtil dateUtil,
-                           SmsAuthHistoryRepos smsAuthHistoryRepos, DirectSendAPIService directSendAPIService) {
-
-        this.userRepos = userRepos;
-        this.passwordUtil = passwordUtil;
-        this.dateUtil = dateUtil;
-        this.smsAuthHistoryRepos = smsAuthHistoryRepos;
-        this.directSendAPIService = directSendAPIService;
-    }
 
     @Override
     public boolean chkUserID(String userID) {
@@ -145,6 +140,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Users editPassword(String userID, String newPass1, String newPass2,
                               HttpServletRequest httpServletRequest) throws Exception {
+
         Users myInfo = userRepos.findByUserID(userID);
         if(myInfo == null) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다.");
@@ -188,10 +184,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ListResponse<Users> findAll(Users user, Pages bfPage, HttpServletRequest httpServletRequest)
+    public ListResponse<Users> findAll(Users instance, Pages pages, HttpServletRequest httpServletRequest)
             throws Exception {
 
         return null;
+    }
+
+    @Override
+    public List<ResponseUsersDTO> findAllByCondition(String userID, String userName, String email, Pageable page) {
+
+        return userReposCustom.findAllByCondition(userID, userName, email, page);
     }
 
     public Users toEntity(RequestUserDTO dto) {

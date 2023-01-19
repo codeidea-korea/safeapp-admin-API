@@ -80,11 +80,11 @@ public class ProjectGroupController {
         @RequestParam(value = "projectId", required = false, defaultValue = "1") Long projectId,
         HttpServletRequest request) throws Exception {
 
-        Admins admin = jwtService.getAdminInfoByToken(request);
+        Users user = jwtService.getUserInfoByToken(request);
         Project project = projectService.find(projectId, request);
         return projectGroupService.findAll(
             ProjectGroup.builder()
-            .admin(admin)
+            .user(user)
             .project(project)
             .build(),
             bfPage,
