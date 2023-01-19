@@ -2,9 +2,11 @@ package com.safeapp.admin.web.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,17 +33,17 @@ public class LoginController {
             @RequestParam(value = "password", defaultValue = "admin1_") @ApiParam("비밀번호") String password,
             HttpServletRequest httpServletRequest) throws Exception {
 
-        return loginService.login(email, password, httpServletRequest);
+        return ResponseUtil.sendResponse(loginService.login(email, password, httpServletRequest));
+    }
+
+    @GetMapping(value = "/login/findMe")
+    @ApiOperation(value = "로그인된 계정정보 조회", notes = "로그인된 계정정보 조회")
+    public ResponseEntity findMe(HttpServletRequest httpServletRequest) {
+        
+        return ResponseUtil.sendResponse(loginService.findMe(httpServletRequest));
     }
 
     /*
-    @GetMapping(value = "/login/findMe")
-    @ApiOperation(value = "로그인된 계정정보 조회", notes = "로그인된 계정정보 조회")
-    public ResponseEntity findMe(HttpServletRequest httpServletRequest) throws Exception {
-        
-        return super.findMe(httpServletRequest);
-    }
-
     @GetMapping(value = "/login/findEmail")
     @ApiOperation(value = "이메일 찾기", notes = "이메일 찾기")
     public ResponseEntity findEmail(

@@ -32,10 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private OAuthService oAuthService;
 
-	@Value("${api.info.dev.version}")
-	private String apiDevVersion;
-	
-	@Override
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
         	.cors()
@@ -47,21 +44,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
-            	.formLogin().disable();
+            	.formLogin().disable()
+            .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login")
+                //.logoutSuccessHandler(customLogoutSuccessHandler)
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID");
     }
-    
+
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
     	web.ignoring().antMatchers(
-    			"/v2/api-docs"
-    			, "/configuration/ui"
-    			, "/swagger-resources"
-    			, "/configuration/security"
-    			, "/swagger-ui/"
-    			, "/swagger-ui.html"
-    			, "/webjars/**"
-    			, "/swagger/**"
-    		);
+            "/swagger/**"
+            , "/swagger-ui/"
+            , "/swagger-ui.html"
+            , "/swagger-resources"
+            , "/v2/api-docs"
+            , "/configuration/ui"
+            , "/configuration/security"
+            , "/webjars/**"
+        );
     }
 
     @Bean
@@ -73,14 +76,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public MultipartResolver multipartResolver() {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
         multipartResolver.setMaxUploadSize(314572800);
+
         return multipartResolver;
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("*"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         
@@ -94,13 +100,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .and()
             .authenticationProvider(authenticationProvider());
     }
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
         return new UserAuthProvider(oAuthService);
     }
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
 }

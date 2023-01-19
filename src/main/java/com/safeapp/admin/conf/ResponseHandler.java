@@ -15,25 +15,29 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestController
 @ControllerAdvice
 public class ResponseHandler extends ResponseEntityExceptionHandler {
-    
+
+    // 2023. 01. 18 - 개발하는 동안에는 임시로 주석처리 함.
+    /*
     @ExceptionHandler(Exception.class)
-    public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request){
-        Map<String, Object> exceptionResponse = new HashMap<String, Object>();
+    public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
+        Map<String, Object> exceptionResponse = new HashMap<>();
         exceptionResponse.put("result", false);
+        exceptionResponse.put("details", request.getDescription(false));
         exceptionResponse.put("msg", ex.getMessage());
         exceptionResponse.put("time", new Date());
-        exceptionResponse.put("details", request.getDescription(false));
         
         return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    */
     
     @ExceptionHandler(HttpServerErrorException.class)
-    public final ResponseEntity<Object> handleHttpServerErrorException(HttpServerErrorException ex, WebRequest request){
-        Map<String, Object> exceptionResponse = new HashMap<String, Object>();
+    public final ResponseEntity<Object> handleHttpServerErrorException(HttpServerErrorException ex) {
+        Map<String, Object> exceptionResponse = new HashMap<>();
         exceptionResponse.put("result", false);
-        exceptionResponse.put("msg", ex.getMessage());
         exceptionResponse.put("code", ex.getStatusCode());
+        exceptionResponse.put("msg", ex.getMessage());
         
         return new ResponseEntity(exceptionResponse, ex.getStatusCode());
     }
+
 }

@@ -12,11 +12,11 @@ import lombok.Getter;
 public enum UserType implements GrantedAuthority {
 
 	NONE("비회원", 1), 
-    NORMAL("로그인 사용자", 101), 
-    PERSONAL("Personal 사용자", 110), 
-    TEAM_USER("Team 사용자(그룹원)", 121), 
-    TEAM_MANAGER("Team 사용자(관리자)", 122), 
-    TEAM_MASTER("Team 사용자(마스터-결제자)", 129), 
+    NORMAL("일반회원", 101), 
+    PERSONAL("Personal 회원", 111),
+    TEAM_USER("Team 회원(그룹 구성원)", 121), 
+    TEAM_MANAGER("Team 회원(그룹 관리자)", 122),
+    TEAM_MASTER("Team 회원(그룹 마스터관리자 = 결제자)", 129),
 	ADMIN("관리자", 201);
 	
 	private final String description;

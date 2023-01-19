@@ -26,7 +26,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 @RestController
-@Api(tags = "User")
+@Api(tags = {"User"}, description = "회원 관리")
 public class UsersController {
 
     private final UserService userService;
@@ -38,10 +38,24 @@ public class UsersController {
 
     @GetMapping(value = "/user/chk/{userID}")
     @ApiOperation(value = "신규회원 등록 시 아이디 중복여부 확인", notes = "신규회원 등록 시 아이디 중복여부 확인")
-    public ResponseEntity chkUserID(
-            @PathVariable("userID") @ApiParam("회원 아이디") String userID) throws Exception {
+    public ResponseEntity chkUserID(@PathVariable("userID") @ApiParam("아이디") String userID) {
 
         return ResponseUtil.sendResponse(userService.chkUserID(userID));
+    }
+
+    @GetMapping(value = "/user/requestNumber")
+    @ApiOperation(value = "핸드폰 본인인증 번호 요청", notes = "핸드폰 본인인증 번호 요청")
+    public ResponseEntity sendAuthSMSCode(@RequestParam(value = "phoneNo") String phoneNo) throws Exception {
+
+        return ResponseUtil.sendResponse(userService.sendAuthSMSCode(phoneNo));
+    }
+
+    @PostMapping(value = "/user/responseNumber")
+    @ApiOperation(value = "핸드폰 본인인증 번호 확인", notes = "핸드폰 본인인증 번호 확인")
+    public ResponseEntity isCorrectSMSCode(@RequestParam(value = "phoneNo") String phoneNo,
+                                           @RequestParam(value = "authNo") String authNo) throws Exception {
+
+        return ResponseUtil.sendResponse(userService.isCorrectSMSCode(phoneNo, authNo));
     }
 
     @PostMapping(value = "/user/add")
@@ -53,8 +67,8 @@ public class UsersController {
     }
 
     @GetMapping(value = "/user/find/{id}")
-    @ApiOperation(value = "회원정보 확인(+ 수정)", notes = "회원정보 확인(+ 수정)")
-    public ResponseEntity<Users> findUserId(@PathVariable("id") @ApiParam("회원 PK") long id,
+    @ApiOperation(value = "회원정보 확인", notes = "회원정보 확인")
+    public ResponseEntity<Users> find(@PathVariable("id") @ApiParam("회원 PK") long id,
             HttpServletRequest httpServletRequest) throws Exception {
 
         return ResponseUtil.sendResponse(userService.find(id, httpServletRequest));
@@ -63,12 +77,12 @@ public class UsersController {
     @PatchMapping(value = "/user/editPassword")
     @ApiOperation(value = "회원 비밀번호 수정", notes = "회원 비밀번호 수정")
     public ResponseEntity editPassword(
-            @RequestParam(value = "userID", defaultValue = "1") String userID,
-            @RequestParam(value = "password", defaultValue = "123abcABC!@#") String password,
-            @RequestParam(value = "newPassword", defaultValue = "123abcABC!@#") String newPassword,
+            @RequestParam(value = "userID", defaultValue = "user1") String userID,
+            @RequestParam(value = "newPass1", defaultValue = "user2_") String newPass1,
+            @RequestParam(value = "newPass2", defaultValue = "user2_") String newPass2,
             HttpServletRequest httpServletRequest) throws Exception {
 
-        return ResponseUtil.sendResponse(userService.editPassword(userID, password, newPassword, httpServletRequest));
+        return ResponseUtil.sendResponse(userService.editPassword(userID, newPass1, newPass2, httpServletRequest));
     }
 
     @PutMapping(value = "/user/edit")
@@ -78,11 +92,13 @@ public class UsersController {
         return ResponseUtil.sendResponse(userService.edit(user, httpServletRequest));
     }
 
-    @DeleteMapping(value = "/user/remove")
+    @DeleteMapping(value = "/user/remove/{id}")
     @ApiOperation(value = "회원 삭제", notes = "회원 삭제")
-    public ResponseEntity remove(HttpServletRequest httpServletRequest) throws Exception {
+    public ResponseEntity remove(@PathVariable("id") @ApiParam("회원 PK") long id,
+                                 HttpServletRequest httpServletRequest) throws Exception {
 
-        return ResponseUtil.sendResponse(null);
+        userService.remove(id, httpServletRequest);
+        return ResponseUtil.sendResponse(id);
     }
 
     @GetMapping(value = "/user/list")
@@ -93,21 +109,6 @@ public class UsersController {
             HttpServletRequest request) throws Exception {
 
         return ResponseUtil.sendResponse(userService.findAll(new Users(), new Pages(pageNo, pageSize),request));
-    }
-    
-    @GetMapping(value = "/user/requestNumber")
-    @ApiOperation(value = "핸드폰 본인인증 번호 요청", notes = "핸드폰 본인인증 번호 요청")
-    public ResponseEntity sendAuthSMSCode(@RequestParam(value = "phoneNo") String phoneNo) throws Exception {
-        
-        return ResponseUtil.sendResponse(userService.sendAuthSMSCode(phoneNo));
-    }
-    
-    @PostMapping(value = "/user/responseNumber")
-    @ApiOperation(value = "핸드폰 본인인증 번호 확인", notes = "핸드폰 본인인증 번호 확인")
-    public ResponseEntity isCurrectSMSCode(@RequestParam(value = "phoneNo") String phoneNo,
-            @RequestParam(value = "authNo") String authNo) throws Exception {
-        
-        return ResponseUtil.sendResponse(userService.isCorrectSMSCode(phoneNo, authNo));
     }
 
 }

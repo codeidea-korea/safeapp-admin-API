@@ -46,10 +46,8 @@ public class LoginServiceImpl implements LoginService {
         this.directSendAPIService = directSendAPIService;
     }
 
-    public ResponseEntity login(String email, String password, HttpServletRequest request) throws Exception {
-        log.error("1");
+    public Token login(String email, String password, HttpServletRequest request) throws Exception {
         Admins adminInfo = adminRepos.findByEmail(email);
-        log.error("2");
         // 입력한 이메일이 존재하지 않거나, 이미 삭제 처리된 이메일일 때
         if(Objects.isNull(adminInfo) || adminInfo.getDeleted() == YN.Y) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "입력하신 로그인 정보가 일치하지 않습니다.");
@@ -58,7 +56,7 @@ public class LoginServiceImpl implements LoginService {
         if(!passwordUtil.checkEqual(adminInfo.getPassword(), password)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "입력하신 로그인 정보가 일치하지 않습니다.");
         }
-        log.error("adminInfo: {}", adminInfo);
+
         String template =
                 "Addr:" + request.getRemoteAddr()
                 + "/Host:" + request.getRemoteHost()
@@ -66,7 +64,17 @@ public class LoginServiceImpl implements LoginService {
 
         Token token = jwtService.generateAccessToken(adminInfo, template);
 
-        return ResponseUtil.sendResponse(token);
+        return token;
+    }
+
+    @Override
+    public Admins findMe(HttpServletRequest httpServletRequest) {
+        Admins adminInfo = jwtService.getAdminInfoByToken(httpServletRequest);
+        if(Objects.isNull(adminInfo)) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "입력하신 로그인 정보가 존재하지 않습니다.");
+        }
+
+        return adminInfo;
     }
 
 }

@@ -14,15 +14,13 @@ public interface UserService extends CRUDService<Users> {
 
     boolean chkUserID(String userID);
 
-    Users editPassword(String userID, String password, String newPassword, HttpServletRequest httpServletRequest)
-            throws Exception;
-    
     boolean sendAuthSMSCode(String phoneNo) throws Exception;
-    
+
     boolean isCorrectSMSCode(String phoneNo, String authNo) throws Exception;
 
-    Users toEntity (RequestUserDTO dto);
+    Users editPassword(String userID, String newPass1, String newPass2, HttpServletRequest httpServletRequest)
+            throws Exception;
 
-    Users toEntitySNS (RequestSNSUserDTO dto);
+    Users toEntity (RequestUserDTO dto);
 
 }
