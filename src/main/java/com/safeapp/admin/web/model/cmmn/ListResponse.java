@@ -3,43 +3,43 @@ package com.safeapp.admin.web.model.cmmn;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class ListResponse<T> {
 
-    private long count = 0;
-    private List<T> list = new ArrayList<>();
-    
-    private Page page;
-    
-    class Page {
-        private long totalDataCnt;
-        private long totalPages;
-        private boolean isLastPage;
-        private boolean isFirstPage;
-        private long requestPage;
-        private long requestSize;
+    private long totalDataCnt;
+    private long totalPages;
+    private long requestPage;
+    private long requestSize;
+    private boolean isLastPage;
+    private boolean isFirstPage;
 
-        Page(Pages bfPage) {
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+    public class Page {
+        public Page(Pages pages) {
             totalDataCnt = count;
-            totalPages = count / bfPage.getPageSize() + (count % bfPage.getPageSize() == 0 ? 0 : 1);
-            requestPage = bfPage.getPageNo();
-            requestSize = bfPage.getPageSize();
-            isFirstPage = bfPage.getPageNo() == 1;
-            isLastPage = bfPage.getPageNo() == totalPages;
+            totalPages = count / pages.getPageSize() + (count % pages.getPageSize() == 0 ? 0 : 1);
+            requestPage = pages.getPageNo();
+            requestSize = pages.getPageSize();
+            isFirstPage = pages.getPageNo() == 1;
+            isLastPage = pages.getPageNo() == totalPages;
         }
     }
+
+    private long count = 0;
+    private List<T> list = new ArrayList<>();
+    private Page page;
     
-    public ListResponse(long count, List<T> list, Pages page) {
-        this.list = list;
+    public ListResponse(long count, List<T> list, Pages pages) {
         this.count = count;
-        
-        this.page = new Page(page);
+        this.list = list;
+        this.page = new Page(pages);
     }
 
 }

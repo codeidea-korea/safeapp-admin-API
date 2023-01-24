@@ -107,7 +107,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public UserAuth getEfectiveAuthByUserId(String userId) {
-        Users user = userRepos.findByUserID(userId);
+        Users user = userRepos.findByUserId(userId);
         List<UserAuth> auths = repos.findAllByUserIdAndEfectiveEndAtAfter(user.getId(), dateUtil.getThisTime());
         return auths == null || auths.size() < 1 ? null : auths.get(0);
     }

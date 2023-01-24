@@ -7,4 +7,5 @@ import com.safeapp.admin.web.model.entity.Project;
 
 @Repository
 public interface ProjectRepos extends JpaRepository<Project, Long> {
+
 }

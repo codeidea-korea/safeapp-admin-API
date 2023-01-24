@@ -23,7 +23,7 @@ public class BFAuthenticationTokenTest {
         String auth = "Bearer " + token;
         auth.replace(auth, "bearer ").replace(auth, "Bearer ");
         
-        String admin = jwtUtil.getAdminIDOrUserIDByAccessToken(token);
+        String admin = jwtUtil.getAdminIDOrUserIdByAccessToken(token);
     }
 
 }

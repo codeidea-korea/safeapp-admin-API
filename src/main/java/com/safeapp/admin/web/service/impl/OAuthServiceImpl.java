@@ -3,12 +3,9 @@ package com.safeapp.admin.web.service.impl;
 import java.util.Objects;
 
 import com.safeapp.admin.web.data.AdminType;
-import com.safeapp.admin.web.data.UserType;
 import com.safeapp.admin.web.model.AdminDetails;
 import com.safeapp.admin.web.model.entity.Admins;
-import com.safeapp.admin.web.model.entity.Users;
 import com.safeapp.admin.web.repos.jpa.AdminRepos;
-import com.safeapp.admin.web.repos.jpa.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

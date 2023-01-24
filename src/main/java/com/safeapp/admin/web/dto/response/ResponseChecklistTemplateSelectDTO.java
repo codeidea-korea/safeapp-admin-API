@@ -60,7 +60,7 @@ public class ResponseChecklistTemplateSelectDTO {
     String approverName;
 
     @Schema(description = "상세내용")
-    List<ResponseChecklistTemplateDetailDTO> details = new ArrayList<>();
+    List<ResponseCheckListTemplateDetailDTO> details = new ArrayList<>();
 
     @Builder
     public ResponseChecklistTemplateSelectDTO(ChecklistTemplate template) {
@@ -90,7 +90,7 @@ public class ResponseChecklistTemplateSelectDTO {
         }
         if (template.getDetails().isEmpty() == false) {
             for (ChecklistTemplateDetail detail : template.getDetails()) {
-                ResponseChecklistTemplateDetailDTO dto = ResponseChecklistTemplateDetailDTO
+                ResponseCheckListTemplateDetailDTO dto = ResponseCheckListTemplateDetailDTO
                         .builder()
                         .detail(detail)
                         .build();

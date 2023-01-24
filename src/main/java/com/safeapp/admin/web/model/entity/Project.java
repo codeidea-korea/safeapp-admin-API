@@ -17,10 +17,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity(name = "projects")
-@AllArgsConstructor
 @Data
 @NoArgsConstructor
-public class Project extends BaseTimeEntity{
+public class Project extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -42,7 +42,7 @@ public class Project extends BaseTimeEntity{
     private LocalDateTime endAt;
 
     @Column(name = "max_user_count")
-    private long maxUserCount;
+    private Long maxUserCount;
 
     @Column(name = "address")
     private String address;
@@ -59,10 +59,9 @@ public class Project extends BaseTimeEntity{
     @Column(name = "status")
     private ProjectType status;
 
-
     @Builder
-    public Project(long id, String name, LocalDateTime startAt, LocalDateTime endAt, long maxUserCount, String address,
-        String addressDetail, String contents, String image, ProjectType status, LocalDateTime createdAt) {
+    public Project(Long id, String name, LocalDateTime startAt, LocalDateTime endAt, Long maxUserCount, String address,
+            String addressDetail, String contents, String image, ProjectType status) {
 
         this.id = id;
         this.name = name;
@@ -75,4 +74,5 @@ public class Project extends BaseTimeEntity{
         this.image = image;
         this.status = status;
     }
+
 }

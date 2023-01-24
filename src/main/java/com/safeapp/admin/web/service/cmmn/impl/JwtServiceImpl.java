@@ -50,7 +50,7 @@ public class JwtServiceImpl implements JwtService {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.");
         }
 
-        String adminID = jwtUtil.getAdminIDOrUserIDByAccessToken(token);
+        String adminID = jwtUtil.getAdminIDOrUserIdByAccessToken(token);
         if(StringUtils.isNullOrEmpty(adminID)) {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "인증되지 않은 관리자입니다.");
         }
@@ -74,7 +74,7 @@ public class JwtServiceImpl implements JwtService {
         String token = removeBearer(httpServletRequest.getHeader("Authorization"));
         checkToken(token);
 
-        String adminID = jwtUtil.getAdminIDOrUserIDByAccessToken(token);
+        String adminID = jwtUtil.getAdminIDOrUserIdByAccessToken(token);
         Admins admin = adminRepos.findByAdminID(adminID);
 
         return admin;
@@ -115,8 +115,8 @@ public class JwtServiceImpl implements JwtService {
         String token = removeBearer(httpServletRequest.getHeader("Authorization"));
         checkToken(token);
 
-        String userID = jwtUtil.getAdminIDOrUserIDByAccessToken(token);
-        Users user = userRepos.findByUserID(userID);
+        String userId = jwtUtil.getAdminIDOrUserIdByAccessToken(token);
+        Users user = userRepos.findByUserId(userId);
 
         return user;
     }
@@ -174,7 +174,7 @@ public class JwtServiceImpl implements JwtService {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.");
         }
         
-        String adminID = jwtUtil.getAdminIDOrUserIDByRefreshToken(refreshToken);
+        String adminID = jwtUtil.getAdminIDOrUserIdByRefreshToken(refreshToken);
         Admins admin = adminRepos.findByAdminID(adminID);
         
         if(admin == null) {

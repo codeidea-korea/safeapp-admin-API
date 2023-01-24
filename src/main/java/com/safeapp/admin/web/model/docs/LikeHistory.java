@@ -16,7 +16,7 @@ public class LikeHistory {
     private String docId;
 
     @ApiModelProperty("사용자 식별자")
-    private long userID;
+    private long userId;
 
     @ApiModelProperty("게시판 식별자")
     private long boardId;
@@ -28,10 +28,10 @@ public class LikeHistory {
     private YN liked;
 
     @Builder
-    public LikeHistory(String docId, long userID, long boardId, String type, YN liked) {
+    public LikeHistory(String docId, long userId, long boardId, String type, YN liked) {
         super();
         this.docId = docId;
-        this.userID = userID;
+        this.userId = userId;
         this.boardId = boardId;
         this.type = type;
         this.liked = liked;

@@ -21,7 +21,6 @@ import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.docs.LikeHistory;
 import com.safeapp.admin.web.model.entity.RiskCheck;
-import com.safeapp.admin.web.model.entity.Users;
 import lombok.AllArgsConstructor;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.data.domain.Pageable;
@@ -129,7 +128,7 @@ public class RiskCheckServiceImpl implements RiskCheckService {
 //        Users user = userJwtService.getUserInfoByTokenAnyway(httpServletRequest);
 //        if(user != null) {
 //            for(RiskCheck item : list) {
-//                LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(item.getUserId(), "risk", item.getId());
+//                LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(item.getUserId(), "risk", item.getId());
 //
 //                if(liked != null) {
 //                    item.setLiked(liked.getLiked());
@@ -171,7 +170,7 @@ public class RiskCheckServiceImpl implements RiskCheckService {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "먼저 로그인하여주세요.");
         }
         
-        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(admin.getId(), "risk", id);
+        LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(admin.getId(), "risk", id);
         if(liked != null) {
             if(liked.getLiked() == YN.Y) {
                 throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "이미 좋아요 하셨습니다.");
@@ -182,7 +181,7 @@ public class RiskCheckServiceImpl implements RiskCheckService {
                 .liked(YN.Y)
                 .type("risk")
                 .boardId(id)
-                .userID(admin.getId())
+                .userId(admin.getId())
                 .build());
         }
     }
@@ -198,7 +197,7 @@ public class RiskCheckServiceImpl implements RiskCheckService {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "먼저 로그인하여주세요.");
         }
 
-        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(admin.getId(), "checklist", id);
+        LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(admin.getId(), "checklist", id);
 
         if(liked != null) {
             yn = YN.Y;
@@ -216,7 +215,7 @@ public class RiskCheckServiceImpl implements RiskCheckService {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "먼저 로그인하여주세요.");
         }
 
-        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(admin.getId(), "risk", id);
+        LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(admin.getId(), "risk", id);
         if(liked != null) {
             likeRepos.delete(liked);
         } else {
@@ -229,7 +228,7 @@ public class RiskCheckServiceImpl implements RiskCheckService {
         
         Admins admin = jwtService.getAdminInfoByToken(httpServletRequest);
 
-        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(admin.getId(), "risk", id);
+        LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(admin.getId(), "risk", id);
         return liked != null && liked.getLiked() == YN.Y;
     }
 

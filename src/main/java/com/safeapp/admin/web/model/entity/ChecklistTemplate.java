@@ -12,22 +12,22 @@ import lombok.*;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity(name = "checklist_templates")
-@AllArgsConstructor
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-public class ChecklistTemplate extends BaseTimeEntity{
+@AllArgsConstructor
+public class ChecklistTemplate extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", columnDefinition = "bigint COMMENT '체크리스트 템플릿 고유 아이디'")
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "project", columnDefinition = "bigint COMMENT '프로젝트'")
+    @JoinColumn(name = "project")
     private Project project;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "user",  columnDefinition = "bigint COMMENT '유저'")
+    @JoinColumn(name = "user")
     private Users user;
 
     @Column(name = "name")
@@ -49,15 +49,15 @@ public class ChecklistTemplate extends BaseTimeEntity{
     private YN visibled;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "checker", columnDefinition = "bigint COMMENT '체커'")
+    @JoinColumn(name = "checker")
     private Users checker;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "reviewer", columnDefinition = "bigint COMMENT '리뷰어'")
+    @JoinColumn(name = "reviewer")
     private Users reviewer;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "approver", columnDefinition = "bigint COMMENT '승인자'")
+    @JoinColumn(name = "approver")
     private Users approver;
 
     @Transient
@@ -90,4 +90,5 @@ public class ChecklistTemplate extends BaseTimeEntity{
         }
         this.details = details;
     }
+
 }

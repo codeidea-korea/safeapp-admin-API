@@ -7,6 +7,7 @@ import java.util.Base64.Encoder;
 import java.util.Date;
 
 import com.safeapp.admin.web.data.EncryptType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,7 @@ import com.safeapp.admin.utils.encrypt.AES256;
 import com.safeapp.admin.utils.encrypt.KISASeedCbc;
 
 @Component
+@Slf4j
 public class PasswordUtil {
 
     @Value("${encrypt.seed.key}")
@@ -42,6 +44,8 @@ public class PasswordUtil {
         int encryptType = generateEncryptType();
         String encryptSeperateCode = generateSeperateCode();
         String encryptBody = generateEncrypt(data, encryptType);
+        log.error("encryptType: {}, encryptSeperateCode: {}, encryptBody: {}, data: {}",
+                encryptType, encryptSeperateCode, encryptBody, data);
         initAES256();
         return aes256.encrypt(encryptType + encryptSeperateCode + encryptBody);
     }

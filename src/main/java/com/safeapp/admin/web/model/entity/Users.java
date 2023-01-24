@@ -24,8 +24,8 @@ import static javax.persistence.EnumType.STRING;
 
 @Entity(name = "users")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Users extends BaseTimeEntity {
 
     @Id
@@ -49,7 +49,7 @@ public class Users extends BaseTimeEntity {
     private UserType type;
 
     @Column(name = "user_id")
-    private String userID;
+    private String userId;
 
     @Column(name = "user_name")
     private String userName;
@@ -86,12 +86,9 @@ public class Users extends BaseTimeEntity {
     private LocalDateTime messageAllowedAt;
 
     // 자식 테이블 맵핑
-    /*
-    @OneToMany(mappedBy = "admin")
-    private List<AccidentExp> accidentExps = new ArrayList<>();
-    */
     @OneToMany(mappedBy = "user")
-    private List<ChecklistProject> checklistProjectList = new ArrayList<>();
+    private List<CheckListProject> checkListProjectList = new ArrayList<>();
+
     @OneToMany(mappedBy = "user")
     private List<UserAuth> userAuthList = new ArrayList<>();
     
@@ -102,7 +99,7 @@ public class Users extends BaseTimeEntity {
         this.password = users.password;
         this.phoneNo = users.phoneNo;
         this.type = users.type;
-        this.userID = users.userID;
+        this.userId = users.userId;
         this.userName = users.userName;
         this.image = users.image;
         this.snsAllowed = users.snsAllowed;
@@ -113,8 +110,8 @@ public class Users extends BaseTimeEntity {
     }
 
     @Builder
-    public Users(long id, String email, String password, String phoneNo, UserType type, String userID, String userName, String image,
-                 YN snsAllowed, YN marketingAllowed, LocalDateTime marketingAllowedAt, YN messageAllowed, LocalDateTime messageAllowedAt) {
+    public Users(Long id, String email, String password, String phoneNo, UserType type, String userId, String userName, String image,
+            YN snsAllowed, YN marketingAllowed, LocalDateTime marketingAllowedAt, YN messageAllowed, LocalDateTime messageAllowedAt) {
         
         this.id = id;
         this.deleted = YN.N;
@@ -122,7 +119,7 @@ public class Users extends BaseTimeEntity {
         this.password = password;
         this.phoneNo = phoneNo;
         this.type = type;
-        this.userID = userID;
+        this.userId = userId;
         this.userName = userName;
         this.image = image;
         this.snsAllowed = snsAllowed;

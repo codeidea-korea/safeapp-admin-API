@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.safeapp.admin.web.dto.request.RequestChecklistTemplateDetailDTO;
+import com.safeapp.admin.web.dto.request.RequestCheckListTemplateDetailDTO;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
@@ -102,7 +102,7 @@ public class ChecklistTemplateDetailServiceImpl implements ChecklistTemplateDeta
     }
 
     @Override
-    public ChecklistTemplateDetail toEntity(RequestChecklistTemplateDetailDTO dto){
+    public ChecklistTemplateDetail toEntity(RequestCheckListTemplateDetailDTO dto){
         ChecklistTemplateDetail detail = new ChecklistTemplateDetail();
         detail.setTypes(dto.getTypes());
         detail.setDepth(dto.getDepth());

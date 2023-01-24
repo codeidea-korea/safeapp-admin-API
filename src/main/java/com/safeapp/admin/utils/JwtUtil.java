@@ -78,13 +78,13 @@ public class JwtUtil {
                 .getBody();
     }
 
-    public String getAdminIDOrUserIDByAccessToken(String token) {
+    public String getAdminIDOrUserIdByAccessToken(String token) {
         final Claims claims = extractAllClaims(token);
 
         return (String)claims.get("id");
     }
 
-    public String getAdminIDOrUserIDByRefreshToken(String token) {
+    public String getAdminIDOrUserIdByRefreshToken(String token) {
         final Claims claims = extractAllClaims(token);
 
         return (String)claims.get("sem");

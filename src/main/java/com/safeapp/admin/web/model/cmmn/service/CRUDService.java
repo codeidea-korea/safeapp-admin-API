@@ -7,15 +7,15 @@ import com.safeapp.admin.web.model.cmmn.Pages;
 
 public interface CRUDService<T> {
 
-    T add(T obj, HttpServletRequest httpServletRequest) throws Exception;
+    T add(T obj, HttpServletRequest request) throws Exception;
 
-    T find(long seq, HttpServletRequest httpServletRequest) throws Exception;
+    T find(long id, HttpServletRequest request) throws Exception;
 
-    T edit(T obj, HttpServletRequest httpServletRequest) throws Exception;
+    T edit(T obj, HttpServletRequest request) throws Exception;
 
-    void remove(long seq, HttpServletRequest httpServletRequest) throws Exception;
+    void remove(long id, HttpServletRequest request) throws Exception;
 
-    ListResponse<T> findAll(T obj, Pages pages, HttpServletRequest httpServletRequest) throws Exception;
+    ListResponse<T> findAll(T obj, Pages pages, HttpServletRequest request) throws Exception;
 
     T generate(T obj);
 

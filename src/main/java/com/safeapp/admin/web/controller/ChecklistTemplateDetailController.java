@@ -2,12 +2,12 @@ package com.safeapp.admin.web.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.safeapp.admin.web.dto.request.RequestChecklistTemplateDetailDTO;
-import com.safeapp.admin.web.dto.response.ResponseChecklistTemplateDetailDTO;
-import com.safeapp.admin.web.service.ChecklistTemplateService;
+import com.safeapp.admin.web.dto.request.RequestCheckListTemplateDetailDTO;
+import com.safeapp.admin.web.dto.response.ResponseCheckListTemplateDetailDTO;
+import com.safeapp.admin.web.service.CheckListTemplateService;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
-import com.safeapp.admin.web.model.entity.ChecklistTemplateDetail;
+import com.safeapp.admin.web.model.entity.CheckListTemplateDetail;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.safeapp.admin.web.service.ChecklistTemplateDetailService;
+import com.safeapp.admin.web.service.CheckListTemplateDetailService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,26 +27,26 @@ import io.swagger.annotations.ApiParam;
 
 import static org.springframework.http.HttpStatus.OK;
 
-@RestController
+//@RestController
 @RequestMapping("/api/checklistTemplateDetail")
 @AllArgsConstructor
-@Api(tags = {"ChecklistTemplateDetail"}, description = "체크리스트 템플릿 상세", basePath = "/api/checklistTemplateDetail")
-public class ChecklistTemplateDetailController {
+@Api(tags = {"CheckListTemplateDetail"}, description = "체크리스트 템플릿 상세", basePath = "/api/checklistTemplateDetail")
+public class CheckListTemplateDetailController {
 
-    private final ChecklistTemplateDetailService checklistTemplateDetailService;
-    private final ChecklistTemplateService checklistTemplateService;
+    private final CheckListTemplateDetailService checklistTemplateDetailService;
+    private final CheckListTemplateService checklistTemplateService;
 
 
     @PostMapping(value = "/{id}")
     @ApiOperation(value = "등록", notes = "등록")
-    public ResponseEntity<ResponseChecklistTemplateDetailDTO> add(
-        @RequestBody RequestChecklistTemplateDetailDTO dto,
+    public ResponseEntity<ResponseCheckListTemplateDetailDTO> add(
+        @RequestBody RequestCheckListTemplateDetailDTO dto,
         @PathVariable("id") @ApiParam(value = "체크리스트 템플릿 본문 ID", readOnly = true)Long id,
         HttpServletRequest request) throws Exception {
-        ChecklistTemplateDetail params = checklistTemplateDetailService.toEntity(dto);
-        params.setChecklistTemplate(checklistTemplateService.find(id,request));
-        ChecklistTemplateDetail result = checklistTemplateDetailService.add(params, request);
-        return new ResponseEntity<>(ResponseChecklistTemplateDetailDTO
+        CheckListTemplateDetail params = checklistTemplateDetailService.toEntity(dto);
+        params.setCheckListTemplate(checklistTemplateService.find(id,request));
+        CheckListTemplateDetail result = checklistTemplateDetailService.add(params, request);
+        return new ResponseEntity<>(ResponseCheckListTemplateDetailDTO
                 .builder()
                 .detail(result)
                 .build(),OK);
@@ -54,9 +54,9 @@ public class ChecklistTemplateDetailController {
 
     @PutMapping(value = "/{id}")
     @ApiOperation(value = "수정", notes = "수정")
-    public ChecklistTemplateDetail modify(
+    public CheckListTemplateDetail modify(
         @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
-        @RequestBody ChecklistTemplateDetail params,
+        @RequestBody CheckListTemplateDetail params,
         HttpServletRequest request) throws Exception {
 
         params.setId(id);
@@ -73,7 +73,7 @@ public class ChecklistTemplateDetailController {
 
     @GetMapping(value = "/{id}")
     @ApiOperation(value = "조회 (단건)", notes = "조회 (단건)")
-    public ChecklistTemplateDetail find(
+    public CheckListTemplateDetail find(
         @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
         HttpServletRequest request) throws Exception {
         return checklistTemplateDetailService.find(id, request);
@@ -85,7 +85,7 @@ public class ChecklistTemplateDetailController {
         Pages bfPage,
         HttpServletRequest request) throws Exception {
         return checklistTemplateDetailService.findAll(
-            ChecklistTemplateDetail.builder()
+            CheckListTemplateDetail.builder()
                 .build(),
             bfPage,
             request);

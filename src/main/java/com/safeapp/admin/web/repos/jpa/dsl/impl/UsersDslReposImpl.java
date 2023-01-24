@@ -31,58 +31,62 @@ public class UsersDslReposImpl extends QuerydslRepositorySupport implements User
         super(Users.class);
     }
 
-    private JPAQuery selectFromWhere(Users instance, QUsers qUsers) {
+    private JPAQuery selectFromWhere(Users users, QUsers qUsers) {
         JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
         JPAQuery query = jpaQueryFactory.selectFrom(qUsers);
 
-        if (!StringUtil.isNullOrEmpty(instance.getPhoneNo())) {
-            query.where(qUsers.phoneNo.like(instance.getPhoneNo()));
+        if(!StringUtil.isNullOrEmpty(users.getPhoneNo())) {
+            query.where(qUsers.phoneNo.like(users.getPhoneNo()));
         }
-        if (!StringUtil.isNullOrEmpty(instance.getEmail())) {
-            query.where(qUsers.email.like(instance.getEmail()));
+        if(!StringUtil.isNullOrEmpty(users.getEmail())) {
+            query.where(qUsers.email.like(users.getEmail()));
         }
-        if (!StringUtil.isNullOrEmpty(instance.getUserName())) {
-            query.where(qUsers.userName.like(instance.getUserName()));
+        if(!StringUtil.isNullOrEmpty(users.getUserName())) {
+            query.where(qUsers.userName.like(users.getUserName()));
         }
-        if (instance.getDeleted() != null) {
-            query.where(qUsers.deleted.eq(instance.getDeleted()));
+        if(users.getDeleted() != null) {
+            query.where(qUsers.deleted.eq(users.getDeleted()));
         }
-        if (instance.getMarketingAllowed() != null) {
-            query.where(qUsers.marketingAllowed.eq(instance.getMarketingAllowed()));
+        if(users.getMarketingAllowed() != null) {
+            query.where(qUsers.marketingAllowed.eq(users.getMarketingAllowed()));
         }
-        if (instance.getMessageAllowed() != null) {
-            query.where(qUsers.messageAllowed.eq(instance.getMessageAllowed()));
+        if(users.getMessageAllowed() != null) {
+            query.where(qUsers.messageAllowed.eq(users.getMessageAllowed()));
         }
-        if (instance.getSnsAllowed() != null) {
-            query.where(qUsers.snsAllowed.eq(instance.getSnsAllowed()));
+        if(users.getSnsAllowed() != null) {
+            query.where(qUsers.snsAllowed.eq(users.getSnsAllowed()));
         }
-        if (instance.getType() != null) {
-            query.where(qUsers.type.eq(instance.getType()));
+        if(users.getType() != null) {
+            query.where(qUsers.type.eq(users.getType()));
         }
-        if (instance.getId() > 0) {
-            query.where(qUsers.id.eq(instance.getId()));
+        if(users.getId() > 0) {
+            query.where(qUsers.id.eq(users.getId()));
         }
+
         return query;
     }
 
     @Override
-    public List<Users> findAll(Users instance, Pages bfPage) {
+    public long countAll(Users users) {
+        QUsers qFile = QUsers.users;
+        JPAQuery query = selectFromWhere(users, qFile);
+
+        return query.fetchCount();
+    }
+
+    @Override
+    public List<Users> findAll(Users users, Pages pages) {
         QUsers qUsers = QUsers.users;
-        JPAQuery query = selectFromWhere(instance, qUsers);
+        JPAQuery query = selectFromWhere(users, qUsers);
 
         query
-            .offset(bfPage.getOffset())
-            .limit(bfPage.getPageSize())
-            .orderBy(new OrderSpecifier(com.querydsl.core.types.Order.DESC,
-                new PathBuilder(QUsers.class, qUsers.id.getMetadata())));
+            .offset(pages.getOffset())
+            .limit(pages.getPageSize())
+            .orderBy(
+                new OrderSpecifier(com.querydsl.core.types.Order.DESC, new PathBuilder(QUsers.class, qUsers.id.getMetadata()))
+            );
 
         return query.fetch();
     }
 
-    @Override
-    public long countAll(Users instance) {
-        QUsers qFile = QUsers.users;
-        JPAQuery query = selectFromWhere(instance, qFile);
-        return query.fetchCount();
-    }
 }

@@ -2,21 +2,25 @@ package com.safeapp.admin.web.dto.request;
 
 import com.safeapp.admin.web.data.YN;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 public class RequestDetailModifyDTO {
+
     @Schema(description = "고유 아이디")
     Long id;
 
-        @Schema(description = "내용")
+    @Schema(description = "내용")
     String contents;
-        @Schema(description = "주소")
+
+    @Schema(description = "주소")
     String address;
-        @Schema(description = "상세주소")
+
+    @Schema(description = "상세주소")
     String addressDetail;
+
         @Schema(description = "도구")
     String tools;
         @Schema(description = "위험요소타입")
@@ -59,5 +63,6 @@ public class RequestDetailModifyDTO {
         YN izTitle;
 
         @Schema(description = "타입")
-    String types;
+        String types;
+
 }

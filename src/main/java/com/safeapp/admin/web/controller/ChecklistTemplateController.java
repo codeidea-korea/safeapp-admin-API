@@ -3,12 +3,11 @@ package com.safeapp.admin.web.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.dto.request.RequestChecklistTemplateDTO;
-import com.safeapp.admin.web.dto.response.ResponseChecklistTemplateDTO;
-import com.safeapp.admin.web.dto.response.ResponseChecklistTemplateSelectDTO;
+import com.safeapp.admin.web.dto.request.RequestCheckListTemplateDTO;
+import com.safeapp.admin.web.dto.response.ResponseCheckListTemplateDTO;
 import com.safeapp.admin.utils.ResponseUtil;
-import com.safeapp.admin.web.model.entity.ChecklistTemplate;
 import io.swagger.v3.oas.annotations.Parameter;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.safeapp.admin.web.service.ChecklistTemplateService;
+import com.safeapp.admin.web.service.CheckListTemplateService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,26 +33,22 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/template/checklists")
-@Api(tags = {"ChecklistTemplate"}, description = "체크리스트 템플릿", basePath = "/template/checklists")
-public class ChecklistTemplateController {
+@RequestMapping("/checkList/template")
+@AllArgsConstructor
+@Api(tags = {"CheckListTemplate"}, description = "체크리스트 템플릿")
+public class CheckListTemplateController {
 
-    private final ChecklistTemplateService checklistTemplateService;
+    private final CheckListTemplateService checklistTemplateService;
 
-    @Autowired
-    public ChecklistTemplateController(ChecklistTemplateService checklistTemplateService) {
-        this.checklistTemplateService = checklistTemplateService;
-    }
-
-    @PostMapping(value = "")
-    @ApiOperation(value = "등록", notes = "등록")
-    public ResponseEntity<ResponseChecklistTemplateDTO> add(
-        @RequestBody RequestChecklistTemplateDTO dto,
+    @PostMapping(value = "/add")
+    @ApiOperation(value = "체크리스트 템플릿 등록", notes = "체크리스트 템플릿 등록")
+    public ResponseEntity<ResponseCheckListTemplateDTO> add(
+        @RequestBody RequestCheckListTemplateDTO dto,
         HttpServletRequest request) throws Exception {
-        ChecklistTemplate params = checklistTemplateService.toEntity(dto);
-        ChecklistTemplate result = checklistTemplateService.add(params, request);
+        CheckListTemplate params = checklistTemplateService.toEntity(dto);
+        CheckListTemplate result = checklistTemplateService.add(params, request);
         return new ResponseEntity<>(
-                ResponseChecklistTemplateDTO
+                ResponseCheckListTemplateDTO
                         .builder().
                         template(result)
                         .build(),OK
@@ -64,7 +59,7 @@ public class ChecklistTemplateController {
     @ApiOperation(value = "수정", notes = "수정")
     public ResponseEntity modify(
         @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
-        @RequestBody ChecklistTemplate params,
+        @RequestBody CheckListTemplate params,
         HttpServletRequest request) throws Exception {
         params.setId(id);
         return ResponseUtil.sendResponse(checklistTemplateService.edit(params, request));
@@ -81,12 +76,12 @@ public class ChecklistTemplateController {
 
     @GetMapping(value = "/{id}")
     @ApiOperation(value = "조회 (단건)", notes = "조회 (단건)")
-    public ResponseEntity<ResponseChecklistTemplateSelectDTO> find(
+    public ResponseEntity<ResponseCheckListTemplateSelectDTO> find(
         @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
         HttpServletRequest request) throws Exception {
-        ChecklistTemplate result = checklistTemplateService.find(id, request);
+        CheckListTemplate result = checklistTemplateService.find(id, request);
         return new ResponseEntity<>(
-                ResponseChecklistTemplateSelectDTO
+                ResponseCheckListTemplateSelectDTO
                         .builder()
                         .template(result)
                         .build(), OK);
@@ -94,7 +89,7 @@ public class ChecklistTemplateController {
 
     @GetMapping(value = "")
     @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
-    public ResponseEntity<List<ResponseChecklistTemplateDTO>> findAll(
+    public ResponseEntity<List<ResponseCheckListTemplateDTO>> findAll(
             @RequestParam(value = "userId", required = false) @Parameter(description = "유저ID") Long userId,
             @RequestParam(value = "projectId", required = false) @Parameter(description = "프로젝트ID") Long projectId,
             @RequestParam(value = "name", required = false) @Parameter(description = "제목") String name,
@@ -109,32 +104,4 @@ public class ChecklistTemplateController {
                 userId, projectId, name, tag, created_at_descended, views_descended, likes_descended, detail_contents, page),OK);
     }
 
-    @PatchMapping(value = "/{id}/like")
-    @ApiOperation(value = "좋아요", notes = "좋아요")
-    public ResponseEntity like(
-        @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
-        HttpServletRequest request) throws Exception {
-        
-        checklistTemplateService.addLike(id, request);
-        return ResponseUtil.sendResponse(true);
-    }
-
-    @PatchMapping(value = "/{id}/dislike")
-    @ApiOperation(value = "좋아요 해제", notes = "좋아요 해제")
-    public ResponseEntity dislike(
-        @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
-        HttpServletRequest request) throws Exception {
-        
-        checklistTemplateService.removeLike(id, request);
-        return ResponseUtil.sendResponse(true);
-    }
-
-    @GetMapping(value = "/{id}/liked")
-    @ApiOperation(value = "나의 좋아요 여부", notes = "나의 좋아요 여부")
-    public ResponseEntity liked(
-        @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
-        HttpServletRequest request) throws Exception {
-        
-        return ResponseUtil.sendResponse(checklistTemplateService.isLiked(id, request));
-    }
 }

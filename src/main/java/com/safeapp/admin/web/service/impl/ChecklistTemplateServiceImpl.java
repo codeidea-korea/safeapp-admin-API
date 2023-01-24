@@ -5,8 +5,8 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.safeapp.admin.web.dto.request.RequestChecklistTemplateDTO;
-import com.safeapp.admin.web.dto.response.ResponseChecklistTemplateDTO;
+import com.safeapp.admin.web.dto.request.RequestCheckListTemplateDTO;
+import com.safeapp.admin.web.dto.response.ResponseCheckListTemplateDTO;
 import com.safeapp.admin.web.repos.jpa.ProjectRepos;
 import com.safeapp.admin.web.repos.jpa.UserRepos;
 import com.safeapp.admin.utils.DateUtil;
@@ -102,7 +102,7 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
         Users user = jwtService.getUserInfoByTokenAnyway(httpServletRequest);
         if(user != null) {
             for(ChecklistTemplate item : list) {
-                LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(item.getUser().getId(), "checklist-template", item.getId());
+                LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(item.getUser().getId(), "checklist-template", item.getId());
                 
                 if(liked != null) {
                     item.setLiked(liked.getLiked());
@@ -134,7 +134,7 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "먼저 로그인하여주세요.");
         }
         
-        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(user.getId(), "checklist-template", id);
+        LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(user.getId(), "checklist-template", id);
         if(liked != null) {
             if(liked.getLiked() == YN.Y) {
                 throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "이미 좋아요 하셨습니다.");
@@ -145,7 +145,7 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
                 .liked(YN.Y)
                 .type("checklist-template")
                 .boardId(id)
-                .userID(user.getId())
+                .userId(user.getId())
                 .build());
         }
     }
@@ -159,7 +159,7 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "먼저 로그인하여주세요.");
         }
 
-        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(user.getId(), "checklist-template", id);
+        LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(user.getId(), "checklist-template", id);
         if(liked != null) {
             likeRepos.delete(liked);
         } else {
@@ -172,12 +172,12 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
         
         Users user = jwtService.getUserInfoByToken(httpServletRequest);
 
-        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(user.getId(), "checklist-template", id);
+        LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(user.getId(), "checklist-template", id);
         return liked != null && liked.getLiked() == YN.Y;
     }
 
     @Override
-    public ChecklistTemplate toEntity(RequestChecklistTemplateDTO dto) throws NotFoundException {
+    public ChecklistTemplate toEntity(RequestCheckListTemplateDTO dto) throws NotFoundException {
         ChecklistTemplate template = new ChecklistTemplate();
         template.setProject(projectRepos.findById(dto.getProjectId()).orElseThrow(() -> new NotFoundException("project does not exist. input project id: " + dto.getProjectId())));
         template.setChecker(userRepos.findById(dto.getCheckerId()).orElseThrow(() -> new NotFoundException("checker does not exist. input checker id: " + dto.getCheckerId())));
@@ -192,7 +192,7 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
     }
 
     @Override
-    public List<ResponseChecklistTemplateDTO> findAllByCondition(
+    public List<ResponseCheckListTemplateDTO> findAllByCondition(
             Long userId,
             Long projectId,
             String name,

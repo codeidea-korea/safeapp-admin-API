@@ -7,20 +7,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity(name = "project_managers")
-@AllArgsConstructor
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class ProjectManager {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "project", columnDefinition = "bigint COMMENT '프로젝트'")
+    @JoinColumn(name = "project")
     private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "user", columnDefinition = "bigint COMMENT '유저'")
+    @JoinColumn(name = "user")
     private Users user;
+
 }

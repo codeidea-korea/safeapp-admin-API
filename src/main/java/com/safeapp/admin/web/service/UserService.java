@@ -18,16 +18,13 @@ import java.util.List;
 
 public interface UserService extends CRUDService<Users> {
 
-    boolean chkUserID(String userID);
+    boolean chkUserId(String userId);
 
     boolean sendAuthSMSCode(String phoneNo) throws Exception;
 
     boolean isCorrectSMSCode(String phoneNo, String authNo) throws Exception;
 
-    Users editPassword(String userID, String newPass1, String newPass2, HttpServletRequest httpServletRequest)
-            throws Exception;
-
-    List<ResponseUsersDTO> findAllByCondition(String userID, String userName, String email, Pageable page);
+    Users editPassword(String userId, String newPass1, String newPass2, HttpServletRequest httpServletRequest) throws Exception;
 
     Users toEntity (RequestUserDTO dto);
 

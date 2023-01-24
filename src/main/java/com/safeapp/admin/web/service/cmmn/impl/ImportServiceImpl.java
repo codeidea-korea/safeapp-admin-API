@@ -69,7 +69,7 @@ public class ImportServiceImpl implements ImportService {
 
     @Autowired
     public ImportServiceImpl(UserAuthService userAuthService, JwtService jwtService,
-        ImportPaymentRepos repos, AuthRepos authRepos, UserRepos userRepos, DateUtil dateUtil) {
+                             ImportPaymentRepos repos, AuthRepos authRepos, UserRepos userRepos, DateUtil dateUtil) {
 
         this.userAuthService = userAuthService;
         this.jwtService = jwtService;
@@ -85,7 +85,7 @@ public class ImportServiceImpl implements ImportService {
         // 고객 주문번호 생성(채번)
         Users loginUser = jwtService.getUserInfoByToken(httpServletRequest);
 
-        payment.setCustomerUid(loginUser.getUserID());
+        payment.setCustomerUid(loginUser.getUserId());
         payment.setMerchantUid(
             "consqure-" + dateUtil.getDatetimeDetail() + "-" + loginUser.getId());
         // 비회원 결제 불가
@@ -195,7 +195,7 @@ public class ImportServiceImpl implements ImportService {
             // 현재 유효한 권한
             UserAuth efectiveAuth = userAuthService.getEfectiveAuthByUserId(importPayment.getCustomerUid());
             LocalDateTime now = dateUtil.getThisTime();
-            Users user = userRepos.findByUserID(importPayment.getCustomerUid());
+            Users user = userRepos.findByUserId(importPayment.getCustomerUid());
 
             if (efectiveAuth == null) {
                 // 유효값이 없으면 신규 권한으로 적용

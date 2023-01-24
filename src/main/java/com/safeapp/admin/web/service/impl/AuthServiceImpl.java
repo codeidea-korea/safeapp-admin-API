@@ -24,18 +24,15 @@ public class AuthServiceImpl implements AuthService {
 
     private final AuthRepos repos;
 
-    private final JwtService jwtService;
-
     private final PasswordUtil passwordUtil;
 
     private final DateUtil dateUtil;
 
     @Autowired
     public AuthServiceImpl(AuthRepos repos,
-                           JwtService jwtService, PasswordUtil passwordUtil, DateUtil dateUtil) {
+                           PasswordUtil passwordUtil, DateUtil dateUtil) {
 
         this.repos = repos;
-        this.jwtService = jwtService;
         this.passwordUtil = passwordUtil;
         this.dateUtil = dateUtil;
     }

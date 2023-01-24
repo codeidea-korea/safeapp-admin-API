@@ -1,13 +1,13 @@
 package com.safeapp.admin.web.repos.jpa.custom;
 
 import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.dto.response.ResponseChecklistTemplateDTO;
+import com.safeapp.admin.web.dto.response.ResponseCheckListTemplateDTO;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface ChecklistTemplateRepositoryCustom {
-    List<ResponseChecklistTemplateDTO> findAllByCondition(
+    List<ResponseCheckListTemplateDTO> findAllByCondition(
             Long userId,
             Long projectId,
             String name,

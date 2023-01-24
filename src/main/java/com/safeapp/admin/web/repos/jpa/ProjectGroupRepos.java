@@ -7,4 +7,5 @@ import com.safeapp.admin.web.model.entity.ProjectGroup;
 
 @Repository
 public interface ProjectGroupRepos extends JpaRepository<ProjectGroup, Long> {
+
 }

@@ -12,11 +12,17 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class DirectQuery {
+
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public DirectQuery(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public List<Map<String, Object>> findAllGroup(long id, Pages pages) {
+
+        return null;
     }
 
     public List<Map<String, Object>> findAllUnionChecklistAndRisk(String title, String type, YN createdAtDescended,
@@ -200,4 +206,5 @@ public class DirectQuery {
             return 0;
         }
     }
+
 }

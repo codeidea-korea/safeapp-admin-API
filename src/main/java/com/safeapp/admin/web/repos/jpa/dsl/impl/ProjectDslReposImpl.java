@@ -31,43 +31,47 @@ public class ProjectDslReposImpl extends QuerydslRepositorySupport implements Pr
         super(Project.class);
     }
 
-    private JPAQuery selectFromWhere(Project instance, QProject qProject) {
+    private JPAQuery selectFromWhere(Project project, QProject qProject) {
         JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
         JPAQuery query = jpaQueryFactory.selectFrom(qProject);
 
-        if (!StringUtil.isNullOrEmpty(instance.getName())) {
-            query.where(qProject.name.like(instance.getName()));
+        if(!StringUtil.isNullOrEmpty(project.getName())) {
+            query.where(qProject.name.like(project.getName()));
         }
-        if (!StringUtil.isNullOrEmpty(instance.getContents())) {
-            query.where(qProject.name.like(instance.getContents()));
+        if(!StringUtil.isNullOrEmpty(project.getContents())) {
+            query.where(qProject.name.like(project.getContents()));
         }
-        if (instance.getStatus() != null) {
-            query.where(qProject.status.eq(instance.getStatus()));
+        if(project.getStatus() != null) {
+            query.where(qProject.status.eq(project.getStatus()));
         }
-        if (instance.getId() > 0) {
-            query.where(qProject.id.eq(instance.getId()));
+        if(project.getId() > 0) {
+            query.where(qProject.id.eq(project.getId()));
         }
+
         return query;
     }
 
     @Override
-    public List<Project> findAll(Project instance, Pages bfPage) {
+    public long countAll(Project project) {
+        QProject qFile = QProject.project;
+        JPAQuery query = selectFromWhere(project, qFile);
+
+        return query.fetchCount();
+    }
+
+    @Override
+    public List<Project> findAll(Project project, Pages pages) {
         QProject qProject = QProject.project;
-        JPAQuery query = selectFromWhere(instance, qProject);
+        JPAQuery query = selectFromWhere(project, qProject);
 
         query
-            .offset(bfPage.getOffset())
-            .limit(bfPage.getPageSize())
-            .orderBy(new OrderSpecifier(com.querydsl.core.types.Order.DESC,
-                new PathBuilder(QProject.class, qProject.id.getMetadata())));
+            .offset(pages.getOffset())
+            .limit(pages.getPageSize())
+            .orderBy(
+                new OrderSpecifier(com.querydsl.core.types.Order.DESC, new PathBuilder(QProject.class, qProject.id.getMetadata()))
+            );
 
         return query.fetch();
     }
 
-    @Override
-    public long countAll(Project instance) {
-        QProject qFile = QProject.project;
-        JPAQuery query = selectFromWhere(instance, qFile);
-        return query.fetchCount();
-    }
 }

@@ -1,6 +1,7 @@
 package com.safeapp.admin.web.data;
 
 public enum StatusType {
+
     NONE,
     READY,
     CHECK,
@@ -8,4 +9,5 @@ public enum StatusType {
     APPROVE,
     RECHECK,
     APPROVE_COMPLETE
+
 }

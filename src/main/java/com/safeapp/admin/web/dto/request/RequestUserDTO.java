@@ -27,7 +27,7 @@ public class RequestUserDTO {
     UserType type;
 
     @Schema(description = "아이디", example = "user1")
-    String userID;
+    String userId;
 
     @Schema(description = "이름", example = "유저 1")
     String userName;

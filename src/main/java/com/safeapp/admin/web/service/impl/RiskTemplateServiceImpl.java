@@ -18,7 +18,6 @@ import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.docs.LikeHistory;
 import com.safeapp.admin.web.model.entity.RiskTemplate;
 import com.safeapp.admin.web.model.entity.RiskTemplateDetail;
-import com.safeapp.admin.web.model.entity.Users;
 import com.safeapp.admin.web.repos.jpa.RiskTemplateRepository;
 import lombok.AllArgsConstructor;
 import org.apache.ibatis.javassist.NotFoundException;
@@ -112,7 +111,7 @@ public class RiskTemplateServiceImpl implements RiskTemplateService {
         Admins admin = jwtService.getAdminInfoByTokenAnyway(httpServletRequest);
         if(admin != null) {
             for(RiskTemplate item : list) {
-                LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(item.getUser().getId(), "risk-template", item.getId());
+                LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(item.getUser().getId(), "risk-template", item.getId());
                 
                 if(liked != null) {
                     item.setLiked(liked.getLiked());
@@ -157,7 +156,7 @@ public class RiskTemplateServiceImpl implements RiskTemplateService {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "먼저 로그인하여주세요.");
         }
         
-        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(admin.getId(), "risk-template", id);
+        LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(admin.getId(), "risk-template", id);
         if(liked != null) {
             if(liked.getLiked() == YN.Y) {
                 throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "이미 좋아요 하셨습니다.");
@@ -168,7 +167,7 @@ public class RiskTemplateServiceImpl implements RiskTemplateService {
                 .liked(YN.Y)
                 .type("risk-template")
                 .boardId(id)
-                .userID(admin.getId())
+                .userId(admin.getId())
                 .build());
         }
     }
@@ -182,7 +181,7 @@ public class RiskTemplateServiceImpl implements RiskTemplateService {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "먼저 로그인하여주세요.");
         }
 
-        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(admin.getId(), "risk-template", id);
+        LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(admin.getId(), "risk-template", id);
         if(liked != null) {
             likeRepos.delete(liked);
         } else {
@@ -195,7 +194,7 @@ public class RiskTemplateServiceImpl implements RiskTemplateService {
         
         Admins admin = jwtService.getAdminInfoByToken(httpServletRequest);
 
-        LikeHistory liked = likeRepos.findByUserIDAndTypeAndBoardId(admin.getId(), "risk-template", id);
+        LikeHistory liked = likeRepos.findByUserIdAndTypeAndBoardId(admin.getId(), "risk-template", id);
         return liked != null && liked.getLiked() == YN.Y;
     }
 

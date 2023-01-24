@@ -29,9 +29,4 @@ public class Pages {
         return PageRequest.of(pageNo - 1, pageSize);
     }
 
-    public Pageable generatePageable(Sort.Direction direction, String fieldName) {
-
-        return PageRequest.of(pageNo - 1, pageSize, Sort.by(direction, fieldName));
-    }
-
 }

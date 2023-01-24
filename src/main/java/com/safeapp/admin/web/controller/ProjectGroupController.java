@@ -2,6 +2,7 @@ package com.safeapp.admin.web.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.model.entity.Admins;
 import com.safeapp.admin.web.model.entity.Project;
 import com.safeapp.admin.web.model.entity.Users;
@@ -11,6 +12,7 @@ import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.ProjectGroup;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,67 +29,59 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@AllArgsConstructor
 @RestController
-@RequestMapping("/api/projectGroup")
-@Api(tags = {"ProjectGroup"}, description = "프로젝트 그룹", basePath = "/api/projectGroup")
+@RequestMapping("/project/group")
+@AllArgsConstructor
+@Api(tags = {"ProjectGroup"}, description = "프로젝트 그룹원 관리")
 public class ProjectGroupController {
 
     private final ProjectGroupService projectGroupService;
-    private final ProjectService projectService;
-    private final JwtService jwtService;
 
-    @PostMapping(value = "")
-    @ApiOperation(value = "등록", notes = "등록")
-    public ProjectGroup add(
-        @RequestBody ProjectGroup params,
-        HttpServletRequest request) throws Exception {
-        return projectGroupService.add(params, request);
+    @PostMapping(value = "/add")
+    @ApiOperation(value = "그룹원 등록", notes = "그룹원 등록")
+    public ProjectGroup add(@RequestBody ProjectGroup prjGr, HttpServletRequest request) throws Exception {
+
+        return projectGroupService.add(prjGr, request);
     }
 
-    @PutMapping(value = "/{id}")
-    @ApiOperation(value = "수정", notes = "수정")
-    public ProjectGroup modify(
-        @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
-        @RequestBody ProjectGroup params,
-        HttpServletRequest request) throws Exception {
+    @GetMapping(value = "/find/{id}")
+    @ApiOperation(value = "그룹원 확인", notes = "그룹원 확인")
+    public ProjectGroup find(@PathVariable("id") @ApiParam(value = "그룹원 PK", required = true) long id,
+                             HttpServletRequest request) throws Exception {
 
-        params.setId(id);
-        return projectGroupService.edit(params, request);
-    }
-
-    @DeleteMapping(value = "")
-    @ApiOperation(value = "삭제", notes = "삭제")
-    public void remove(
-        @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
-        HttpServletRequest request) throws Exception {
-        projectGroupService.remove(id, request);
-    }
-
-    @GetMapping(value = "/{id}")
-    @ApiOperation(value = "조회 (단건)", notes = "조회 (단건)")
-    public ProjectGroup find(
-        @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
-        HttpServletRequest request) throws Exception {
         return projectGroupService.find(id, request);
     }
 
-    @GetMapping(value = "")
-    @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
-    public ListResponse findAll(
-        Pages bfPage,
-        @RequestParam(value = "userId", required = false, defaultValue = "1") Long userId,
-        @RequestParam(value = "projectId", required = false, defaultValue = "1") Long projectId,
-        HttpServletRequest request) throws Exception {
+    @PutMapping(value = "/edit/{id}")
+    @ApiOperation(value = "그룹원 권한 수정", notes = "그룹원 권한 수정")
+    public ProjectGroup edit(@PathVariable("id") @ApiParam(value = "그룹원 PK", required = true) long id,
+                             @RequestBody ProjectGroup prjGr, HttpServletRequest request) throws Exception {
 
-        Users user = jwtService.getUserInfoByToken(request);
-        Project project = projectService.find(projectId, request);
-        return projectGroupService.findAll(
-            ProjectGroup.builder()
-            .user(user)
-            .project(project)
-            .build(),
-            bfPage,
-            request);
+        prjGr.setId(id);
+        return projectGroupService.edit(prjGr, request);
     }
+
+    @DeleteMapping(value = "/remove/{id}")
+    @ApiOperation(value = "그룹원 삭제", notes = "그룹원 삭제")
+    public ResponseEntity remove(@PathVariable("id") @ApiParam(value = "그룹원 PK", required = true) long id,
+                                 HttpServletRequest request) throws Exception {
+
+        projectGroupService.remove(id, request);
+        return ResponseUtil.sendResponse(null);
+    }
+
+    @GetMapping(value = "/list")
+    @ApiOperation(value = "그룹원 목록", notes = "그룹원 목록")
+    public ResponseEntity<ListResponse> findAll(@RequestParam(value = "project", defaultValue = "0") Long project,
+            Pages pages, HttpServletRequest request) throws Exception {
+
+        return ResponseUtil.sendResponse(
+                projectGroupService.findAll(
+                        ProjectGroup.builder()
+                            .project(project)
+                            .build(),
+                        pages,
+                        request));
+    }
+
 }

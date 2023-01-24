@@ -1,7 +1,7 @@
 package com.safeapp.admin.web.repos.jpa.impl;
 
 import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.dto.response.ResponseChecklistTemplateDTO;
+import com.safeapp.admin.web.dto.response.ResponseCheckListTemplateDTO;
 import com.safeapp.admin.web.model.entity.QChecklistTemplate;
 import com.safeapp.admin.web.model.entity.QChecklistTemplateDetail;
 import com.safeapp.admin.web.model.entity.QProject;
@@ -33,7 +33,7 @@ public class ChecklistTemplateRepositoryImpl implements ChecklistTemplateReposit
 
     @Transactional(readOnly = true)
     @Override
-    public List<ResponseChecklistTemplateDTO> findAllByCondition(
+    public List<ResponseCheckListTemplateDTO> findAllByCondition(
             Long userId,
             Long projectId,
             String name,
@@ -66,7 +66,7 @@ public class ChecklistTemplateRepositoryImpl implements ChecklistTemplateReposit
                 .transform(
                         groupBy(checklistTemplate.id).list(
                                 Projections.fields(
-                                        ResponseChecklistTemplateDTO.class,
+                                        ResponseCheckListTemplateDTO.class,
                                         checklistTemplate.id.as("id"),
                                         checklistTemplate.name.as("title"),
                                         checklistTemplate.user.userName.as("userName"),
