@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.safeapp.admin.web.model.entity.*;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ import com.safeapp.admin.web.repos.jpa.dsl.ProjectDslRepos;
 import com.safeapp.admin.web.service.ProjectService;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Slf4j
 public class ProjectServiceImpl implements ProjectService {
 

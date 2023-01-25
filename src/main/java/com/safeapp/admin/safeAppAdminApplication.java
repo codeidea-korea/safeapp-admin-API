@@ -10,19 +10,18 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
-@ComponentScan
+@PropertySource(value = {"classpath:/application-local.properties"})
 @EnableJpaAuditing
 @MapperScan("com.safeapp.admin.mapper")
-@PropertySource(value = {"classpath:/application-local.properties"})
-public class CornsqureApplication extends SpringBootServletInitializer {
+public class safeAppAdminApplication extends SpringBootServletInitializer {
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-        return builder.sources(CornsqureApplication.class);
+        return builder.sources(safeAppAdminApplication.class);
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(CornsqureApplication.class, args);
+        SpringApplication.run(safeAppAdminApplication.class, args);
     }
 
 }

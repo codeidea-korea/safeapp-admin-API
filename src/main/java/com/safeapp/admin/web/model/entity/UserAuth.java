@@ -18,17 +18,18 @@ import lombok.NoArgsConstructor;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity(name = "user_auths")
-@AllArgsConstructor
 @Data
 @NoArgsConstructor
-public class UserAuth extends BaseTimeEntity{
+@AllArgsConstructor
+public class UserAuth extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "user", columnDefinition = "bigint COMMENT '유저'")
+    @JoinColumn(name = "user")
     private Users user;
 
     @Column(name = "efective_start_at")
@@ -68,4 +69,5 @@ public class UserAuth extends BaseTimeEntity{
         this.paymentWhat = paymentWhat;
         this.price = price;
     }
+
 }

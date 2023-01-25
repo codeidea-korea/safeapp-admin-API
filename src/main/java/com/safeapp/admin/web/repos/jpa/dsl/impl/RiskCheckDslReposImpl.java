@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
-import com.safeapp.admin.web.model.entity.QChecklistProject;
+import com.safeapp.admin.web.model.entity.QCheckListProject;
 import com.safeapp.admin.web.model.entity.QRiskCheck;
 import com.safeapp.admin.web.repos.jpa.dsl.RiskCheckDslRepos;
 import com.querydsl.core.types.OrderSpecifier;
@@ -57,22 +57,22 @@ public class RiskCheckDslReposImpl extends QuerydslRepositorySupport implements 
     private JPAQuery orderByFromWhere(RiskCheck instance, QRiskCheck qRiskCheck, JPAQuery query) {
         if(instance.getCreatedAtDescended() == null && instance.getLikesDescended() == null && instance.getViewsDescended() == null) {
             query.orderBy(new OrderSpecifier(com.querydsl.core.types.Order.DESC,
-                new PathBuilder(QChecklistProject.class, qRiskCheck.id.getMetadata())));
+                new PathBuilder(QCheckListProject.class, qRiskCheck.id.getMetadata())));
         } else {
             if (instance.getCreatedAtDescended() != null) {
                 query.orderBy(new OrderSpecifier(
                     (instance.getCreatedAtDescended() == YN.Y ? com.querydsl.core.types.Order.DESC : com.querydsl.core.types.Order.ASC),
-                    new PathBuilder(QChecklistProject.class, qRiskCheck.createdAt.getMetadata())));
+                    new PathBuilder(QCheckListProject.class, qRiskCheck.createdAt.getMetadata())));
             }
             if (instance.getLikesDescended() != null) {
                 query.orderBy(new OrderSpecifier(
                     (instance.getLikesDescended() == YN.Y ? com.querydsl.core.types.Order.DESC : com.querydsl.core.types.Order.ASC),
-                    new PathBuilder(QChecklistProject.class, qRiskCheck.likes.getMetadata())));
+                    new PathBuilder(QCheckListProject.class, qRiskCheck.likes.getMetadata())));
             }
             if (instance.getViewsDescended() != null) {
                 query.orderBy(new OrderSpecifier(
                     (instance.getViewsDescended() == YN.Y ? com.querydsl.core.types.Order.DESC : com.querydsl.core.types.Order.ASC),
-                    new PathBuilder(QChecklistProject.class, qRiskCheck.views.getMetadata())));
+                    new PathBuilder(QCheckListProject.class, qRiskCheck.views.getMetadata())));
             }
         }
 

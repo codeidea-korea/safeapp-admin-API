@@ -25,42 +25,42 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 @AllArgsConstructor
-@Api(tags = {"User"}, description = "회원 관리")
+@Api(tags = {"User"}, description = "회원")
 public class UsersController {
 
     private final UserService userService;
 
     @GetMapping(value = "/chk/{userId}")
-    @ApiOperation(value = "신규 회원 등록 → 아이디 중복여부 확인", notes = "신규 회원 등록 → 아이디 중복여부 확인")
+    @ApiOperation(value = "회원 등록 → 아이디 중복여부 확인", notes = "회원 등록 → 아이디 중복여부 확인")
     public ResponseEntity chkUserId(@PathVariable("userId") @ApiParam("아이디") String userId) {
 
         return ResponseUtil.sendResponse(userService.chkUserId(userId));
     }
 
     @GetMapping(value = "/reqNum")
-    @ApiOperation(value = "신규 회원 등록 → 핸드폰 본인인증 번호 요청", notes = "신규 회원 등록 → 핸드폰 본인인증 번호 요청")
+    @ApiOperation(value = "회원 등록 → 핸드폰 본인인증 번호 요청", notes = "회원 등록 → 핸드폰 본인인증 번호 요청")
     public ResponseEntity sendAuthSMSCode(@RequestParam(value = "phoneNo") String phoneNo) throws Exception {
 
         return ResponseUtil.sendResponse(userService.sendAuthSMSCode(phoneNo));
     }
 
     @PostMapping(value = "/resNum")
-    @ApiOperation(value = "신규 회원 등록 → 핸드폰 본인인증 번호 확인", notes = "신규 회원 등록 → 핸드폰 본인인증 번호 확인")
+    @ApiOperation(value = "회원 등록 → 핸드폰 본인인증 번호 확인", notes = "회원 등록 → 핸드폰 본인인증 번호 확인")
     public ResponseEntity isCorrectSMSCode(@RequestParam(value = "phoneNo") String phoneNo,
-                                           @RequestParam(value = "authNo") String authNo) throws Exception {
+            @RequestParam(value = "authNo") String authNo) throws Exception {
 
         return ResponseUtil.sendResponse(userService.isCorrectSMSCode(phoneNo, authNo));
     }
 
     @PostMapping(value = "/add")
-    @ApiOperation(value = "신규 회원 등록", notes = "신규 회원 등록")
+    @ApiOperation(value = "회원 등록", notes = "회원 등록")
     public ResponseEntity add(@RequestBody RequestUserDTO userDTO, HttpServletRequest request) throws Exception {
         Users user = userService.toEntity(userDTO);
         return ResponseUtil.sendResponse(userService.add(user, request));
     }
 
     @GetMapping(value = "/find/{id}")
-    @ApiOperation(value = "회원 정보 확인", notes = "회원 정보 확인")
+    @ApiOperation(value = "회원 단독 조회", notes = "회원 단독 조회")
     public ResponseEntity<Users> find(@PathVariable("id") @ApiParam(value = "회원 PK", required = true) long id,
             HttpServletRequest request) throws Exception {
 
@@ -80,9 +80,9 @@ public class UsersController {
     }
 
     @PutMapping(value = "/edit")
-    @ApiOperation(value = "회원 정보 수정", notes = "회원 정보 수정")
+    @ApiOperation(value = "회원 수정", notes = "회원 수정")
     public ResponseEntity edit(@PathVariable("id") @ApiParam(value = "회원 PK", required = true) long id,
-                               @RequestBody Users user, HttpServletRequest request) throws Exception {
+            @RequestBody Users user, HttpServletRequest request) throws Exception {
 
         user.setId(id);
         return ResponseUtil.sendResponse(userService.edit(user, request));

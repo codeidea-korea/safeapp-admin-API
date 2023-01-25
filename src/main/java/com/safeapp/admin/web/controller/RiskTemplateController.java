@@ -32,7 +32,7 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
 
-@RestController
+//@RestController
 @RequestMapping("/template/risk-checklists")
 @Api(tags = {"RiskTemplate"}, description = "위험체크 템플릿", basePath = "/template/risk-checklists")
 public class RiskTemplateController {

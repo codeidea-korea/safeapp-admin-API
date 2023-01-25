@@ -9,6 +9,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,7 @@ import java.util.List;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class RiskTemplateRepositoryImpl implements RIskTemplateRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;

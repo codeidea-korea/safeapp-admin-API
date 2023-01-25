@@ -18,7 +18,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@RestController
+//@RestController
 @RequestMapping("/file")
 @Api(tags = {"File"}, description = "파일 업로드", basePath = "/file")
 public class FileController {

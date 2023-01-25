@@ -13,7 +13,7 @@ import java.util.List;
 
 import static org.hibernate.sql.InFragment.NOT_NULL;
 
-@Schema(description = "체크리스트 수정")
+@Schema(description = "체크리스트 수정 요청")
 @Data
 public class RequestCheckListProjectModifyDTO {
 
@@ -21,7 +21,7 @@ public class RequestCheckListProjectModifyDTO {
     @NotBlank(message = NOT_NULL)
     Long projectId;
 
-    @Schema(description = "회원 ID")
+    @Schema(description = "회원 PK")
     @NotBlank(message = NOT_NULL)
     Long userId;
 
@@ -29,7 +29,7 @@ public class RequestCheckListProjectModifyDTO {
     @NotBlank(message = NOT_NULL)
     String name;
 
-    @Schema(description = "전체공개여부")
+    @Schema(description = "공개 여부")
     @NotBlank(message = NOT_NULL)
     YN visibled;
 
@@ -49,13 +49,10 @@ public class RequestCheckListProjectModifyDTO {
     @NotBlank(message = NOT_NULL)
     Long approverId;
 
-    @Schema(description = "체크시간")
-    LocalDateTime checkAt;
-
-    @Schema(description = "관련사고사례")
+    @Schema(description = "관련 사고사례")
     String relatedAcidNo;
 
-    @Schema(description = "재검토사유")
+    @Schema(description = "재검토 사유")
     String recheckReason;
 
     List<DetailModifyDTO> details = new ArrayList<>();
@@ -71,7 +68,7 @@ public class RequestCheckListProjectModifyDTO {
 
         @Schema(description = "제목 여부")
         @NotBlank(message = NOT_NULL)
-        YN izTitle;
+        YN isDepth;
 
         @Schema(description = "부모 깊이")
         @NotBlank(message = NOT_NULL)

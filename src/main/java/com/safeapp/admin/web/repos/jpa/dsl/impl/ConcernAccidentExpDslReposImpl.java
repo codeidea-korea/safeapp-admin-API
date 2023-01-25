@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
-import com.safeapp.admin.web.model.entity.QChecklistProject;
+import com.safeapp.admin.web.model.entity.QCheckListProject;
 import com.safeapp.admin.web.model.entity.QConcernAccidentExp;
 import com.safeapp.admin.web.repos.jpa.dsl.ConcernAccidentExpDslRepos;
 import com.querydsl.core.types.OrderSpecifier;
@@ -66,17 +66,17 @@ public class ConcernAccidentExpDslReposImpl extends QuerydslRepositorySupport im
     private JPAQuery orderByFromWhere(ConcernAccidentExp instance, QConcernAccidentExp qChecklistProject, JPAQuery query) {
         if(instance.getCreatedAtDescended() == null && instance.getViewsDescended() == null) {
             query.orderBy(new OrderSpecifier(com.querydsl.core.types.Order.DESC,
-                new PathBuilder(QChecklistProject.class, qChecklistProject.id.getMetadata())));
+                new PathBuilder(QCheckListProject.class, qChecklistProject.id.getMetadata())));
         } else {
             if (instance.getCreatedAtDescended() != null) {
                 query.orderBy(new OrderSpecifier(
                     (instance.getCreatedAtDescended() == YN.Y ? com.querydsl.core.types.Order.DESC : com.querydsl.core.types.Order.ASC),
-                    new PathBuilder(QChecklistProject.class, qChecklistProject.createdAt.getMetadata())));
+                    new PathBuilder(QCheckListProject.class, qChecklistProject.createdAt.getMetadata())));
             }
             if (instance.getViewsDescended() != null) {
                 query.orderBy(new OrderSpecifier(
                     (instance.getViewsDescended() == YN.Y ? com.querydsl.core.types.Order.DESC : com.querydsl.core.types.Order.ASC),
-                    new PathBuilder(QChecklistProject.class, qChecklistProject.views.getMetadata())));
+                    new PathBuilder(QCheckListProject.class, qChecklistProject.views.getMetadata())));
             }
         }
 

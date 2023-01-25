@@ -6,16 +6,14 @@ import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 @RestController
+@RequestMapping("/login")
 @Api(tags = {"Login"}, description = "로그인")
 public class LoginController {
 
@@ -26,21 +24,21 @@ public class LoginController {
         this.loginService = loginService;
     }
 
-    @PostMapping(value = "/login")
+    @PostMapping(value = "")
     @ApiOperation(value = "로그인", notes = "로그인")
     public ResponseEntity login(
             @RequestParam(value = "email", defaultValue = "admin1@codeidea.dev") @ApiParam("이메일") String email,
             @RequestParam(value = "password", defaultValue = "admin1_") @ApiParam("비밀번호") String password,
-            HttpServletRequest httpServletRequest) throws Exception {
+            HttpServletRequest request) throws Exception {
 
-        return ResponseUtil.sendResponse(loginService.login(email, password, httpServletRequest));
+        return ResponseUtil.sendResponse(loginService.login(email, password, request));
     }
 
-    @GetMapping(value = "/login/findMe")
+    @GetMapping(value = "/findMe")
     @ApiOperation(value = "로그인된 계정정보 조회", notes = "로그인된 계정정보 조회")
-    public ResponseEntity findMe(HttpServletRequest httpServletRequest) {
+    public ResponseEntity findMe(HttpServletRequest request) {
         
-        return ResponseUtil.sendResponse(loginService.findMe(httpServletRequest));
+        return ResponseUtil.sendResponse(loginService.findMe(request));
     }
 
     /*

@@ -1,9 +1,5 @@
 package com.safeapp.admin.web.model.entity;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.*;
 
 import com.safeapp.admin.web.data.AdminType;
@@ -22,9 +18,9 @@ import static javax.persistence.EnumType.STRING;
 
 @Entity(name = "admins")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @ToString(exclude = "type")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Admins extends BaseTimeEntity {
 
     @Id
@@ -66,7 +62,7 @@ public class Admins extends BaseTimeEntity {
 
     @Builder
     public Admins(long id, String email, String password, String phoneNo, AdminType type,
-                  String adminID, String adminName) {
+            String adminID, String adminName) {
 
         this.id = id;
         this.deleted = YN.N;

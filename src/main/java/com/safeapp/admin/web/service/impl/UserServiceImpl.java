@@ -92,17 +92,17 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
-    public Users toEntity(RequestUserDTO dto) {
+    public Users toEntity(RequestUserDTO addDto) {
         Users user = new Users();
 
-        user.setEmail(dto.getEmail());
-        user.setPassword(dto.getPassword());
-        user.setPhoneNo(dto.getPhoneNo());
-        user.setType(dto.getType());
-        user.setUserId(dto.getUserId());
-        user.setUserName(dto.getUserName());
-        user.setMarketingAllowed(dto.getMarketingAllowed());
-        user.setMarketingAllowedAt(dto.getMarketingAllowedAt());
+        user.setEmail(addDto.getEmail());
+        user.setPassword(addDto.getPassword());
+        user.setPhoneNo(addDto.getPhoneNo());
+        user.setType(addDto.getType());
+        user.setUserId(addDto.getUserId());
+        user.setUserName(addDto.getUserName());
+        user.setMarketingAllowed(addDto.getMarketingAllowed());
+        user.setMarketingAllowedAt(addDto.getMarketingAllowedAt());
 
         return user;
     }
@@ -127,21 +127,19 @@ public class UserServiceImpl implements UserService {
         }
         user.setPassword(passwordUtil.encode(user.getPassword()));
 
-        Users userInfo = userRepos.save(user);
-        if(Objects.isNull(userInfo)) {
+        Users addedUser = userRepos.save(user);
+        if(Objects.isNull(addedUser)) {
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "DB 저장 중 오류가 발생하였습니다.");
         }
 
-        return userInfo;
+        return addedUser;
     }
 
     @Override
     public Users find(long id, HttpServletRequest request) throws Exception {
-        Users oldUser = userRepos.findById(id).orElse(null);
-        //if(Objects.isNull(oldUser) || oldUser.getType() != UserType.ADMIN) {
-        if(Objects.isNull(oldUser)) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다.");
-        }
+        Users oldUser =
+            userRepos.findById(id)
+            .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
 
         return oldUser;
     }
@@ -149,10 +147,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public Users editPassword(String userId, String newPass1, String newPass2,
-                              HttpServletRequest request) throws Exception {
+            HttpServletRequest request) throws Exception {
 
-        Users userInfo = userRepos.findByUserId(userId);
-        if(userInfo == null) {
+        Users oldUser = userRepos.findByUserId(userId);
+        if(oldUser == null) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다.");
         }
 
@@ -160,34 +158,34 @@ public class UserServiceImpl implements UserService {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "두 비밀번호가 일치하지 않습니다.");
         }
         String newPass = passwordUtil.encode(newPass1);
-        userInfo.setPassword(newPass);
+        oldUser.setPassword(newPass);
 
-        return userRepos.save(userInfo);
+        Users newUser = userRepos.save(oldUser);
+        return newUser;
     }
 
     @Transactional
     @Override
     public Users edit(Users user, HttpServletRequest request) throws Exception {
-        Users userInfo = userRepos.findByUserId(user.getUserId());
-        if(Objects.isNull(userInfo)) {
+        Users oldUser = userRepos.findByUserId(user.getUserId());
+        if(Objects.isNull(oldUser)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다.");
         }
 
-        user.setPassword(passwordUtil.encode(user.getPassword()));
-        user = userRepos.save(user);
+        oldUser.setPassword(passwordUtil.encode(oldUser.getPassword()));
 
-        return user;
+        Users newUser = userRepos.save(oldUser);
+        return newUser;
     }
 
     @Override
     public void remove(long id, HttpServletRequest request) {
-        Users userInfo = userRepos.findById(id).orElse(null);
-        if(Objects.isNull(userInfo)) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다.");
-        }
+        Users user =
+            userRepos.findById(id)
+            .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
 
-        userInfo.setDeleted(YN.Y);
-        userRepos.save(userInfo);
+        user.setDeleted(YN.Y);
+        userRepos.save(user);
     }
 
     @Override

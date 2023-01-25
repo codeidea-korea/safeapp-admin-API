@@ -1,24 +1,25 @@
 package com.safeapp.admin.web.dto.response;
 
 import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.model.entity.ChecklistTemplateDetail;
+import com.safeapp.admin.web.model.entity.CheckListTemplateDetail;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
-@Schema(description = "체크리스트 상세")
+@Schema(description = "체크리스트 템플릿 상세 응답")
+@Data
 public class ResponseCheckListTemplateDetailDTO {
-    @Schema(description = "고유 아이디")
+
+    @Schema(description = "체크리스트 템플릿 상세 PK")
     Long id;
 
     @Schema(description = "깊이")
     int depth;
 
-    @Schema(description = "제목여부")
-    YN izTitle;
+    @Schema(description = "제목 여부")
+    YN isDepth;
 
     @Schema(description = "부모 깊이")
     int parentDepth;
@@ -36,14 +37,15 @@ public class ResponseCheckListTemplateDetailDTO {
     String types;
 
     @Builder
-    public ResponseCheckListTemplateDetailDTO(ChecklistTemplateDetail detail) {
+    public ResponseCheckListTemplateDetailDTO(CheckListTemplateDetail detail) {
         this.id = detail.getId();
         this.depth = detail.getDepth();
-        this.izTitle = detail.getIzTitle();
+        this.isDepth = detail.getIsDepth();
         this.parentDepth = detail.getParentDepth();
         this.contents = detail.getContents();
         this.orders = detail.getOrders();
         this.parentOrders = detail.getParentOrders();
         this.types = detail.getTypes();
     }
+
 }

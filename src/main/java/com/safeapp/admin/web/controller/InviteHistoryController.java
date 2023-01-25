@@ -27,7 +27,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@RestController
+//@RestController
 @RequestMapping("/invite")
 @Api(tags = {"InviteHistory"}, description = "초대", basePath = "/invite")
 public class InviteHistoryController {

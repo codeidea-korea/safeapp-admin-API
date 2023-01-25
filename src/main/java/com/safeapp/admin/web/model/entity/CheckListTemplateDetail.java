@@ -12,24 +12,25 @@ import lombok.NoArgsConstructor;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity(name = "checklist_template_details")
-@AllArgsConstructor
 @Data
 @NoArgsConstructor
-public class ChecklistTemplateDetail {
+@AllArgsConstructor
+public class CheckListTemplateDetail {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "checklist_template", columnDefinition = "bigint COMMENT '체크리스트 템플릿'")
-    private ChecklistTemplate checklistTemplate;
+    @JoinColumn(name = "checklist_template")
+    private CheckListTemplate checkListTemplate;
 
     @Column(name = "depth")
     private int depth;
 
-    @Column(name = "is_depth", nullable = false)
-    private YN izTitle;
+    @Column(name = "is_depth")
+    private YN isDepth;
 
     @Column(name = "parent_depth")
     private int parentDepth;
@@ -46,14 +47,15 @@ public class ChecklistTemplateDetail {
     @Column(name = "parent_orders")
     private int parentOrders;
 
-
     @Builder
-    public ChecklistTemplateDetail(long id, long templateId, int depth, YN izTitle, int parentDepth, String contents,
-        int orders, String types, int parentOrders) {
+    public CheckListTemplateDetail(long id, int depth, YN isDepth, int parentDepth, String contents,
+                                   int orders, String types, int parentOrders) {
+
         super();
+
         this.id = id;
         this.depth = depth;
-        this.izTitle = izTitle;
+        this.isDepth = isDepth;
         this.parentDepth = parentDepth;
         this.contents = contents;
         this.orders = orders;

@@ -31,7 +31,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@RestController
+//@RestController
 @RequestMapping("/messages/user-notices")
 @Api(tags = {"Messages"}, description = "알림", basePath = "/messages/user-notices")
 public class MessagesController {

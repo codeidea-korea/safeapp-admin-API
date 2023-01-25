@@ -20,8 +20,7 @@ public interface CheckListProjectService extends CRUDService<CheckListProject> {
 
     CheckListProject toEntityModify(RequestCheckListProjectModifyDTO modifyDto) throws NotFoundException;
 
-    List<ResponseCheckListProjectDTO> findAllByCondition(
-        String tag, YN visibled, YN created_at_descended,
+    List<ResponseCheckListProjectDTO> findAllByCondition(String tag, YN visibled, YN created_at_descended,
         YN views_descended, YN likes_descended, Pageable pageable, HttpServletRequest request);
 
 }

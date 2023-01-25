@@ -17,7 +17,7 @@ import com.safeapp.admin.web.service.cmmn.ImportService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Controller
+//@Controller
 @Api(tags = {"Order"}, description = "주문", basePath = "/orders")
 public class OrderController {
 

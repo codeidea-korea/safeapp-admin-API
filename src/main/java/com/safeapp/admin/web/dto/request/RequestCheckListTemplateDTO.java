@@ -2,6 +2,7 @@ package com.safeapp.admin.web.dto.request;
 
 import com.safeapp.admin.web.data.YN;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.NotBlank;
@@ -10,23 +11,23 @@ import java.time.LocalDateTime;
 
 import static org.hibernate.sql.InFragment.NOT_NULL;
 
-@Getter
-@Setter
-@Schema(description = "체크리스트 템플릿")
+@Schema(description = "체크리스트 템플릿 요청")
+@Data
 public class RequestCheckListTemplateDTO {
-    @Schema(description = "프로젝트 ID")
+
+    @Schema(description = "프로젝트 PK")
     @NotBlank(message = NOT_NULL)
     Long projectId;
 
-    @Schema(description = "유저ID")
+    @Schema(description = "유저 PK")
     @NotBlank(message = NOT_NULL)
     Long userId;
 
-    @Schema(description = "체크리스트 이름")
+    @Schema(description = "제목")
     @NotBlank(message = NOT_NULL)
     String name;
 
-    @Schema(description = "전체공개여부")
+    @Schema(description = "공개 여부")
     @NotBlank(message = NOT_NULL)
     YN visibled;
 
@@ -34,23 +35,19 @@ public class RequestCheckListTemplateDTO {
     @NotBlank(message = NOT_NULL)
     String tag;
 
-    @Schema(description = "체커ID")
+    @Schema(description = "점검자 ID")
     Long checkerId;
 
-    @Schema(description = "리뷰자ID")
+    @Schema(description = "검토자 ID")
     Long reviewerId;
 
-    @Schema(description = "승인자ID")
+    @Schema(description = "승인자 ID")
     Long approverId;
 
-    @Schema(description = "체크시간")
-    LocalDateTime checkAt;
-
-    @Schema(description = "관련번호?(이거 뭔지 좀 알려주세요.)")
+    @Schema(description = "관련 사고사례")
     String relatedAcidNo;
 
-    @Schema(description = "재확인사유")
+    @Schema(description = "재검토 사유")
     String recheckReason;
-
 
 }

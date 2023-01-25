@@ -11,12 +11,12 @@ public interface CRUDService<T> {
 
     T find(long id, HttpServletRequest request) throws Exception;
 
+    T generate(T obj);
+
     T edit(T obj, HttpServletRequest request) throws Exception;
 
     void remove(long id, HttpServletRequest request) throws Exception;
 
     ListResponse<T> findAll(T obj, Pages pages, HttpServletRequest request) throws Exception;
-
-    T generate(T obj);
 
 }

@@ -100,7 +100,7 @@ public class CheckListProject extends BaseTimeEntity {
     @JsonManagedReference
     private List<CheckListProjectDetail> checkListProjectDetailList = new ArrayList<>();
 
-    public void modify(CheckListProject checkListProject) {
+    public void edit(CheckListProject checkListProject) {
         setApprover(checkListProject.getApprover());
         setCheckAt(checkListProject.getCheckAt());
         setChecker(checkListProject.getChecker());

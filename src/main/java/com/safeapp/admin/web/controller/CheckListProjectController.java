@@ -9,6 +9,7 @@ import com.safeapp.admin.web.dto.response.ResponseCheckListProjectDTO;
 import com.safeapp.admin.web.dto.response.ResponseCheckListProjectSelectDTO;
 import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.data.YN;
+import com.safeapp.admin.web.dto.response.ResponseCheckListTemplateDTO;
 import com.safeapp.admin.web.model.entity.CheckListProject;
 import com.safeapp.admin.web.model.entity.Users;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -39,7 +40,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/checkList")
 @AllArgsConstructor
-@Api(tags = {"CheckListProject"}, description = "체크리스트 관리")
+@Api(tags = {"CheckListProject"}, description = "체크리스트")
 public class CheckListProjectController {
 
     private final CheckListProjectService checkListProjectService;
@@ -47,14 +48,14 @@ public class CheckListProjectController {
     @PostMapping(value = "/add")
     @ApiOperation(value = "체크리스트 등록", notes = "체크리스트 등록")
     public ResponseEntity<ResponseCheckListProjectDTO> add(@RequestBody RequestCheckListProjectDTO addDto,
-                                                           HttpServletRequest request) throws Exception {
+            HttpServletRequest request) throws Exception {
 
-        CheckListProject chkPrj = checkListProjectService.toEntity(addDto);
-        return ResponseUtil.sendResponse(checkListProjectService.add(chkPrj, request));
+        CheckListProject addedChkPrj = checkListProjectService.add(checkListProjectService.toEntity(addDto), request);
+        return new ResponseEntity<>(ResponseCheckListProjectDTO.builder().checkListProject(addedChkPrj).build(), OK);
     }
 
     @GetMapping(value = "/find/{id}")
-    @ApiOperation(value = "체크리스트 확인", notes = "체크리스트 확인")
+    @ApiOperation(value = "체크리스트 단독 조회", notes = "체크리스트 단독 조회")
     public ResponseEntity<ResponseCheckListProjectSelectDTO> find(@PathVariable("id") @ApiParam(value = "체크리스트 PK", required = true) long id,
             HttpServletRequest request) throws Exception {
 
@@ -67,11 +68,11 @@ public class CheckListProjectController {
     public ResponseEntity<ResponseCheckListProjectDTO> edit(@PathVariable("id") @ApiParam(value = "체크리스트 PK", required = true) long id,
             @RequestBody RequestCheckListProjectModifyDTO modifyDto, HttpServletRequest request) throws Exception {
 
-        CheckListProject chkPrjInfo = checkListProjectService.toEntityModify(modifyDto);
-        chkPrjInfo.setId(id);
+        CheckListProject chkPrj = checkListProjectService.toEntityModify(modifyDto);
+        chkPrj.setId(id);
 
-        CheckListProject chkPrj = checkListProjectService.edit(chkPrjInfo, request);
-        return new ResponseEntity<>(ResponseCheckListProjectDTO.builder().checkListProject(chkPrj).build(), OK);
+        CheckListProject editedChkPrj = checkListProjectService.edit(chkPrj, request);
+        return new ResponseEntity<>(ResponseCheckListProjectDTO.builder().checkListProject(editedChkPrj).build(), OK);
     }
 
     @DeleteMapping(value = "/remove/{id}")
@@ -94,10 +95,8 @@ public class CheckListProjectController {
         Pageable pageable, HttpServletRequest request) throws Exception {
 
         return
-            new ResponseEntity<>(
-                checkListProjectService.findAllByCondition(tag, visibled, created_at_descended,
-                views_descended, likes_descended, pageable, request)
-            , OK);
+            new ResponseEntity<>(checkListProjectService.findAllByCondition(tag, visibled, created_at_descended,
+                views_descended, likes_descended, pageable, request), OK);
     }
 
 }

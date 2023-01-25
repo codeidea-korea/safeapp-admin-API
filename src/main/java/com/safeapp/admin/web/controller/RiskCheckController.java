@@ -34,7 +34,7 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
 
-@RestController
+//@RestController
 @RequestMapping("/check")
 @AllArgsConstructor
 @Api(tags = {"RiskCheck"}, description = "위험체크", basePath = "/check")

@@ -13,6 +13,7 @@ import com.safeapp.admin.web.model.entity.Admins;
 import com.safeapp.admin.web.repos.jpa.AdminRepos;
 import com.safeapp.admin.web.repos.jpa.SmsAuthHistoryRepos;
 import com.safeapp.admin.web.service.LoginService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import com.safeapp.admin.web.service.cmmn.DirectSendAPIService;
 import com.safeapp.admin.web.service.cmmn.JwtService;
 
 @Service
+@AllArgsConstructor
 @Slf4j
 public class LoginServiceImpl implements LoginService {
 
@@ -33,18 +35,6 @@ public class LoginServiceImpl implements LoginService {
     private final JwtService jwtService;
     private final SmsAuthHistoryRepos smsAuthHistoryRepos;
     private final DirectSendAPIService directSendAPIService;
-
-    @Autowired
-    public LoginServiceImpl(AdminRepos adminRepos, PasswordUtil passwordUtil, DateUtil dateUtil, JwtService jwtService,
-            SmsAuthHistoryRepos smsAuthHistoryRepos, DirectSendAPIService directSendAPIService) {
-
-        this.adminRepos = adminRepos;
-        this.passwordUtil = passwordUtil;
-        this.dateUtil = dateUtil;
-        this.jwtService = jwtService;
-        this.smsAuthHistoryRepos = smsAuthHistoryRepos;
-        this.directSendAPIService = directSendAPIService;
-    }
 
     public Token login(String email, String password, HttpServletRequest request) throws Exception {
         Admins adminInfo = adminRepos.findByEmail(email);

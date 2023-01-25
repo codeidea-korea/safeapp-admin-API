@@ -2,26 +2,26 @@ package com.safeapp.admin.web.dto.request;
 
 import com.safeapp.admin.web.data.YN;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.NotBlank;
 
 import static org.hibernate.sql.InFragment.NOT_NULL;
 
-@Getter
-@Setter
-@Schema(description = "체크리스트 템플릿 상세")
+@Schema(description = "체크리스트 템플릿 상세 요청")
+@Data
 public class RequestCheckListTemplateDetailDTO {
 
     @Schema(description = "깊이")
     @NotBlank(message = NOT_NULL)
     int depth;
 
-    @Schema(description = "제목여부")
+    @Schema(description = "제목 여부")
     @NotBlank(message = NOT_NULL)
-    YN izTitle;
+    YN isDepth;
 
-    @Schema(description = "부모깊이")
+    @Schema(description = "부모 깊이")
     @NotBlank(message = NOT_NULL)
     int parentDepth;
 
@@ -40,4 +40,5 @@ public class RequestCheckListTemplateDetailDTO {
     @Schema(description = "타입")
     @NotBlank(message = NOT_NULL)
     String types;
+
 }

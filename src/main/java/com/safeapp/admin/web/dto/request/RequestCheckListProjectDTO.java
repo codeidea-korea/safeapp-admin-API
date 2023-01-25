@@ -17,7 +17,7 @@ public class RequestCheckListProjectDTO {
     @NotBlank(message = NOT_NULL)
     Long projectId;
 
-    @Schema(description = "회원 ID")
+    @Schema(description = "회원 PK")
     @NotBlank(message = NOT_NULL)
     Long userId;
 
@@ -25,7 +25,7 @@ public class RequestCheckListProjectDTO {
     @NotBlank(message = NOT_NULL)
     String name;
 
-    @Schema(description = "전체공개여부")
+    @Schema(description = "공개 여부")
     @NotBlank(message = NOT_NULL)
     YN visibled;
 
@@ -42,10 +42,10 @@ public class RequestCheckListProjectDTO {
     @Schema(description = "승인자 ID")
     Long approverId = null;
 
-    @Schema(description = "관련사고사례")
+    @Schema(description = "관련 사고사례")
     String relatedAcidNo;
 
-    @Schema(description = "재검토사유")
+    @Schema(description = "재검토 사유")
     String recheckReason;
 
 }

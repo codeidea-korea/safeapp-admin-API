@@ -16,8 +16,7 @@ public enum UserType implements GrantedAuthority {
     PERSONAL("Personal 회원", 111),
     TEAM_USER("Team 회원(그룹 구성원)", 121), 
     TEAM_MANAGER("Team 회원(그룹 관리자)", 122),
-    TEAM_MASTER("Team 회원(그룹 마스터관리자 = 결제자)", 129),
-	ADMIN("관리자", 201);
+    TEAM_MASTER("Team 회원(그룹 마스터관리자 = 결제자)", 129);
 	
 	private final String description;
     private final int code;
@@ -30,17 +29,6 @@ public enum UserType implements GrantedAuthority {
     @Override
     public String getAuthority() {
         return description;
-    }
-    
-    public Collection<GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        for(UserType type : UserType.values()) {
-            if(type.code < this.code) {
-                authorities.add(new SimpleGrantedAuthority(description));
-            }
-        }
-
-        return authorities;
     }
 
 }

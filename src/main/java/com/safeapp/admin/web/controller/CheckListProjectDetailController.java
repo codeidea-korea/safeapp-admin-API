@@ -35,15 +35,15 @@ public class CheckListProjectDetailController {
     public ResponseEntity<ResponseCheckListProjectDetailDTO> add(@PathVariable("id") @ApiParam(value = "체크리스트 PK", readOnly = true) long id,
             @RequestBody RequestCheckListProjectDetailDTO addDto, HttpServletRequest request) throws Exception {
 
-        CheckListProjectDetail chkPrjDetInfo = checkListProjectDetailService.toEntity(addDto);
-        chkPrjDetInfo.setCheckListProject(checkListProjectService.find(id, request));
+        CheckListProjectDetail chkPrjDet = checkListProjectDetailService.toEntity(addDto);
+        chkPrjDet.setCheckListProject(checkListProjectService.find(id, request));
 
-        CheckListProjectDetail chkPrjDet = checkListProjectDetailService.add(chkPrjDetInfo, request);
-        return new ResponseEntity<>(ResponseCheckListProjectDetailDTO.builder().detail(chkPrjDet).build(), OK);
+        CheckListProjectDetail addedChkPrjDet = checkListProjectDetailService.add(chkPrjDet, request);
+        return new ResponseEntity<>(ResponseCheckListProjectDetailDTO.builder().detail(addedChkPrjDet).build(), OK);
     }
 
     @GetMapping(value = "/find/{id}")
-    @ApiOperation(value = "체크리스트 상세 확인", notes = "체크리스트 상세 확인")
+    @ApiOperation(value = "체크리스트 상세 단독 조회", notes = "체크리스트 상세 단독 조회")
     public ResponseEntity<ResponseCheckListProjectDetailDTO> find(@PathVariable("id") @ApiParam(value = "체크리스트 상세 PK", required = true) long id,
             HttpServletRequest request) throws Exception {
 
@@ -56,11 +56,11 @@ public class CheckListProjectDetailController {
     public ResponseEntity<ResponseCheckListProjectDetailDTO> edit(@PathVariable("id") @ApiParam(value = "체크리스트 상세 PK", required = true) long id,
             @RequestBody RequestCheckListProjectDetailDTO modifyDto, HttpServletRequest request) throws Exception {
 
-        CheckListProjectDetail chkPrjDetInfo = checkListProjectDetailService.toEntity(modifyDto);
-        chkPrjDetInfo.setId(id);
+        CheckListProjectDetail chkPrjDet = checkListProjectDetailService.toEntity(modifyDto);
+        chkPrjDet.setId(id);
 
-        CheckListProjectDetail chkPrjDet =  checkListProjectDetailService.edit(chkPrjDetInfo, request);
-        return new ResponseEntity<>(ResponseCheckListProjectDetailDTO.builder().detail(chkPrjDet).build(), OK);
+        CheckListProjectDetail editedChkPrjDet =  checkListProjectDetailService.edit(chkPrjDet, request);
+        return new ResponseEntity<>(ResponseCheckListProjectDetailDTO.builder().detail(editedChkPrjDet).build(), OK);
     }
 
     @DeleteMapping(value = "/remove/{id}")
@@ -73,7 +73,7 @@ public class CheckListProjectDetailController {
     }
 
     @GetMapping(value = "/list")
-    @ApiOperation(value = "체크리스트 상세 목록", notes = "체크리스트 상세 목록")
+    @ApiOperation(value = "체크리스트 상세 목록 조회", notes = "체크리스트 상세 목록 조회")
     public ListResponse findAll(Pages pages, HttpServletRequest request) throws Exception {
 
         return checkListProjectDetailService.findAll(CheckListProjectDetail.builder().build(), pages, request);

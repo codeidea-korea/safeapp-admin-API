@@ -52,10 +52,6 @@ public class CheckListProjectDetail {
     @JsonManagedReference
     private CheckListProject checkListProject;
 
-    // 자식 테이블 매핑
-    @OneToMany(mappedBy = "checkListProjectDetail")
-    private List<CheckListProjectResult> checklistProjectResultList = new ArrayList<>();
-
     @Builder
     public CheckListProjectDetail(Long id, Integer depth, YN isDepth, Integer parentDepth, String contents,
                                   Integer orders, Integer parentOrders, String types) {
@@ -70,17 +66,6 @@ public class CheckListProjectDetail {
         this.orders = orders;
         this.parentOrders = parentOrders;
         this.types = types;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        CheckListProjectDetail chkPrjDet = (CheckListProjectDetail)object;
-
-        if(chkPrjDet.id == this.id) {
-            return true;
-        }
-
-        return false;
     }
 
 }

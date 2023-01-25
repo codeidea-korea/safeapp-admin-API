@@ -17,8 +17,8 @@ import java.util.Objects;
 
 public interface LoginService {
 
-    Token login(String email, String password, HttpServletRequest httpServletRequest) throws Exception;
+    Token login(String email, String password, HttpServletRequest request) throws Exception;
 
-    Admins findMe(HttpServletRequest httpServletRequest);
+    Admins findMe(HttpServletRequest request);
 
 }

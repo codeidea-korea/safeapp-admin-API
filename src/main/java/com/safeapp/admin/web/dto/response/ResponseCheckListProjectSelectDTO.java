@@ -3,7 +3,7 @@ package com.safeapp.admin.web.dto.response;
 import com.safeapp.admin.web.data.StatusType;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.entity.CheckListProject;
-import com.safeapp.admin.web.model.entity.ChecklistProjectDetail;
+import com.safeapp.admin.web.model.entity.CheckListProjectDetail;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Schema(description = "체크리스트 정보 확인")
+@Schema(description = "체크리스트 정보 확인 응답")
 @Data
 public class ResponseCheckListProjectSelectDTO {
 
@@ -39,7 +39,7 @@ public class ResponseCheckListProjectSelectDTO {
     @Schema(description = "좋아요 수")
     Integer likeCount;
 
-    @Schema(description = "관련사고사례")
+    @Schema(description = "관련 사고사례")
     String relatedAcidNo;
 
     @Schema(description = "태그")
@@ -63,10 +63,10 @@ public class ResponseCheckListProjectSelectDTO {
     @Schema(description = "승인자 이름")
     String approverName;
 
-    @Schema(description = "재검토사유")
+    @Schema(description = "재검토 사유")
     String recheckReason;
 
-    @Schema(description = "체크시간")
+    @Schema(description = "점검시간")
     LocalDateTime checkAt;
 
     @Schema(description = "검토시간")
@@ -113,13 +113,13 @@ public class ResponseCheckListProjectSelectDTO {
             this.approverName = checkListProject.getApprover().getUserName();
         }
 
-        if(checkListProject.getChecklistProjectDetailList().isEmpty() == false) {
-            for(ChecklistProjectDetail detail : checkListProject.getChecklistProjectDetailList()) {
+        if(checkListProject.getCheckListProjectDetailList().isEmpty() == false) {
+            for(CheckListProjectDetail detail : checkListProject.getCheckListProjectDetailList()) {
                 ResponseCheckListProjectDetailDTO chkPrjDetDto =
-                        ResponseCheckListProjectDetailDTO
-                        .builder()
-                        .detail(detail)
-                        .build();
+                    ResponseCheckListProjectDetailDTO
+                    .builder()
+                    .detail(detail)
+                    .build();
 
                 details.add(chkPrjDetDto);
             }

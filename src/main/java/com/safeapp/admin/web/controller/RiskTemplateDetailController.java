@@ -26,7 +26,7 @@ import io.swagger.annotations.ApiParam;
 
 import static org.springframework.http.HttpStatus.OK;
 
-@RestController
+//@RestController
 @RequestMapping("/api/riskTemplateDetail")
 @Api(tags = {"RiskTemplateDetail"}, description = "위험체크 템플릿 상세", basePath = "/api/riskTemplateDetail")
 public class RiskTemplateDetailController {

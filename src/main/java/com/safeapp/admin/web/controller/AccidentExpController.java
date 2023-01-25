@@ -9,6 +9,7 @@ import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.AccidentExp;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,9 +28,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@RestController
+//@RestController
 @RequestMapping("/board/accidents")
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Api(tags = {"AccidentExp"}, description = "사고 사례", basePath = "/board/accidents")
 public class AccidentExpController {
 

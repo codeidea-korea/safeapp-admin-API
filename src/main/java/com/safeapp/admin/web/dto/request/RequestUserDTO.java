@@ -1,6 +1,5 @@
 package com.safeapp.admin.web.dto.request;
 
-import com.safeapp.admin.web.data.SNSType;
 import com.safeapp.admin.web.data.UserType;
 import com.safeapp.admin.web.data.YN;
 import io.swagger.v3.oas.annotations.media.Schema;

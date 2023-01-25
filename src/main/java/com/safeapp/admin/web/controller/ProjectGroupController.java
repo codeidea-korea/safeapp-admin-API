@@ -32,7 +32,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/project/group")
 @AllArgsConstructor
-@Api(tags = {"ProjectGroup"}, description = "프로젝트 그룹원 관리")
+@Api(tags = {"ProjectGroup"}, description = "프로젝트 그룹원")
 public class ProjectGroupController {
 
     private final ProjectGroupService projectGroupService;

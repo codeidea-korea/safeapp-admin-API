@@ -8,14 +8,14 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
-@Getter
-public class ChecklistAndRisk {
+@Data
+public class CheckListAndRisk {
     
-    private long id;
+    private Long id;
     
     private String name;
     
@@ -24,11 +24,12 @@ public class ChecklistAndRisk {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createdAt;
     
-    private long userId;
+    private Long userId;
     
     private String userEmailId;
     
     private String userName;
     
     private String type;
+
 }

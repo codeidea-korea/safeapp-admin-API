@@ -26,7 +26,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/project")
 @AllArgsConstructor
-@Api(tags = {"Project"}, description = "프로젝트 관리")
+@Api(tags = {"Project"}, description = "프로젝트")
 public class ProjectController {
 
     private final ProjectService projectService;

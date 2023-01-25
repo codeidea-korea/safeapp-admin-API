@@ -15,7 +15,7 @@ import static javax.persistence.FetchType.LAZY;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChecklistTemplate extends BaseTimeEntity {
+public class CheckListTemplate extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,31 +63,33 @@ public class ChecklistTemplate extends BaseTimeEntity {
     @Transient
     private YN liked;
 
-    //자식테이블 맵핑
-    @OneToMany(mappedBy = "checklistTemplate")
-    private List<ChecklistTemplateDetail> details = new ArrayList<>();
+    // 자식 테이블 맵핑
+    @OneToMany(mappedBy = "checkListTemplate")
+    private List<CheckListTemplateDetail> details = new ArrayList<>();
 
     @Builder
-    public ChecklistTemplate(Long id, Project project,  Users user, String name,
-         String tag, String relatedAcidNo,
-         Users checker, Users reviewer,  Users approver,
-        List<ChecklistTemplateDetail> details) {
+    public CheckListTemplate(Long id, Project project,  Users user, String name, String tag, String relatedAcidNo,
+            Users checker, Users reviewer,  Users approver, List<CheckListTemplateDetail> details) {
+
         super();
+
         this.id = id;
         this.project = project;
         this.user = user;
         this.name = name;
         this.tag = tag;
         this.relatedAcidNo = relatedAcidNo;
-        if(checker != null){
+
+        if(checker != null) {
             this.checker = checker;
         }
-        if(reviewer != null){
+        if(reviewer != null) {
             this.reviewer = reviewer;
         }
-        if(approver != null){
+        if(approver != null) {
             this.approver = approver;
         }
+
         this.details = details;
     }
 

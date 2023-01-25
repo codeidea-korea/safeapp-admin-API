@@ -24,8 +24,8 @@ public interface UserService extends CRUDService<Users> {
 
     boolean isCorrectSMSCode(String phoneNo, String authNo) throws Exception;
 
-    Users editPassword(String userId, String newPass1, String newPass2, HttpServletRequest httpServletRequest) throws Exception;
-
     Users toEntity (RequestUserDTO dto);
+
+    Users editPassword(String userId, String newPass1, String newPass2, HttpServletRequest httpServletRequest) throws Exception;
 
 }
