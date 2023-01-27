@@ -35,32 +35,12 @@ public class UsersDslReposImpl extends QuerydslRepositorySupport implements User
         JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
         JPAQuery query = jpaQueryFactory.selectFrom(qUsers);
 
-        if(!StringUtil.isNullOrEmpty(users.getPhoneNo())) {
-            query.where(qUsers.phoneNo.like(users.getPhoneNo()));
-        }
-        if(!StringUtil.isNullOrEmpty(users.getEmail())) {
-            query.where(qUsers.email.like(users.getEmail()));
-        }
-        if(!StringUtil.isNullOrEmpty(users.getUserName())) {
+        if(!StringUtil.isNullOrEmpty(users.getUserId())) {
+            query.where(qUsers.userId.like(users.getUserId()));
+        } else if(!StringUtil.isNullOrEmpty(users.getUserName())) {
             query.where(qUsers.userName.like(users.getUserName()));
-        }
-        if(users.getDeleted() != null) {
-            query.where(qUsers.deleted.eq(users.getDeleted()));
-        }
-        if(users.getMarketingAllowed() != null) {
-            query.where(qUsers.marketingAllowed.eq(users.getMarketingAllowed()));
-        }
-        if(users.getMessageAllowed() != null) {
-            query.where(qUsers.messageAllowed.eq(users.getMessageAllowed()));
-        }
-        if(users.getSnsAllowed() != null) {
-            query.where(qUsers.snsAllowed.eq(users.getSnsAllowed()));
-        }
-        if(users.getType() != null) {
-            query.where(qUsers.type.eq(users.getType()));
-        }
-        if(users.getId() > 0) {
-            query.where(qUsers.id.eq(users.getId()));
+        } else if(!StringUtil.isNullOrEmpty(users.getPhoneNo())) {
+            query.where(qUsers.phoneNo.like(users.getPhoneNo()));
         }
 
         return query;

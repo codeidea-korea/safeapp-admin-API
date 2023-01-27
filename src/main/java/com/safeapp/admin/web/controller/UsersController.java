@@ -2,11 +2,15 @@ package com.safeapp.admin.web.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.safeapp.admin.web.dto.request.RequestUserDTO;
+import com.safeapp.admin.web.dto.request.RequestUsersDTO;
 import com.safeapp.admin.utils.ResponseUtil;
+import com.safeapp.admin.web.dto.request.RequestUsersModifyDTO;
+import com.safeapp.admin.web.dto.response.ResponseCheckListProjectDTO;
+import com.safeapp.admin.web.dto.response.ResponseCheckListProjectSelectDTO;
 import com.safeapp.admin.web.dto.response.ResponseUsersDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
+import com.safeapp.admin.web.model.entity.CheckListProject;
 import com.safeapp.admin.web.model.entity.Users;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +25,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/user")
@@ -54,17 +60,18 @@ public class UsersController {
 
     @PostMapping(value = "/add")
     @ApiOperation(value = "회원 등록", notes = "회원 등록")
-    public ResponseEntity add(@RequestBody RequestUserDTO userDTO, HttpServletRequest request) throws Exception {
-        Users user = userService.toEntity(userDTO);
-        return ResponseUtil.sendResponse(userService.add(user, request));
+    public ResponseEntity<ResponseUsersDTO> add(@RequestBody RequestUsersDTO addDto, HttpServletRequest request) throws Exception {
+        Users addedUser = userService.add(userService.toEntity(addDto), request);
+        return new ResponseEntity<>(ResponseUsersDTO.builder().user(addedUser).build(), OK);
     }
 
     @GetMapping(value = "/find/{id}")
     @ApiOperation(value = "회원 단독 조회", notes = "회원 단독 조회")
-    public ResponseEntity<Users> find(@PathVariable("id") @ApiParam(value = "회원 PK", required = true) long id,
+    public ResponseEntity<ResponseUsersDTO> find(@PathVariable("id") @ApiParam(value = "회원 PK", required = true) long id,
             HttpServletRequest request) throws Exception {
 
-        return ResponseUtil.sendResponse(userService.find(id, request));
+        Users oldUser = userService.find(id, request);
+        return new ResponseEntity<>(ResponseUsersDTO.builder().user(oldUser).build(), OK);
     }
 
     @PatchMapping(value = "/editPass")
@@ -81,17 +88,20 @@ public class UsersController {
 
     @PutMapping(value = "/edit")
     @ApiOperation(value = "회원 수정", notes = "회원 수정")
-    public ResponseEntity edit(@PathVariable("id") @ApiParam(value = "회원 PK", required = true) long id,
-            @RequestBody Users user, HttpServletRequest request) throws Exception {
+    public ResponseEntity<ResponseUsersDTO> edit(@PathVariable("id") @ApiParam(value = "회원 PK", required = true) long id,
+            @RequestBody RequestUsersModifyDTO modifyDto, HttpServletRequest request) throws Exception {
 
+        Users user = userService.toEntityModify(modifyDto);
         user.setId(id);
-        return ResponseUtil.sendResponse(userService.edit(user, request));
+
+        Users editedUser = userService.edit(user, request);
+        return new ResponseEntity<>(ResponseUsersDTO.builder().user(editedUser).build(), OK);
     }
 
     @DeleteMapping(value = "/remove/{id}")
     @ApiOperation(value = "회원 삭제", notes = "회원 삭제")
     public ResponseEntity remove(@PathVariable("id") @ApiParam("회원 PK") long id,
-                                 HttpServletRequest request) throws Exception {
+            HttpServletRequest request) throws Exception {
 
         userService.remove(id, request);
         return ResponseUtil.sendResponse(null);
@@ -102,19 +112,21 @@ public class UsersController {
     public ResponseEntity<ListResponse> findAll(
             @RequestParam(value = "userId", required = false, defaultValue = "") String userId,
             @RequestParam(value = "userName", required = false, defaultValue = "") String userName,
-            @RequestParam(value = "email", required = false, defaultValue = "") String email,
-            Pages pages, HttpServletRequest request) throws Exception {
+            @RequestParam(value = "phoneNo", required = false, defaultValue = "") String phoneNo,
+            @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            HttpServletRequest request) throws Exception {
 
+        Pages pages = new Pages(pageNo, pageSize);
         return
-                ResponseUtil.sendResponse(
-                userService.findAll(
-                    Users.builder()
-                        .userId("%" + userId + "%")
-                        .userName("%" + userName + "%")
-                        .email("%" + email + "%")
-                        .build(),
-                    pages,
-                    request));
+            ResponseUtil.sendResponse(
+            userService.findAll(
+                Users.builder()
+                .userId("%" + userId + "%")
+                .userName("%" + userName + "%")
+                .phoneNo("%" + phoneNo + "%")
+                .build(),
+            pages, request));
     }
 
 }

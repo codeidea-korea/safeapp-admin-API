@@ -40,7 +40,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/checkList")
 @AllArgsConstructor
-@Api(tags = {"CheckListProject"}, description = "체크리스트")
+@Api(tags = {"CheckListProject"}, description = "체크리스트 관리")
 public class CheckListProjectController {
 
     private final CheckListProjectService checkListProjectService;

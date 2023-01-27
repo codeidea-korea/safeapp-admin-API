@@ -13,6 +13,7 @@ import com.safeapp.admin.web.dto.response.ResponseCheckListProjectDTO;
 import com.safeapp.admin.web.model.entity.CheckListProject;
 import com.safeapp.admin.web.model.entity.CheckListProjectDetail;
 import com.safeapp.admin.web.model.entity.CheckListTemplate;
+import com.safeapp.admin.web.model.entity.ProjectGroup;
 import com.safeapp.admin.web.repos.jpa.CheckListProjectRepository;
 import com.safeapp.admin.web.repos.jpa.ProjectRepos;
 import com.safeapp.admin.web.data.YN;
@@ -35,7 +36,7 @@ import com.safeapp.admin.web.service.CheckListProjectService;
 public class CheckListProjectServiceImpl implements CheckListProjectService {
 
     private final CheckListProjectRepository chkPrjRepos;
-    private final ProjectRepos projectRepos;
+    private final ProjectRepos prjRepos;
     private final UserRepos userRepos;
 
     @Override
@@ -43,7 +44,7 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
         CheckListProject checkListProject = new CheckListProject();
 
         if(addDto.getProjectId() != null) {
-            checkListProject.setProject(projectRepos.findById(addDto.getProjectId()).orElseThrow(() -> new NotFoundException("Input Project ID: " + addDto.getProjectId())));
+            checkListProject.setProject(prjRepos.findById(addDto.getProjectId()).orElseThrow(() -> new NotFoundException("Input Project ID: " + addDto.getProjectId())));
         }
         checkListProject.setUser(userRepos.findById(addDto.getUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + addDto.getUserId())));
         if(addDto.getCheckerId() != null) {
@@ -96,8 +97,14 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
     public CheckListProject toEntityModify(RequestCheckListProjectModifyDTO modifyDto) throws NotFoundException {
         CheckListProject checkListProject = new CheckListProject();
 
+        checkListProject.setName(modifyDto.getName());
+        checkListProject.setVisibled(modifyDto.getVisibled());
+        checkListProject.setTag(modifyDto.getTag());
+        checkListProject.setRelatedAcidNo(modifyDto.getRelatedAcidNo());
+        checkListProject.setRecheckReason(modifyDto.getRecheckReason());
+
         if(modifyDto.getProjectId() != null) {
-            checkListProject.setProject(projectRepos.findById(modifyDto.getProjectId()).orElseThrow(() -> new NotFoundException("Input Project ID: " + modifyDto.getProjectId())));
+            checkListProject.setProject(prjRepos.findById(modifyDto.getProjectId()).orElseThrow(() -> new NotFoundException("Input Project ID: " + modifyDto.getProjectId())));
         }
         checkListProject.setUser(userRepos.findById(modifyDto.getUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + modifyDto.getUserId())));
         if(modifyDto.getCheckerId() != null) {
@@ -113,20 +120,11 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
             checkListProject.setApprove_at(LocalDateTime.now());
         }
 
-        checkListProject.setName(modifyDto.getName());
-        checkListProject.setVisibled(modifyDto.getVisibled());
-        checkListProject.setTag(modifyDto.getTag());
-        checkListProject.setRelatedAcidNo(modifyDto.getRelatedAcidNo());
-        checkListProject.setRecheckReason(modifyDto.getRecheckReason());
-
         List<CheckListProjectDetail> chkPrjDets = new ArrayList<>();
         if(modifyDto.getDetails().isEmpty() == false) {
             for(RequestCheckListProjectModifyDTO.DetailModifyDTO detailModifyDto : modifyDto.getDetails()) {
                 CheckListProjectDetail chkPrjDet = new CheckListProjectDetail();
 
-                if(detailModifyDto.getId() != null) {
-                    chkPrjDet.setId(detailModifyDto.getId());
-                };
                 chkPrjDet.setDepth(detailModifyDto.getDepth());
                 chkPrjDet.setIsDepth(detailModifyDto.getIsDepth());
                 chkPrjDet.setParentDepth(detailModifyDto.getParentDepth());
@@ -136,6 +134,10 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
                 chkPrjDet.setTypes(detailModifyDto.getTypes());
 
                 chkPrjDet.setCheckListProject(checkListProject);
+
+                if(detailModifyDto.getId() != null) {
+                    chkPrjDet.setId(detailModifyDto.getId());
+                };
 
                 chkPrjDets.add(chkPrjDet);
             }

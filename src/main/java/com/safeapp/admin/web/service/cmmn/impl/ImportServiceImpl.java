@@ -201,8 +201,6 @@ public class ImportServiceImpl implements ImportService {
                 // 유효값이 없으면 신규 권한으로 적용
 
                 UserAuth userAuth = UserAuth.builder()
-                        .userId(user.getId())
-                        .authId(newAuth.getId())
                         .createdAt(now)
                         .efectiveEndAt(now.plusDays(30))
                         .efectiveStartAt(now)
@@ -218,8 +216,6 @@ public class ImportServiceImpl implements ImportService {
 
                 UserAuth userAuth = UserAuth.builder()
                         .id(efectiveAuth.getId())
-                        .userId(user.getId())
-                        .authId(newAuth.getId())
                         .createdAt(now)
                         .efectiveEndAt(efectiveAuth.getEfectiveEndAt().plusDays(30))
                         .efectiveStartAt(efectiveAuth.getEfectiveStartAt())

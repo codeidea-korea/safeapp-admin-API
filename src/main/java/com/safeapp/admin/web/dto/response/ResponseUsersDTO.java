@@ -9,12 +9,15 @@ import com.safeapp.admin.web.data.UserType;
 import com.safeapp.admin.web.data.YN;
 
 import com.safeapp.admin.web.model.entity.CheckListProject;
+import com.safeapp.admin.web.model.entity.CheckListProjectDetail;
 import com.safeapp.admin.web.model.entity.UserAuth;
+import com.safeapp.admin.web.model.entity.Users;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "회원")
+@Schema(description = "회원 응답")
 @Data
 public class ResponseUsersDTO {
 
@@ -34,7 +37,7 @@ public class ResponseUsersDTO {
     private String phoneNo;
 
     @Schema(description = "type")
-    private UserType type;
+    private UserType userType;
 
     @Schema(description = "user_id")
     private String userId;
@@ -49,7 +52,7 @@ public class ResponseUsersDTO {
     private YN snsAllowed;
 
     @Schema(description = "sns_type")
-    SNSType snsType = SNSType.NORMAL;
+    SNSType snsType;
 
     @Schema(description = "sns_value")
     String snsValue;
@@ -70,7 +73,39 @@ public class ResponseUsersDTO {
     @Schema(description = "user")
     private List<CheckListProject> checkListProjectList = new ArrayList<>();
 
+    /*
     @Schema(description = "user")
     private List<UserAuth> userAuthList = new ArrayList<>();
+    */
+
+    @Builder
+    public ResponseUsersDTO(Users user) {
+        this.id = user.getId();
+        this.deleted = user.getDeleted();
+        this.email = user.getEmail();
+        this.password = user.getPassword();
+        this.phoneNo = user.getPhoneNo();
+        this.userType = user.getUserType();
+        this.userId = user.getUserId();
+        this.userName = user.getUserName();
+        this.image = user.getImage();
+        this.snsAllowed = user.getSnsAllowed();
+        this.snsType = user.getSnsType();
+        this.snsValue = user.getSnsValue();
+        this.marketingAllowed = user.getMarketingAllowed();
+        this.marketingAllowedAt = user.getMarketingAllowedAt();
+        this.messageAllowed = user.getMarketingAllowed();
+        this.messageAllowedAt = user.getMessageAllowedAt();
+
+        if(user.getCheckListProjectList() != null) {
+            this.checkListProjectList = user.getCheckListProjectList();
+        }
+
+        /*
+        if(user.getUserAuthList() != null) {
+            this.userAuthList = user.getUserAuthList();
+        }
+        */
+    }
 
 }

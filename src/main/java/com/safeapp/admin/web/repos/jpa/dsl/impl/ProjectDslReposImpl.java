@@ -7,6 +7,8 @@ import javax.persistence.PersistenceContext;
 
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Project;
+import com.safeapp.admin.web.model.entity.ProjectGroup;
+import com.safeapp.admin.web.model.entity.QProjectGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;

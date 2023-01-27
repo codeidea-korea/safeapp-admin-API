@@ -9,9 +9,9 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Schema(description = "회원")
+@Schema(description = "회원 요청")
 @Data
-public class RequestUserDTO {
+public class RequestUsersDTO {
 
     @Schema(description = "이메일", example = "user1@codeidea.dev")
     String email;
@@ -19,16 +19,16 @@ public class RequestUserDTO {
     @Schema(description = "비밀번호", example = "user1_")
     String password;
 
-    @Schema(description = "휴대폰번호", example = "010-1111-2222")
+    @Schema(description = "휴대폰번호", example = "010-1111-1111")
     String phoneNo;
 
     @Schema(description = "유형", example = "1")
-    UserType type;
+    UserType userType;
 
     @Schema(description = "아이디", example = "user1")
     String userId;
 
-    @Schema(description = "이름", example = "유저 1")
+    @Schema(description = "이름", example = "회원 1")
     String userName;
 
     @Schema(description = "마케팅 정보 수신 동의 여부", example = "1")

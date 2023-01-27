@@ -5,7 +5,8 @@ import javax.servlet.http.HttpServletRequest;
 import com.safeapp.admin.web.data.SNSType;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.dto.request.RequestSNSUserDTO;
-import com.safeapp.admin.web.dto.request.RequestUserDTO;
+import com.safeapp.admin.web.dto.request.RequestUsersDTO;
+import com.safeapp.admin.web.dto.request.RequestUsersModifyDTO;
 import com.safeapp.admin.web.dto.response.ResponseRiskcheckDTO;
 import com.safeapp.admin.web.dto.response.ResponseUsersDTO;
 import com.safeapp.admin.web.model.cmmn.Token;
@@ -24,8 +25,10 @@ public interface UserService extends CRUDService<Users> {
 
     boolean isCorrectSMSCode(String phoneNo, String authNo) throws Exception;
 
-    Users toEntity (RequestUserDTO dto);
+    Users toEntity(RequestUsersDTO addDto);
 
     Users editPassword(String userId, String newPass1, String newPass2, HttpServletRequest httpServletRequest) throws Exception;
+
+    Users toEntityModify(RequestUsersModifyDTO modifyDto);
 
 }

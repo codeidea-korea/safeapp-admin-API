@@ -26,7 +26,7 @@ public class CheckListProjectDetail {
     @Column(name = "depth")
     private Integer depth;
 
-    @Column(name = "is_depth")
+    @Column(name = "is_depth", nullable = false)
     private YN isDepth;
 
     @Column(name = "parent_depth")
@@ -54,7 +54,7 @@ public class CheckListProjectDetail {
 
     @Builder
     public CheckListProjectDetail(Long id, Integer depth, YN isDepth, Integer parentDepth, String contents,
-                                  Integer orders, Integer parentOrders, String types) {
+            Integer orders, Integer parentOrders, String types) {
 
         super();
 

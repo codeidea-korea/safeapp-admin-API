@@ -12,6 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity(name = "project_groups")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class ProjectGroup extends BaseTimeEntity {
 
     @Id
@@ -22,21 +23,23 @@ public class ProjectGroup extends BaseTimeEntity {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "project")
-    private Long project;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "project")
+    private Project project;
 
     @ManyToOne
     @JoinColumn(name = "user")
     private Users user;
 
     @Builder
-    public ProjectGroup(Long id, String name, Long project, Users user) {
+    public ProjectGroup(Long id, String name, Users user, Project project) {
         super();
 
         this.id = id;
         this.name = name;
-        this.project = project;
+
         this.user = user;
+        this.project = project;
     }
 
 }

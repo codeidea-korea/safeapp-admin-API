@@ -57,8 +57,8 @@ public class UserAuth extends BaseTimeEntity {
     private LocalDateTime createdAt;
 
     @Builder
-    public UserAuth(long id, long authId, long userId, LocalDateTime efectiveStartAt, LocalDateTime efectiveEndAt,
-        LocalDateTime createdAt, int paymentWhat, int price) {
+    public UserAuth(long id, LocalDateTime efectiveStartAt, LocalDateTime efectiveEndAt,
+            LocalDateTime createdAt, int paymentWhat, int price) {
 
         this.id = id;
 

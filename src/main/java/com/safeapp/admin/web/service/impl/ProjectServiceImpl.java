@@ -4,12 +4,17 @@ import java.util.List;
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 
+import com.safeapp.admin.utils.DateUtil;
+import com.safeapp.admin.web.data.YN;
+import com.safeapp.admin.web.dto.response.ResponseCheckListProjectDTO;
+import com.safeapp.admin.web.dto.response.ResponseProjectGroupDTO;
 import com.safeapp.admin.web.model.entity.*;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
@@ -36,23 +41,39 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public Project generate(Project oldProject) {
+        return
+            Project.builder()
+            .id(oldProject.getId())
+            .address(oldProject.getAddress())
+            .addressDetail(oldProject.getAddressDetail())
+            .contents(oldProject.getContents())
+            .endAt(oldProject.getEndAt())
+            .image(oldProject.getImage())
+            .maxUserCount(oldProject.getMaxUserCount())
+            .name(oldProject.getName())
+            .startAt(oldProject.getStartAt())
+            .status(oldProject.getStatus())
+            .build();
+    }
+
+    @Override
     public Project edit(Project project, HttpServletRequest request) throws Exception {
-        Project prjInfo =
+        Project oldProject =
             prjRepos.findById(project.getId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 프로젝트입니다."));
 
-        project = prjRepos.save(generate(project));
-
-        return project;
+        Project editedProject = prjRepos.save(generate(oldProject));
+        return editedProject;
     }
 
     @Override
     public void remove(long id, HttpServletRequest request) {
-        Project prjInfos =
+        Project project =
             prjRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 프로젝트입니다."));
 
-        prjRepos.delete(prjInfos);
+        prjRepos.delete(project);
     }
 
     @Override
@@ -64,9 +85,13 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project add(Project obj, HttpServletRequest request) throws Exception { return null; }
+    public List<ResponseProjectGroupDTO> findAllGroupByCondition(long id, Pageable pageable, HttpServletRequest request) {
+
+        return null;
+        //return prjRepos.findAllGroupByCondition(id, pageable, request);
+    }
 
     @Override
-    public Project generate(Project obj) { return null; }
+    public Project add(Project project, HttpServletRequest request) throws Exception { return null; }
 
 }

@@ -130,7 +130,7 @@ public class JwtServiceImpl implements JwtService {
         }
 
         Users user = new Users();
-        user.setType(UserType.NONE);
+        user.setUserType(UserType.NONE);
 
         return user;
     }
@@ -141,7 +141,7 @@ public class JwtServiceImpl implements JwtService {
 
         try {
             user = getUserInfoByToken(httpServletRequest);
-            if(user.getType().getCode() >= lessType.getCode()) {
+            if(user.getUserType().getCode() >= lessType.getCode()) {
                 return true;
             }
         } catch (Exception e) {

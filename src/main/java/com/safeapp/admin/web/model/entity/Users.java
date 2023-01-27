@@ -46,7 +46,7 @@ public class Users extends BaseTimeEntity {
     private String phoneNo;
 
     @Column(name = "type")
-    private UserType type;
+    private UserType userType;
 
     @Column(name = "user_id")
     private String userId;
@@ -89,16 +89,18 @@ public class Users extends BaseTimeEntity {
     @OneToMany(mappedBy = "user")
     private List<CheckListProject> checkListProjectList = new ArrayList<>();
 
+    /*
     @OneToMany(mappedBy = "user")
     private List<UserAuth> userAuthList = new ArrayList<>();
-    
+    */
+
     public Users(Users users) {
         this.id = users.id;
         this.deleted = users.deleted;
         this.email = users.email;
         this.password = users.password;
         this.phoneNo = users.phoneNo;
-        this.type = users.type;
+        this.userType = users.userType;
         this.userId = users.userId;
         this.userName = users.userName;
         this.image = users.image;
@@ -110,7 +112,7 @@ public class Users extends BaseTimeEntity {
     }
 
     @Builder
-    public Users(Long id, String email, String password, String phoneNo, UserType type, String userId, String userName, String image,
+    public Users(Long id, String email, String password, String phoneNo, UserType userType, String userId, String userName, String image,
             YN snsAllowed, YN marketingAllowed, LocalDateTime marketingAllowedAt, YN messageAllowed, LocalDateTime messageAllowedAt) {
         
         this.id = id;
@@ -118,7 +120,7 @@ public class Users extends BaseTimeEntity {
         this.email = email;
         this.password = password;
         this.phoneNo = phoneNo;
-        this.type = type;
+        this.userType = userType;
         this.userId = userId;
         this.userName = userName;
         this.image = image;

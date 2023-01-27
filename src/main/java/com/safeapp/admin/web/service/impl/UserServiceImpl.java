@@ -1,20 +1,21 @@
 package com.safeapp.admin.web.service.impl;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.safeapp.admin.web.dto.request.RequestUserDTO;
+import com.safeapp.admin.web.dto.request.RequestCheckListProjectModifyDTO;
+import com.safeapp.admin.web.dto.request.RequestUsersDTO;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.UserType;
 import com.safeapp.admin.web.data.YN;
+import com.safeapp.admin.web.dto.request.RequestUsersModifyDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
+import com.safeapp.admin.web.model.entity.CheckListProject;
+import com.safeapp.admin.web.model.entity.CheckListProjectDetail;
 import com.safeapp.admin.web.model.entity.SmsAuthHistory;
 import com.safeapp.admin.web.model.entity.Users;
 import com.safeapp.admin.web.repos.jpa.SmsAuthHistoryRepos;
@@ -22,6 +23,7 @@ import com.safeapp.admin.web.repos.jpa.UserRepos;
 import com.safeapp.admin.web.repos.jpa.dsl.UsersDslRepos;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,13 +94,13 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
-    public Users toEntity(RequestUserDTO addDto) {
+    public Users toEntity(RequestUsersDTO addDto) {
         Users user = new Users();
 
         user.setEmail(addDto.getEmail());
         user.setPassword(addDto.getPassword());
         user.setPhoneNo(addDto.getPhoneNo());
-        user.setType(addDto.getType());
+        user.setUserType(addDto.getUserType());
         user.setUserId(addDto.getUserId());
         user.setUserName(addDto.getUserName());
         user.setMarketingAllowed(addDto.getMarketingAllowed());
@@ -113,11 +115,11 @@ public class UserServiceImpl implements UserService {
         if(StringUtils.isNullOrEmpty(user.getUserId())) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "아이디를 입력해주세요.");
         }
-        if(!chkUserId(user.getUserId())) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "중복된 아이디입니다.");
+        if(Objects.isNull(user)) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다.");
         }
 
-        user.setType(UserType.NORMAL);
+        user.setUserType(UserType.NORMAL);
         user.setDeleted(YN.N);
         if(user.getMarketingAllowed() == YN.Y) {
             user.setMarketingAllowedAt(dateUtil.getThisTime());
@@ -137,10 +139,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Users find(long id, HttpServletRequest request) throws Exception {
+        log.error("123");
         Users oldUser =
             userRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
-
+        log.error("456");
         return oldUser;
     }
 
@@ -150,18 +153,33 @@ public class UserServiceImpl implements UserService {
             HttpServletRequest request) throws Exception {
 
         Users oldUser = userRepos.findByUserId(userId);
-        if(oldUser == null) {
+
+        if(Objects.isNull(oldUser)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다.");
         }
-
         if(!newPass1.equals(newPass2)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "두 비밀번호가 일치하지 않습니다.");
         }
+
         String newPass = passwordUtil.encode(newPass1);
         oldUser.setPassword(newPass);
 
         Users newUser = userRepos.save(oldUser);
         return newUser;
+    }
+
+    @Override
+    public Users toEntityModify(RequestUsersModifyDTO modifyDto) {
+        Users user = new Users();
+
+        user.setEmail(modifyDto.getEmail());
+        user.setPhoneNo(modifyDto.getPhoneNo());
+        user.setMessageAllowed(modifyDto.getMessageAllowed());
+        user.setMessageAllowedAt(modifyDto.getMessageAllowedAt());
+        user.setMarketingAllowed(modifyDto.getMarketingAllowed());
+        user.setMarketingAllowedAt(modifyDto.getMarketingAllowedAt());
+
+        return user;
     }
 
     @Transactional
@@ -172,10 +190,8 @@ public class UserServiceImpl implements UserService {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다.");
         }
 
-        oldUser.setPassword(passwordUtil.encode(oldUser.getPassword()));
-
-        Users newUser = userRepos.save(oldUser);
-        return newUser;
+        Users editedUser = userRepos.save(oldUser);
+        return editedUser;
     }
 
     @Override
@@ -197,7 +213,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Users generate(Users obj) {
+    public Users generate(Users oldUser) {
         return null;
     }
 

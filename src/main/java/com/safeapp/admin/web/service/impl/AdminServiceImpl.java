@@ -187,7 +187,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     /*
-    public Admins toEntity(RequestUserDTO dto) {
+    public Admins toEntity(RequestUsersDTO dto) {
         Admins admin = new Admins();
 
         admin.setType(dto.getType());
