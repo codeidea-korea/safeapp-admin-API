@@ -11,6 +11,7 @@ import com.safeapp.admin.web.dto.response.ResponseProjectGroupDTO;
 import com.safeapp.admin.web.model.entity.*;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
+import com.safeapp.admin.web.repos.jpa.ProjectGroupRepos;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepos prjRepos;
     private final ProjectDslRepos prjDslRepos;
+    private final ProjectGroupRepos prjGrRepos;
     private final DateUtil dateUtil;
 
     @Override
@@ -40,7 +42,6 @@ public class ProjectServiceImpl implements ProjectService {
         if(oldProject.getDeleteYn() == true) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 프로젝트입니다.");
         }
-        log.error("oldProject: {}", oldProject);
 
         return oldProject;
     }
@@ -51,9 +52,25 @@ public class ProjectServiceImpl implements ProjectService {
             prjRepos.findById(project.getId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 프로젝트입니다."));
 
-        oldProject.update(project);
+        oldProject.edit(project);
+
         Project editedProject = prjRepos.save(oldProject);
         return editedProject;
+    }
+
+    @Override
+    public List<ResponseProjectGroupDTO> findAllGroupByCondition(long id, int pageNo, int pageSize, HttpServletRequest request) {
+
+        return prjGrRepos.findAllById(id, pageNo, pageSize, request);
+    }
+
+    @Override
+    public void removeGroup(long id, HttpServletRequest request) {
+        ProjectGroup projectGroup =
+            prjGrRepos.findById(id)
+            .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 프로젝트 그룹원입니다."));
+
+        prjGrRepos.delete(projectGroup);
     }
 
     @Override
@@ -93,13 +110,6 @@ public class ProjectServiceImpl implements ProjectService {
             .startAt(oldProject.getStartAt())
             .status(oldProject.getStatus())
             .build();
-    }
-
-    @Override
-    public List<ResponseProjectGroupDTO> findAllGroupByCondition(long id, Pageable pageable, HttpServletRequest request) {
-
-        return null;
-        //return prjRepos.findAllGroupByCondition(id, pageable, request);
     }
 
 }

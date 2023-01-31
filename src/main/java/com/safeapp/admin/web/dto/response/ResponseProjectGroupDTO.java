@@ -1,5 +1,6 @@
 package com.safeapp.admin.web.dto.response;
 
+import com.safeapp.admin.web.data.UserAuthType;
 import com.safeapp.admin.web.data.UserType;
 import com.safeapp.admin.web.model.entity.CheckListProject;
 import com.safeapp.admin.web.model.entity.CheckListProjectDetail;
@@ -22,6 +23,6 @@ public class ResponseProjectGroupDTO {
     String email;
 
     @Schema(description = "권한")
-    UserType userType;
+    String userAuthType;
 
 }

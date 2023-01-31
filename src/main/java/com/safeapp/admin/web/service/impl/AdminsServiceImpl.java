@@ -195,7 +195,7 @@ public class AdminsServiceImpl implements AdminsService {
             adminRepos.findById(admin.getId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다."));
 
-        oldAdmin.edit(admin);
+        oldAdmin.update(admin);
 
         Admins editedAdmin = adminRepos.save(oldAdmin);
         return editedAdmin;

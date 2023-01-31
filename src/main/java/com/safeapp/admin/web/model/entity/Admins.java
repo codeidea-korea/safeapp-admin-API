@@ -94,7 +94,7 @@ public class Admins extends BaseTimeEntity {
         this.deleted = YN.N;
     }
 
-    public void edit(Admins admin) {
+    public void update(Admins admin) {
         setAdminId(admin.getAdminId());
         setEmail(admin.getEmail());
         setAdminName(admin.getAdminName());

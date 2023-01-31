@@ -76,7 +76,7 @@ public class Project extends BaseTimeEntity {
         this.status = status;
     }
 
-    public void update(Project oldProject) {
+    public void edit(Project oldProject) {
         this.name = oldProject.getName();
         this.startAt = oldProject.getStartAt();
         this.endAt = oldProject.getEndAt();

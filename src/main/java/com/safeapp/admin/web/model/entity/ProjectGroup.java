@@ -2,6 +2,7 @@ package com.safeapp.admin.web.model.entity;
 
 import javax.persistence.*;
 
+import com.safeapp.admin.web.data.UserAuthType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +24,9 @@ public class ProjectGroup extends BaseTimeEntity {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "user_auth_type")
+    private String userAuthType;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "project")
     private Project project;
@@ -32,11 +36,12 @@ public class ProjectGroup extends BaseTimeEntity {
     private Users user;
 
     @Builder
-    public ProjectGroup(Long id, String name, Users user, Project project) {
+    public ProjectGroup(Long id, String name, String userAuthType, Users user, Project project) {
         super();
 
         this.id = id;
         this.name = name;
+        this.userAuthType = userAuthType;
 
         this.user = user;
         this.project = project;

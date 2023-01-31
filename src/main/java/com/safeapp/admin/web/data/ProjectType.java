@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum ProjectType {
+
     NONE(1);
 
     private final int code;
@@ -11,4 +12,5 @@ public enum ProjectType {
     ProjectType(int code) {
         this.code = code;
     }
+
 }

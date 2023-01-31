@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface ProjectService extends CRUDService<Project> {
 
-    List<ResponseProjectGroupDTO> findAllGroupByCondition(long id, Pageable pageable, HttpServletRequest request) throws Exception;
+    List<ResponseProjectGroupDTO> findAllGroupByCondition(long id, int pageNo, int pageSize, HttpServletRequest request) throws Exception;
+
+    void removeGroup(long id, HttpServletRequest request) throws Exception;
 
 }
