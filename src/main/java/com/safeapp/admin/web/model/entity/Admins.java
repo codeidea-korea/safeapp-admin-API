@@ -1,6 +1,7 @@
 package com.safeapp.admin.web.model.entity;
 
 import javax.persistence.*;
+import javax.xml.soap.Text;
 
 import com.safeapp.admin.web.data.AdminType;
 import com.safeapp.admin.web.data.SNSType;
@@ -14,11 +15,13 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 import static javax.persistence.EnumType.STRING;
 
 @Entity(name = "admins")
 @Data
-@ToString(exclude = "type")
+//@ToString(exclude = "type")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Admins extends BaseTimeEntity {
@@ -28,8 +31,8 @@ public class Admins extends BaseTimeEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "deleted")
-    private YN deleted;
+    @Column(name = "admin_id")
+    private String adminId;
 
     @Column(name = "email")
     private String email;
@@ -37,41 +40,66 @@ public class Admins extends BaseTimeEntity {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "phone_no")
-    private String phoneNo;
-
-    @Column(name = "type")
-    private AdminType type;
-
-    @Column(name = "admin_id")
-    private String adminID;
-
     @Column(name = "admin_name")
     private String adminName;
 
+    @Column(name = "phone_no")
+    private String phoneNo;
+
+    @Column(name = "memo")
+    private String memo;
+
+    @Column(name = "marketing_allowed")
+    private YN marketingAllowed;
+
+    @Column(name = "marketing_allowed_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime marketingAllowedAt;
+
+    @Column(name = "type")
+    private AdminType adminType;
+
+    @Column(name = "deleted")
+    private YN deleted;
+
     public Admins(Admins admins) {
         this.id = admins.id;
-        this.deleted = admins.deleted;
+        this.adminId = admins.adminId;
         this.email = admins.email;
         this.password = admins.password;
-        this.phoneNo = admins.phoneNo;
-        this.type = admins.type;
-        this.adminID = admins.adminID;
         this.adminName = admins.adminName;
+        this.phoneNo = admins.phoneNo;
+        this.marketingAllowed = admins.marketingAllowed;
+        this.marketingAllowedAt = admins.marketingAllowedAt;
+        this.memo = admins.memo;
+        this.adminType = admins.adminType;
+        this.deleted = admins.deleted;
     }
 
     @Builder
-    public Admins(long id, String email, String password, String phoneNo, AdminType type,
-            String adminID, String adminName) {
+    public Admins(long id, String adminId, String email, String password, String adminName, String phoneNo,
+            YN marketingAllowed, LocalDateTime marketingAllowedAt, String memo, AdminType adminType) {
 
         this.id = id;
-        this.deleted = YN.N;
+        this.adminId = adminId;
         this.email = email;
         this.password = password;
-        this.phoneNo = phoneNo;
-        this.type = type;
-        this.adminID = adminID;
         this.adminName = adminName;
+        this.marketingAllowed = marketingAllowed;
+        this.marketingAllowedAt = marketingAllowedAt;
+        this.phoneNo = phoneNo;
+        this.memo = memo;
+        this.adminType = adminType;
+        this.deleted = YN.N;
+    }
+
+    public void edit(Admins admin) {
+        setAdminId(admin.getAdminId());
+        setEmail(admin.getEmail());
+        setAdminName(admin.getAdminName());
+        setPhoneNo(admin.getPhoneNo());
     }
 
 }

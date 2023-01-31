@@ -16,7 +16,7 @@ public class BFAuthenticationTokenTest {
             jwtUtil
             .generateAccessToken(Admins.builder()
             .id(50L)
-            .adminID("botbinoo@naver.com")
+            .adminId("botbinoo@naver.com")
             .build(), 5000);
         Assertions.assertNotNull(token);
         

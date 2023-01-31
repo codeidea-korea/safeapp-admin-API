@@ -86,7 +86,7 @@ public class UsersController {
         return ResponseUtil.sendResponse(null);
     }
 
-    @PutMapping(value = "/edit")
+    @PutMapping(value = "/edit/{id}")
     @ApiOperation(value = "회원 수정", notes = "회원 수정")
     public ResponseEntity<ResponseUsersDTO> edit(@PathVariable("id") @ApiParam(value = "회원 PK", required = true) long id,
             @RequestBody RequestUsersModifyDTO modifyDto, HttpServletRequest request) throws Exception {
@@ -109,7 +109,7 @@ public class UsersController {
 
     @GetMapping(value = "/list")
     @ApiOperation(value = "회원 목록 조회", notes = "회원 목록 조회")
-    public ResponseEntity<ListResponse> findAll(
+    public ResponseEntity<ListResponse<Users>> findAll(
             @RequestParam(value = "userId", required = false, defaultValue = "") String userId,
             @RequestParam(value = "userName", required = false, defaultValue = "") String userName,
             @RequestParam(value = "phoneNo", required = false, defaultValue = "") String phoneNo,
@@ -120,13 +120,14 @@ public class UsersController {
         Pages pages = new Pages(pageNo, pageSize);
         return
             ResponseUtil.sendResponse(
-            userService.findAll(
-                Users.builder()
-                .userId("%" + userId + "%")
-                .userName("%" + userName + "%")
-                .phoneNo("%" + phoneNo + "%")
-                .build(),
-            pages, request));
+                userService.findAll(
+                    Users.builder()
+                    .userId("%" + userId + "%")
+                    .userName("%" + userName + "%")
+                    .phoneNo("%" + phoneNo + "%")
+                    .build(),
+                pages, request)
+            );
     }
 
 }

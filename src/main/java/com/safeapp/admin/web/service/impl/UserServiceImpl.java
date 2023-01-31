@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
         LocalDateTime thisTime = dateUtil.getThisTime();
 
         SmsAuthHistory smsAuthHistory =
-                smsAuthHistoryRepos.findFirstByPhoneNoAndEfectedEndedAtAfterOrderByIdDesc(phoneNo, thisTime);
+            smsAuthHistoryRepos.findFirstByPhoneNoAndEfectedEndedAtAfterOrderByIdDesc(phoneNo, thisTime);
         if(smsAuthHistory == null) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "먼저 인증을 요청해주세요.");
         }
@@ -114,6 +114,9 @@ public class UserServiceImpl implements UserService {
     public Users add(Users user, HttpServletRequest request) throws Exception {
         if(StringUtils.isNullOrEmpty(user.getUserId())) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "아이디를 입력해주세요.");
+        }
+        if(!chkUserId(user.getUserId())) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "중복된 아이디입니다.");
         }
         if(Objects.isNull(user)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다.");
@@ -153,7 +156,6 @@ public class UserServiceImpl implements UserService {
             HttpServletRequest request) throws Exception {
 
         Users oldUser = userRepos.findByUserId(userId);
-
         if(Objects.isNull(oldUser)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다.");
         }

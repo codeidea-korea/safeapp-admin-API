@@ -34,7 +34,7 @@ public class JwtUtil {
     public String generateAccessToken(Admins admin, long expiredTime) {
         Claims clm = Jwts.claims();
 
-        clm.put("id", admin.getAdminID());
+        clm.put("id", admin.getAdminId());
         clm.put("s", admin.getId());
         clm.put("m", admin.getEmail());
 
@@ -53,7 +53,7 @@ public class JwtUtil {
     public String generateRefreshToken(Admins admin, long expiredTime) {
         Claims clm = Jwts.claims();
 
-        clm.put("sem", admin.getAdminID());
+        clm.put("sem", admin.getAdminId());
         clm.put("lt", expiredTime);
         clm.put("dm", REFRESH_TOKEN_ALIVE_TIME);
 

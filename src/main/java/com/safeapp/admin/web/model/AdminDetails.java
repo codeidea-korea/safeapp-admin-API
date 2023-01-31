@@ -17,12 +17,12 @@ public class AdminDetails extends Admins implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.getType().getAuthorities();
+        return this.getAdminType().getAuthorities();
     }
 
     @Override
     public String getUsername() {
-        return this.getAdminID();
+        return this.getAdminId();
     }
 
     @Override

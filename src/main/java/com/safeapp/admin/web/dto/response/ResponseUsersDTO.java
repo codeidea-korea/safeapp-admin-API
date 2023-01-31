@@ -97,9 +97,11 @@ public class ResponseUsersDTO {
         this.messageAllowed = user.getMarketingAllowed();
         this.messageAllowedAt = user.getMessageAllowedAt();
 
+        /*
         if(user.getCheckListProjectList() != null) {
             this.checkListProjectList = user.getCheckListProjectList();
         }
+        */
 
         /*
         if(user.getUserAuthList() != null) {

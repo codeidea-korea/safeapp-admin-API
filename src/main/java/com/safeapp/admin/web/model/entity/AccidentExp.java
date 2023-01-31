@@ -79,7 +79,7 @@ public class AccidentExp extends BaseTimeEntity {
     private String detailContents;
 
     @Builder
-    public AccidentExp(long id, String title, long adminID, Admins admin, int views, String image,
+    public AccidentExp(long id, String title, long adminId, Admins admin, int views, String image,
         String tags, String name, LocalDateTime accidentAt, String accidentUid, String accidentReason,
         String accidentCause, String causeDetail, String response, YN createdAtDescended, YN viewsDescended,
         String detailContents) {

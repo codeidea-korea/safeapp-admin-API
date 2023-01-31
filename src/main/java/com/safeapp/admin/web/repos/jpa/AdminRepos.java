@@ -1,9 +1,6 @@
 package com.safeapp.admin.web.repos.jpa;
 
-import com.safeapp.admin.web.data.SNSType;
-import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.entity.Admins;
-import com.safeapp.admin.web.model.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +9,6 @@ public interface AdminRepos extends JpaRepository<Admins, Long> {
 
     Admins findByEmail(String email);
 
-    Admins findByAdminID(String adminID);
+    Admins findByAdminId(String adminId);
 
 }

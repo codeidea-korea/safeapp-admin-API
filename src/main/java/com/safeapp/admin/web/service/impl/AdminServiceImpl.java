@@ -2,6 +2,7 @@ package com.safeapp.admin.web.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -11,13 +12,20 @@ import com.safeapp.admin.web.data.AdminType;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.YN;
+import com.safeapp.admin.web.dto.request.RequestAdminsDTO;
+import com.safeapp.admin.web.dto.request.RequestAdminsModifyDTO;
+import com.safeapp.admin.web.dto.request.RequestUsersDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Admins;
 import com.safeapp.admin.web.model.entity.SmsAuthHistory;
+import com.safeapp.admin.web.model.entity.Users;
 import com.safeapp.admin.web.repos.jpa.AdminRepos;
 import com.safeapp.admin.web.repos.jpa.SmsAuthHistoryRepos;
+import com.safeapp.admin.web.repos.jpa.dsl.AdminsDslRepos;
 import com.safeapp.admin.web.service.AdminService;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,124 +34,28 @@ import org.springframework.web.client.HttpServerErrorException;
 
 import com.safeapp.admin.web.service.cmmn.DirectSendAPIService;
 import com.querydsl.core.util.StringUtils;
+import sun.security.provider.certpath.AdjacencyList;
 
 @Service
+@AllArgsConstructor
+@Slf4j
 public class AdminServiceImpl implements AdminService {
 
     private final AdminRepos adminRepos;
+    private final AdminsDslRepos adminsDslRepos;
     private final SmsAuthHistoryRepos smsAuthHistoryRepos;
     private final DirectSendAPIService directSendAPIService;
     private final PasswordUtil passwordUtil;
     private final DateUtil dateUtil;
 
-    @Autowired
-    public AdminServiceImpl(AdminRepos adminRepos, SmsAuthHistoryRepos smsAuthHistoryRepos, DirectSendAPIService directSendAPIService,
-                           PasswordUtil passwordUtil, DateUtil dateUtil) {
-
-        this.adminRepos = adminRepos;
-        this.smsAuthHistoryRepos = smsAuthHistoryRepos;
-        this.directSendAPIService = directSendAPIService;
-        this.passwordUtil = passwordUtil;
-        this.dateUtil = dateUtil;
-    }
-
     @Override
-    public boolean chkAdminID(String adminID) {
-        Admins adminInfo = adminRepos.findByAdminID(adminID);
-
+    public boolean chkAdminId(String adminId) {
+        Admins adminInfo = adminRepos.findByAdminId(adminId);
         if(!Objects.isNull(adminInfo)) {
             return false;
         }
 
         return true;
-    }
-
-    @Transactional
-    @Override
-    public Admins add(Admins admin, HttpServletRequest httpServletRequest) throws Exception {
-        if(StringUtils.isNullOrEmpty(admin.getAdminID())) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "아이디를 입력해주세요.");
-        }
-        if(!chkAdminID(admin.getAdminID())) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "중복된 아이디입니다.");
-        }
-
-        admin.setType(AdminType.ADMIN);
-        admin.setDeleted(YN.N);
-
-        admin.setPassword(passwordUtil.encode(admin.getPassword()));
-        Admins adminInfo = adminRepos.save(admin);
-
-        if(Objects.isNull(adminInfo)) {
-            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "저장 중 오류가 발생하였습니다.");
-        }
-
-        return adminInfo;
-    }
-
-    @Override
-    public Admins find(long seq, HttpServletRequest httpServletRequest) throws Exception {
-        Admins oldAdmin = adminRepos.findById(seq).orElse(null);
-        //if(Objects.isNull(oldAdmin) || oldAdmin.getType() != AdminType.ADMIN) {
-        if(Objects.isNull(oldAdmin)) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다.");
-        }
-
-        return oldAdmin;
-    }
-
-    @Transactional
-    @Override
-    public Admins editPassword(String adminID, String password, String newPassword,
-                               HttpServletRequest httpServletRequest) throws Exception {
-
-        Admins myInfo = adminRepos.findByAdminID(adminID);
-        if(myInfo == null) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다.");
-        }
-
-        String passwordChk = passwordUtil.encode(password);
-        String passwordConfirm = passwordUtil.encode(newPassword);
-        if(!passwordChk.equals(passwordConfirm)) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "두 비밀번호가 일치하지 않습니다.");
-        }
-
-        myInfo.setPassword(passwordChk);
-        return adminRepos.save(myInfo);
-    }
-
-    @Transactional
-    @Override
-    public Admins edit(Admins admin, HttpServletRequest httpServletRequest) throws Exception {
-        Admins adminInfo = adminRepos.findByAdminID(admin.getAdminID());
-        if(Objects.isNull(adminInfo)) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다.");
-        }
-
-        admin.setPassword(passwordUtil.encode(admin.getPassword()));
-        admin = adminRepos.save(admin);
-
-        return admin;
-    }
-
-    @Override
-    public void remove(long seq, HttpServletRequest httpServletRequest) {
-        Admins adminInfo = adminRepos.findById(seq).orElse(null);
-        if(Objects.isNull(adminInfo)) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다.");
-        }
-
-        if(adminInfo.getType() == AdminType.ADMIN) {
-            adminInfo.setDeleted(YN.Y);
-            adminRepos.save(adminInfo);
-        }
-    }
-
-    @Override
-    public ListResponse<Admins> findAll(Admins admin, Pages bfPage, HttpServletRequest httpServletRequest)
-            throws Exception {
-
-        return null;
     }
 
     @Override
@@ -152,12 +64,12 @@ public class AdminServiceImpl implements AdminService {
         String authCode = Math.round(Math.random() * 1000000) + "";
 
         SmsAuthHistory smsAuthHistory =
-                SmsAuthHistory.builder()
-                .createdAt(thisTime)
-                .efectedEndedAt(thisTime.plusMinutes(3))
-                .phoneNo(phoneNo)
-                .authCode(authCode)
-                .build();
+            SmsAuthHistory.builder()
+            .createdAt(thisTime)
+            .efectedEndedAt(thisTime.plusMinutes(3))
+            .phoneNo(phoneNo)
+            .authCode(authCode)
+            .build();
 
         Map<String, String> bodyMap = new HashMap<>();
         bodyMap.put("title", "인증번호입니다.");
@@ -166,16 +78,15 @@ public class AdminServiceImpl implements AdminService {
         bodyMap.put("phoneNo", phoneNo);
 
         smsAuthHistoryRepos.save(smsAuthHistory);
-
         return directSendAPIService.sendSMS(phoneNo, bodyMap);
     }
 
     @Override
     public boolean isCorrectSMSCode(String phoneNo, String authNo) {
         LocalDateTime thisTime = dateUtil.getThisTime();
-        SmsAuthHistory smsAuthHistory =
-                smsAuthHistoryRepos.findFirstByPhoneNoAndEfectedEndedAtAfterOrderByIdDesc(phoneNo, thisTime);
 
+        SmsAuthHistory smsAuthHistory =
+            smsAuthHistoryRepos.findFirstByPhoneNoAndEfectedEndedAtAfterOrderByIdDesc(phoneNo, thisTime);
         if(smsAuthHistory == null) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "먼저 인증을 요청해주세요.");
         }
@@ -186,30 +97,128 @@ public class AdminServiceImpl implements AdminService {
         return false;
     }
 
-    /*
-    public Admins toEntity(RequestUsersDTO dto) {
+    public Admins toEntity(RequestAdminsDTO addDto) {
         Admins admin = new Admins();
 
-        admin.setType(dto.getType());
-        admin.setAdminID(dto.getUserId());
-        admin.setPhoneNo(dto.getPhoneNo());
-        admin.setUserName(dto.getUserName());
-        admin.setEmail(dto.getEmail());
-        admin.setSnsAllowed(dto.getSnsAllowed());
-        admin.setMarketingAllowed(dto.getMarketingAllowed());
-        admin.setMarketingAllowedAt(dto.getMarketingAllowedAt());
-        admin.setMessageAllowed(dto.getMessageAllowed());
-        admin.setMessageAllowedAt(dto.getMessageAllowedAt());
-        admin.setPassword(dto.getPassword());
-        admin.setSnsType(dto.getSnsType());
+        admin.setAdminId(addDto.getAdminId());
+        admin.setEmail(addDto.getEmail());
+        admin.setPassword(addDto.getPassword());
+        admin.setAdminName(addDto.getAdminName());
+        admin.setPhoneNo(addDto.getPhoneNo());
+        admin.setMemo(addDto.getMemo());
+        admin.setMarketingAllowed(addDto.getMarketingAllowed());
+        admin.setMarketingAllowedAt(addDto.getMarketingAllowedAt());
+        admin.setAdminType(addDto.getAdminType());
 
-        return user;
+        return admin;
     }
-    */
+
+    @Transactional
+    @Override
+    public Admins add(Admins admin, HttpServletRequest httpServletRequest) throws Exception {
+        if(StringUtils.isNullOrEmpty(admin.getAdminId())) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "아이디를 입력해주세요.");
+        }
+        if(!chkAdminId(admin.getAdminId())) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "중복된 아이디입니다.");
+        }
+        if(Objects.isNull(admin)) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다.");
+        }
+
+        admin.setAdminType(AdminType.ADMIN);
+        admin.setDeleted(YN.N);
+        admin.setPassword(passwordUtil.encode(admin.getPassword()));
+
+        Admins addedAdmin = adminRepos.save(admin);
+        if(Objects.isNull(addedAdmin)) {
+            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "DB 저장 중 오류가 발생하였습니다.");
+        }
+
+        return addedAdmin;
+    }
 
     @Override
-    public Admins generate(Admins obj) {
-        return null;
+    public Admins find(long id, HttpServletRequest httpServletRequest) throws Exception {
+        Admins oldAdmin =
+            adminRepos.findById(id)
+            .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다."));
+        //if(Objects.isNull(oldAdmin) || oldAdmin.getType() != AdminType.ADMIN) {
+
+        return oldAdmin;
+    }
+
+    @Transactional
+    @Override
+    public Admins editPassword(String adminId, String newPass1, String newPass2,
+            HttpServletRequest request) throws Exception {
+
+        Admins oldAdmin = adminRepos.findByAdminId(adminId);
+        if(Objects.isNull(oldAdmin)) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다.");
+        }
+        if(!newPass1.equals(newPass2)) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "두 비밀번호가 일치하지 않습니다.");
+        }
+
+        String newPass = passwordUtil.encode(newPass1);
+        oldAdmin.setPassword(newPass);
+
+        Admins newAdmin = adminRepos.save(oldAdmin);
+        return newAdmin;
+    }
+
+    public Admins toEntityModify(RequestAdminsModifyDTO modifyDTO) {
+        Admins admin = new Admins();
+
+        admin.setAdminId(modifyDTO.getAdminId());
+        admin.setEmail(modifyDTO.getEmail());
+        admin.setAdminName(modifyDTO.getAdminName());
+        admin.setPhoneNo(modifyDTO.getPhoneNo());
+
+        return admin;
+    }
+
+    @Transactional
+    @Override
+    public Admins edit(Admins admin, HttpServletRequest request) throws Exception {
+        Admins oldAdmin =
+            adminRepos.findById(admin.getId())
+            .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다."));
+
+        oldAdmin.edit(admin);
+
+        Admins editedAdmin = adminRepos.save(oldAdmin);
+        return editedAdmin;
+    }
+
+    @Override
+    public void remove(long id, HttpServletRequest httpServletRequest) {
+        Admins admin =
+            adminRepos.findById(id)
+            .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다."));
+
+        admin.setDeleted(YN.Y);
+        adminRepos.save(admin);
+    }
+
+    @Override
+    public Admins generate(Admins oldAdmin) {
+        return
+                Admins.builder()
+                        .adminId(oldAdmin.getAdminId())
+                        .adminName(oldAdmin.getAdminName())
+                        .email(oldAdmin.getEmail())
+                        .phoneNo(oldAdmin.getPhoneNo())
+                        .build();
+    }
+
+    @Override
+    public ListResponse<Admins> findAll(Admins admin, Pages pages, HttpServletRequest request) {
+        long count = adminsDslRepos.countAll(admin);
+        List<Admins> list = adminsDslRepos.findAll(admin, pages);
+
+        return new ListResponse(count, list, pages);
     }
 
 }

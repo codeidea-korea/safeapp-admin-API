@@ -50,12 +50,12 @@ public class JwtServiceImpl implements JwtService {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.");
         }
 
-        String adminID = jwtUtil.getAdminIDOrUserIdByAccessToken(token);
-        if(StringUtils.isNullOrEmpty(adminID)) {
+        String adminId = jwtUtil.getAdminIDOrUserIdByAccessToken(token);
+        if(StringUtils.isNullOrEmpty(adminId)) {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "인증되지 않은 관리자입니다.");
         }
 
-        Admins admin = adminRepos.findByAdminID(adminID);
+        Admins admin = adminRepos.findByAdminId(adminId);
         if(Objects.isNull(admin)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다.");
         }
@@ -74,8 +74,8 @@ public class JwtServiceImpl implements JwtService {
         String token = removeBearer(httpServletRequest.getHeader("Authorization"));
         checkToken(token);
 
-        String adminID = jwtUtil.getAdminIDOrUserIdByAccessToken(token);
-        Admins admin = adminRepos.findByAdminID(adminID);
+        String adminId = jwtUtil.getAdminIDOrUserIdByAccessToken(token);
+        Admins admin = adminRepos.findByAdminId(adminId);
 
         return admin;
     }
@@ -89,7 +89,7 @@ public class JwtServiceImpl implements JwtService {
         }
 
         Admins admin = new Admins();
-        admin.setType(AdminType.ADMIN);
+        admin.setAdminType(AdminType.ADMIN);
 
         return admin;
     }
@@ -100,7 +100,7 @@ public class JwtServiceImpl implements JwtService {
 
         try {
             admin = getAdminInfoByToken(httpServletRequest);
-            if(admin.getType().getCode() >= lessType.getCode()) {
+            if(admin.getAdminType().getCode() >= lessType.getCode()) {
                 return true;
             }
         } catch (Exception e) {
@@ -174,8 +174,8 @@ public class JwtServiceImpl implements JwtService {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.");
         }
         
-        String adminID = jwtUtil.getAdminIDOrUserIdByRefreshToken(refreshToken);
-        Admins admin = adminRepos.findByAdminID(adminID);
+        String adminId = jwtUtil.getAdminIDOrUserIdByRefreshToken(refreshToken);
+        Admins admin = adminRepos.findByAdminId(adminId);
         
         if(admin == null) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다.");

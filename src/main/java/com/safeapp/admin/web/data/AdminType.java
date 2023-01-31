@@ -1,19 +1,16 @@
 package com.safeapp.admin.web.data;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 @Getter
-@Slf4j
 public enum AdminType implements GrantedAuthority {
 
-    NONE("비관리자", 1),
     ADMIN("관리자", 201);
 
     private final String description;
