@@ -122,9 +122,9 @@ public class UsersController {
             ResponseUtil.sendResponse(
                 userService.findAll(
                     Users.builder()
-                    .userId("%" + userId + "%")
-                    .userName("%" + userName + "%")
-                    .phoneNo("%" + phoneNo + "%")
+                    .userId(userId)
+                    .userName(userName)
+                    .phoneNo(phoneNo)
                     .build(),
                 pages, request)
             );

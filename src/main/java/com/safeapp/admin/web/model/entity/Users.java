@@ -133,4 +133,13 @@ public class Users extends BaseTimeEntity {
         this.messageAllowedAt = messageAllowedAt;
     }
 
+    public void edit(Users user) {
+        setEmail(user.getEmail());
+        setPhoneNo(user.getPhoneNo());
+        setMessageAllowed(user.getMessageAllowed());
+        setMessageAllowedAt(user.getMessageAllowedAt());
+        setMarketingAllowed(user.getMarketingAllowed());
+        setMarketingAllowedAt(user.getMarketingAllowedAt());
+    }
+
 }

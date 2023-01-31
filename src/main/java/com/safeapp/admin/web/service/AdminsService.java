@@ -8,9 +8,11 @@ import com.safeapp.admin.web.model.entity.Admins;
 import com.safeapp.admin.web.model.entity.CheckListTemplate;
 import com.safeapp.admin.web.model.entity.Users;
 
-public interface AdminService extends CRUDService<Admins> {
+public interface AdminsService extends CRUDService<Admins> {
 
     boolean chkAdminId(String adminId);
+
+    boolean chkEmail(String email);
 
     boolean sendAuthSMSCode(String phoneNo) throws Exception;
 

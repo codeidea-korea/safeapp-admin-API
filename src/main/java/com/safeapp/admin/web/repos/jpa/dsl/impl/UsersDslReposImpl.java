@@ -36,11 +36,11 @@ public class UsersDslReposImpl extends QuerydslRepositorySupport implements User
         JPAQuery query = jpaQueryFactory.selectFrom(qUsers);
 
         if(!StringUtil.isNullOrEmpty(users.getUserId())) {
-            query.where(qUsers.userId.like(users.getUserId()));
+            query.where(qUsers.userId.like("%" + users.getUserId() + "%"));
         } else if(!StringUtil.isNullOrEmpty(users.getUserName())) {
-            query.where(qUsers.userName.like(users.getUserName()));
+            query.where(qUsers.userName.like("%" + users.getUserName()  + "%"));
         } else if(!StringUtil.isNullOrEmpty(users.getPhoneNo())) {
-            query.where(qUsers.phoneNo.like(users.getPhoneNo()));
+            query.where(qUsers.phoneNo.like("%" + users.getPhoneNo()  + "%"));
         }
 
         return query;

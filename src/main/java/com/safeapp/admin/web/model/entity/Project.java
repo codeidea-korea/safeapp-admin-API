@@ -76,4 +76,16 @@ public class Project extends BaseTimeEntity {
         this.status = status;
     }
 
+    public void update(Project oldProject) {
+        this.name = oldProject.getName();
+        this.startAt = oldProject.getStartAt();
+        this.endAt = oldProject.getEndAt();
+        this.maxUserCount = oldProject.getMaxUserCount();
+        this.address = oldProject.getAddress();
+        this.addressDetail = oldProject.getAddressDetail();
+        this.contents = oldProject.getContents();
+        this.image = oldProject.getImage();
+        this.status = oldProject.getStatus();
+    }
+
 }

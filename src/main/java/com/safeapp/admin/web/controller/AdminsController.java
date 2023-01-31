@@ -3,16 +3,11 @@ package com.safeapp.admin.web.controller;
 import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.dto.request.RequestAdminsDTO;
 import com.safeapp.admin.web.dto.request.RequestAdminsModifyDTO;
-import com.safeapp.admin.web.dto.request.RequestUsersDTO;
-import com.safeapp.admin.web.dto.request.RequestUsersModifyDTO;
 import com.safeapp.admin.web.dto.response.ResponseAdminsDTO;
-import com.safeapp.admin.web.dto.response.ResponseUsersDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Admins;
-import com.safeapp.admin.web.model.entity.Users;
-import com.safeapp.admin.web.service.AdminService;
-import com.safeapp.admin.web.service.UserService;
+import com.safeapp.admin.web.service.AdminsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -32,20 +27,27 @@ import static org.springframework.http.HttpStatus.OK;
 @Slf4j
 public class AdminsController {
 
-    private final AdminService adminService;
+    private final AdminsService adminsService;
 
-    @GetMapping(value = "/chk/{adminId}")
+    @GetMapping(value = "/chkAdminId/{adminId}")
     @ApiOperation(value = "관리자 등록 → 아이디 중복여부 확인", notes = "관리자 등록 → 아이디 중복여부 확인")
     public ResponseEntity chkAdminId(@PathVariable("adminId") @ApiParam("아이디") String adminId) {
 
-        return ResponseUtil.sendResponse(adminService.chkAdminId(adminId));
+        return ResponseUtil.sendResponse(adminsService.chkAdminId(adminId));
+    }
+
+    @GetMapping(value = "/chkEmail/{email}")
+    @ApiOperation(value = "관리자 등록 → 이메일 중복여부 확인", notes = "관리자 등록 → 이메일 중복여부 확인")
+    public ResponseEntity chkEmail(@PathVariable("email") @ApiParam("email") String email) {
+
+        return ResponseUtil.sendResponse(adminsService.chkEmail(email));
     }
 
     @GetMapping(value = "/reqNum")
     @ApiOperation(value = "관리자 등록 → 핸드폰 본인인증 번호 요청", notes = "관리자 등록 → 핸드폰 본인인증 번호 요청")
     public ResponseEntity sendAuthSMSCode(@RequestParam(value = "phoneNo") String phoneNo) throws Exception {
 
-        return ResponseUtil.sendResponse(adminService.sendAuthSMSCode(phoneNo));
+        return ResponseUtil.sendResponse(adminsService.sendAuthSMSCode(phoneNo));
     }
 
     @PostMapping(value = "/resNum")
@@ -53,13 +55,13 @@ public class AdminsController {
     public ResponseEntity isCorrectSMSCode(@RequestParam(value = "phoneNo") String phoneNo,
             @RequestParam(value = "authNo") String authNo) throws Exception {
 
-        return ResponseUtil.sendResponse(adminService.isCorrectSMSCode(phoneNo, authNo));
+        return ResponseUtil.sendResponse(adminsService.isCorrectSMSCode(phoneNo, authNo));
     }
 
     @PostMapping(value = "/add")
     @ApiOperation(value = "관리자 등록", notes = "관리자 등록")
     public ResponseEntity<ResponseAdminsDTO> add(@RequestBody RequestAdminsDTO addDto, HttpServletRequest request) throws Exception {
-        Admins addedAdmins = adminService.add(adminService.toEntity(addDto), request);
+        Admins addedAdmins = adminsService.add(adminsService.toEntity(addDto), request);
         return new ResponseEntity<>(ResponseAdminsDTO.builder().admin(addedAdmins).build(), OK);
     }
 
@@ -68,7 +70,7 @@ public class AdminsController {
     public ResponseEntity<ResponseAdminsDTO> find(@PathVariable("id") @ApiParam(value = "관리자 PK", required = true) long id,
             HttpServletRequest request) throws Exception {
 
-        Admins oldAdmin = adminService.find(id, request);
+        Admins oldAdmin = adminsService.find(id, request);
         return new ResponseEntity<>(ResponseAdminsDTO.builder().admin(oldAdmin).build(), OK);
     }
 
@@ -80,7 +82,7 @@ public class AdminsController {
             @RequestParam(value = "newPass2", defaultValue = "admin2_") String newPass2,
             HttpServletRequest request) throws Exception {
 
-        adminService.editPassword(adminId, newPass1, newPass2, request);
+        adminsService.editPassword(adminId, newPass1, newPass2, request);
         return ResponseUtil.sendResponse(null);
     }
 
@@ -89,12 +91,10 @@ public class AdminsController {
     public ResponseEntity<ResponseAdminsDTO> edit(@PathVariable("id") @ApiParam(value = "관리자 PK", required = true) long id,
             @RequestBody RequestAdminsModifyDTO modifyDto, HttpServletRequest request) throws Exception {
 
-        Admins admin = adminService.toEntityModify(modifyDto);
+        Admins admin = adminsService.toEntityModify(modifyDto);
         admin.setId(id);
-        log.error("admin: {}", admin);
 
-        Admins editedAdmin = adminService.edit(admin, request);
-        log.error("editedAdmin: {}", editedAdmin);
+        Admins editedAdmin = adminsService.edit(admin, request);
         return new ResponseEntity<>(ResponseAdminsDTO.builder().admin(editedAdmin).build(), OK);
     }
 
@@ -103,7 +103,7 @@ public class AdminsController {
     public ResponseEntity remove(@PathVariable("id") @ApiParam("관리자 PK") long id,
             HttpServletRequest request) throws Exception {
 
-        adminService.remove(id, request);
+        adminsService.remove(id, request);
         return ResponseUtil.sendResponse(null);
     }
 
@@ -121,12 +121,12 @@ public class AdminsController {
         Pages pages = new Pages(pageNo, pageSize);
         return
             ResponseUtil.sendResponse(
-                adminService.findAll(
+                adminsService.findAll(
                     Admins.builder()
-                    .adminId("%" + adminId + "%")
-                    .adminName("%" + adminName + "%")
-                    .email("%" + email + "%")
-                    .phoneNo("%" + phoneNo + "%")
+                    .adminId(adminId)
+                    .adminName(adminName)
+                    .email(email)
+                    .phoneNo(phoneNo)
                     .build(),
                 pages, request)
             );

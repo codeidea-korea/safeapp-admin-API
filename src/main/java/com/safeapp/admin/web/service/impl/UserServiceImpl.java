@@ -40,10 +40,10 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepos userRepos;
     private final UsersDslRepos userDslRepos;
-    private final PasswordUtil passwordUtil;
-    private final DateUtil dateUtil;
     private final SmsAuthHistoryRepos smsAuthHistoryRepos;
     private final DirectSendAPIService directSendAPIService;
+    private final PasswordUtil passwordUtil;
+    private final DateUtil dateUtil;
 
     @Override
     public boolean chkUserId(String userId) {
@@ -124,14 +124,15 @@ public class UserServiceImpl implements UserService {
 
         user.setUserType(UserType.NORMAL);
         user.setDeleted(YN.N);
+        user.setDeleted(YN.N);
+        log.error("user.getMarketingAllowed(): {}", user.getMarketingAllowed());
         if(user.getMarketingAllowed() == YN.Y) {
             user.setMarketingAllowedAt(dateUtil.getThisTime());
-        }
-        if(user.getMessageAllowed() == YN.Y) {
-            user.setMessageAllowedAt(dateUtil.getThisTime());
+        } else {
+            user.setMarketingAllowedAt(null);
         }
         user.setPassword(passwordUtil.encode(user.getPassword()));
-
+        log.error("user: {}", user);
         Users addedUser = userRepos.save(user);
         if(Objects.isNull(addedUser)) {
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "DB 저장 중 오류가 발생하였습니다.");
@@ -142,11 +143,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Users find(long id, HttpServletRequest request) throws Exception {
-        log.error("123");
         Users oldUser =
             userRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
-        log.error("456");
+
         return oldUser;
     }
 
@@ -177,9 +177,17 @@ public class UserServiceImpl implements UserService {
         user.setEmail(modifyDto.getEmail());
         user.setPhoneNo(modifyDto.getPhoneNo());
         user.setMessageAllowed(modifyDto.getMessageAllowed());
-        user.setMessageAllowedAt(modifyDto.getMessageAllowedAt());
+        if(modifyDto.getMessageAllowed() == YN.Y) {
+            user.setMessageAllowedAt(dateUtil.getThisTime());
+        } else {
+            user.setMessageAllowedAt(null);
+        }
         user.setMarketingAllowed(modifyDto.getMarketingAllowed());
-        user.setMarketingAllowedAt(modifyDto.getMarketingAllowedAt());
+        if(modifyDto.getMarketingAllowed() == YN.Y) {
+            user.setMarketingAllowedAt(dateUtil.getThisTime());
+        } else {
+            user.setMarketingAllowedAt(null);
+        }
 
         return user;
     }
@@ -187,10 +195,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public Users edit(Users user, HttpServletRequest request) throws Exception {
-        Users oldUser = userRepos.findByUserId(user.getUserId());
-        if(Objects.isNull(oldUser)) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다.");
-        }
+        Users oldUser = 
+            userRepos.findById(user.getId())
+            .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
+
+        oldUser.edit(user);
 
         Users editedUser = userRepos.save(oldUser);
         return editedUser;
@@ -207,16 +216,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Users generate(Users oldUser) {
+        return null;
+    }
+
+    @Override
     public ListResponse<Users> findAll(Users user, Pages pages, HttpServletRequest request) {
         long count = userDslRepos.countAll(user);
         List<Users> list = userDslRepos.findAll(user, pages);
 
         return new ListResponse(count, list, pages);
-    }
-
-    @Override
-    public Users generate(Users oldUser) {
-        return null;
     }
 
 }

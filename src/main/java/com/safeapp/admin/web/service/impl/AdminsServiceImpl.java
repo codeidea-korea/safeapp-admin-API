@@ -14,19 +14,16 @@ import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.dto.request.RequestAdminsDTO;
 import com.safeapp.admin.web.dto.request.RequestAdminsModifyDTO;
-import com.safeapp.admin.web.dto.request.RequestUsersDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Admins;
 import com.safeapp.admin.web.model.entity.SmsAuthHistory;
-import com.safeapp.admin.web.model.entity.Users;
 import com.safeapp.admin.web.repos.jpa.AdminRepos;
 import com.safeapp.admin.web.repos.jpa.SmsAuthHistoryRepos;
 import com.safeapp.admin.web.repos.jpa.dsl.AdminsDslRepos;
-import com.safeapp.admin.web.service.AdminService;
+import com.safeapp.admin.web.service.AdminsService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,12 +31,11 @@ import org.springframework.web.client.HttpServerErrorException;
 
 import com.safeapp.admin.web.service.cmmn.DirectSendAPIService;
 import com.querydsl.core.util.StringUtils;
-import sun.security.provider.certpath.AdjacencyList;
 
 @Service
 @AllArgsConstructor
 @Slf4j
-public class AdminServiceImpl implements AdminService {
+public class AdminsServiceImpl implements AdminsService {
 
     private final AdminRepos adminRepos;
     private final AdminsDslRepos adminsDslRepos;
@@ -51,6 +47,16 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public boolean chkAdminId(String adminId) {
         Admins adminInfo = adminRepos.findByAdminId(adminId);
+        if(!Objects.isNull(adminInfo)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean chkEmail(String email) {
+        Admins adminInfo = adminRepos.findByEmail(email);
         if(!Objects.isNull(adminInfo)) {
             return false;
         }
@@ -128,6 +134,9 @@ public class AdminServiceImpl implements AdminService {
 
         admin.setAdminType(AdminType.ADMIN);
         admin.setDeleted(YN.N);
+        if(admin.getMarketingAllowed() == YN.Y) {
+            admin.setMarketingAllowedAt(dateUtil.getThisTime());
+        }
         admin.setPassword(passwordUtil.encode(admin.getPassword()));
 
         Admins addedAdmin = adminRepos.save(admin);
@@ -205,12 +214,13 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Admins generate(Admins oldAdmin) {
         return
-                Admins.builder()
-                        .adminId(oldAdmin.getAdminId())
-                        .adminName(oldAdmin.getAdminName())
-                        .email(oldAdmin.getEmail())
-                        .phoneNo(oldAdmin.getPhoneNo())
-                        .build();
+            Admins
+            .builder()
+            .adminId(oldAdmin.getAdminId())
+            .adminName(oldAdmin.getAdminName())
+            .email(oldAdmin.getEmail())
+            .phoneNo(oldAdmin.getPhoneNo())
+            .build();
     }
 
     @Override

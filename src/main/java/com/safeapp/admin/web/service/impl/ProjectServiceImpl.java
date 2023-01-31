@@ -30,31 +30,19 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepos prjRepos;
     private final ProjectDslRepos prjDslRepos;
+    private final DateUtil dateUtil;
 
     @Override
     public Project find(long id, HttpServletRequest request) throws Exception {
         Project oldProject =
             prjRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 프로젝트입니다."));
+        if(oldProject.getDeleteYn() == true) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 프로젝트입니다.");
+        }
+        log.error("oldProject: {}", oldProject);
 
         return oldProject;
-    }
-
-    @Override
-    public Project generate(Project oldProject) {
-        return
-            Project.builder()
-            .id(oldProject.getId())
-            .address(oldProject.getAddress())
-            .addressDetail(oldProject.getAddressDetail())
-            .contents(oldProject.getContents())
-            .endAt(oldProject.getEndAt())
-            .image(oldProject.getImage())
-            .maxUserCount(oldProject.getMaxUserCount())
-            .name(oldProject.getName())
-            .startAt(oldProject.getStartAt())
-            .status(oldProject.getStatus())
-            .build();
     }
 
     @Override
@@ -63,7 +51,8 @@ public class ProjectServiceImpl implements ProjectService {
             prjRepos.findById(project.getId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 프로젝트입니다."));
 
-        Project editedProject = prjRepos.save(generate(oldProject));
+        oldProject.update(project);
+        Project editedProject = prjRepos.save(oldProject);
         return editedProject;
     }
 
@@ -85,13 +74,32 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public Project add(Project project, HttpServletRequest request) throws Exception { return null; }
+
+    @Override
+    public Project generate(Project oldProject) {
+        return
+            Project
+            .builder()
+            .id(oldProject.getId())
+            .address(oldProject.getAddress())
+            .addressDetail(oldProject.getAddressDetail())
+            .contents(oldProject.getContents())
+            .createdAt(oldProject.getCreatedAt() == null ? dateUtil.getThisTime() : oldProject.getCreatedAt())
+            .endAt(oldProject.getEndAt())
+            .image(oldProject.getImage())
+            .maxUserCount(oldProject.getMaxUserCount())
+            .name(oldProject.getName())
+            .startAt(oldProject.getStartAt())
+            .status(oldProject.getStatus())
+            .build();
+    }
+
+    @Override
     public List<ResponseProjectGroupDTO> findAllGroupByCondition(long id, Pageable pageable, HttpServletRequest request) {
 
         return null;
         //return prjRepos.findAllGroupByCondition(id, pageable, request);
     }
-
-    @Override
-    public Project add(Project project, HttpServletRequest request) throws Exception { return null; }
 
 }

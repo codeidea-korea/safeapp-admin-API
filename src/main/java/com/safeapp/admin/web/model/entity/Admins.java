@@ -21,7 +21,6 @@ import static javax.persistence.EnumType.STRING;
 
 @Entity(name = "admins")
 @Data
-//@ToString(exclude = "type")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Admins extends BaseTimeEntity {

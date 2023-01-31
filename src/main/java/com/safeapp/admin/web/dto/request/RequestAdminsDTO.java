@@ -38,7 +38,7 @@ public class RequestAdminsDTO {
     @Schema(description = "마케팅 정보 수신 동의 시각")
     LocalDateTime marketingAllowedAt;
 
-    @Schema(description = "유형", example = "0")
+    @Schema(description = "관리자 권한 (모든 관리자는 '일반 관리자' 로 동일)", example = "0")
     AdminType adminType;
 
 }

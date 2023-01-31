@@ -23,4 +23,7 @@ public class BaseTimeEntity {
     @Column(name = "updatedAt", columnDefinition = "datetime(6) COMMENT '수정날짜'", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "delete_yn", columnDefinition = "bit(1) COMMENT '삭제여부'", nullable = false)
+    private Boolean deleteYn = false;
+
 }
