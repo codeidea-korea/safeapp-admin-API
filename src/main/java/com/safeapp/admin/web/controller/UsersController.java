@@ -90,8 +90,6 @@ public class UsersController {
             resultMap.put("loginHistory", loginHistory);
         }
 
-
-
         return ResponseUtil.sendResponse(resultMap);
     }
 

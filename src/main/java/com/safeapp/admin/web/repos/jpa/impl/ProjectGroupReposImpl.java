@@ -34,7 +34,7 @@ public class ProjectGroupReposImpl implements ProjectGroupReposCustom {
                     Projections.fields
                     (
                         ResponseProjectGroupDTO.class,
-                        user.id.as("id"),
+                        projectGroup.id.as("id"),
                         user.userName.as("userName"),
                         user.email.as("email"),
                         projectGroup.userAuthType.as("userAuthType")
