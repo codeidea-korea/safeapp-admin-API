@@ -27,9 +27,6 @@ public class ResponseAdminsDTO {
     @Schema(description = "email")
     private String email;
 
-    //@Schema(description = "password")
-    //private String password;
-
     @Schema(description = "admin_name")
     private String adminName;
 

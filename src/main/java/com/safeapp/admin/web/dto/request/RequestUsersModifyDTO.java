@@ -12,17 +12,17 @@ import java.time.LocalDateTime;
 @Data
 public class RequestUsersModifyDTO {
 
+    @Schema(description = "이름", example = "회원 1")
+    String userName;
+
     @Schema(description = "이메일", example = "user1@codeidea.dev")
     String email;
 
     @Schema(description = "휴대폰번호", example = "010-1111-1111")
     String phoneNo;
 
-    @Schema(description = "메시지 정보 수신 동의 여부", example = "1")
-    YN messageAllowed;
-
-    @Schema(description = "메시지 정보 수신 동의 시각")
-    LocalDateTime messageAllowedAt;
+    @Schema(description = "메일 알림 동의 여부", example = "false")
+    Boolean emailAllowed;
 
     @Schema(description = "마케팅 정보 수신 동의 여부", example = "1")
     YN marketingAllowed;

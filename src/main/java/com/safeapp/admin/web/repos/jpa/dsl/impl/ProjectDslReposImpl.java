@@ -37,6 +37,7 @@ public class ProjectDslReposImpl extends QuerydslRepositorySupport implements Pr
         JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
         JPAQuery query = jpaQueryFactory.selectFrom(qProject);
 
+        /*
         if(!StringUtil.isNullOrEmpty(project.getName())) {
             query.where(qProject.name.like(project.getName()));
         }
@@ -49,6 +50,7 @@ public class ProjectDslReposImpl extends QuerydslRepositorySupport implements Pr
         if(project.getId() > 0) {
             query.where(qProject.id.eq(project.getId()));
         }
+        */
 
         return query;
     }

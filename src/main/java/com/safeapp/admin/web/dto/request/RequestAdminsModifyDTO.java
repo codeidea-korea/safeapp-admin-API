@@ -23,4 +23,7 @@ public class RequestAdminsModifyDTO {
     @Schema(description = "휴대폰번호", example = "010-1111-1111")
     String phoneNo;
 
+    @Schema(description = "메모", example = "메모 1")
+    String memo;
+
 }

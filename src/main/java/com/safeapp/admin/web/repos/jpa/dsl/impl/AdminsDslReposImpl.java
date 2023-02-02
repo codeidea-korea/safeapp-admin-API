@@ -36,7 +36,7 @@ public class AdminsDslReposImpl extends QuerydslRepositorySupport implements Adm
     private JPAQuery selectFromWhere(Admins admins, QAdmins qAdmins) {
         JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
         JPAQuery query = jpaQueryFactory.selectFrom(qAdmins);
-        log.error("admins.getAdminId(): {}", admins.getAdminId());
+
         if(!StringUtil.isNullOrEmpty(admins.getAdminId())) {
             query.where(qAdmins.adminId.like("%" + admins.getAdminId() + "%"));
         } else if(!StringUtil.isNullOrEmpty(admins.getAdminName())) {
@@ -46,6 +46,7 @@ public class AdminsDslReposImpl extends QuerydslRepositorySupport implements Adm
         } else if(!StringUtil.isNullOrEmpty(admins.getPhoneNo())) {
             query.where(qAdmins.phoneNo.like("%" + admins.getPhoneNo()  + "%"));
         }
+        query.where(qAdmins.deleteYn.eq(false));
 
         return query;
     }

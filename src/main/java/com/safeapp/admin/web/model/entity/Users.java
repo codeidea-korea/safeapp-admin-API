@@ -85,6 +85,9 @@ public class Users extends BaseTimeEntity {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime messageAllowedAt;
 
+    @Column(name = "email_allowed")
+    private Boolean emailAllowed = false;
+
     // 자식 테이블 맵핑
     /*
     @OneToMany(mappedBy = "user")
@@ -111,11 +114,13 @@ public class Users extends BaseTimeEntity {
         this.marketingAllowedAt = users.marketingAllowedAt;
         this.messageAllowed = users.messageAllowed;
         this.messageAllowedAt = users.messageAllowedAt;
+        this.emailAllowed = users.emailAllowed;
     }
 
     @Builder
     public Users(Long id, String email, String password, String phoneNo, UserType userType, String userId, String userName, String image,
-            YN snsAllowed, YN marketingAllowed, LocalDateTime marketingAllowedAt, YN messageAllowed, LocalDateTime messageAllowedAt) {
+            YN snsAllowed, YN marketingAllowed, LocalDateTime marketingAllowedAt, YN messageAllowed, LocalDateTime messageAllowedAt,
+            Boolean emailAllowed) {
         
         this.id = id;
         this.deleted = YN.N;
@@ -131,13 +136,14 @@ public class Users extends BaseTimeEntity {
         this.marketingAllowedAt = marketingAllowedAt;
         this.messageAllowed = messageAllowed;
         this.messageAllowedAt = messageAllowedAt;
+        this.emailAllowed = emailAllowed;
     }
 
     public void edit(Users user) {
+        setUserName(user.getUserName());
         setEmail(user.getEmail());
         setPhoneNo(user.getPhoneNo());
-        setMessageAllowed(user.getMessageAllowed());
-        setMessageAllowedAt(user.getMessageAllowedAt());
+        setEmailAllowed(user.getEmailAllowed());
         setMarketingAllowed(user.getMarketingAllowed());
         setMarketingAllowedAt(user.getMarketingAllowedAt());
     }

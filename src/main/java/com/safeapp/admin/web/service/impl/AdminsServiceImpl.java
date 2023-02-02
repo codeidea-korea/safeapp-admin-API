@@ -16,11 +16,13 @@ import com.safeapp.admin.web.dto.request.RequestAdminsDTO;
 import com.safeapp.admin.web.dto.request.RequestAdminsModifyDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
+import com.safeapp.admin.web.model.docs.LoginHistory;
 import com.safeapp.admin.web.model.entity.Admins;
 import com.safeapp.admin.web.model.entity.SmsAuthHistory;
 import com.safeapp.admin.web.repos.jpa.AdminRepos;
 import com.safeapp.admin.web.repos.jpa.SmsAuthHistoryRepos;
 import com.safeapp.admin.web.repos.jpa.dsl.AdminsDslRepos;
+import com.safeapp.admin.web.repos.mongo.LoginHistoryRepos;
 import com.safeapp.admin.web.service.AdminsService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +42,7 @@ public class AdminsServiceImpl implements AdminsService {
     private final AdminRepos adminRepos;
     private final AdminsDslRepos adminsDslRepos;
     private final SmsAuthHistoryRepos smsAuthHistoryRepos;
+    private final LoginHistoryRepos loginHistoryRepos;
     private final DirectSendAPIService directSendAPIService;
     private final PasswordUtil passwordUtil;
     private final DateUtil dateUtil;
@@ -184,6 +187,7 @@ public class AdminsServiceImpl implements AdminsService {
         admin.setEmail(modifyDTO.getEmail());
         admin.setAdminName(modifyDTO.getAdminName());
         admin.setPhoneNo(modifyDTO.getPhoneNo());
+        admin.setMemo(modifyDTO.getMemo());
 
         return admin;
     }
@@ -195,7 +199,7 @@ public class AdminsServiceImpl implements AdminsService {
             adminRepos.findById(admin.getId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다."));
 
-        oldAdmin.update(admin);
+        oldAdmin.edit(admin);
 
         Admins editedAdmin = adminRepos.save(oldAdmin);
         return editedAdmin;
@@ -208,6 +212,8 @@ public class AdminsServiceImpl implements AdminsService {
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다."));
 
         admin.setDeleted(YN.Y);
+        admin.setDeleteYn(true);
+
         adminRepos.save(admin);
     }
 

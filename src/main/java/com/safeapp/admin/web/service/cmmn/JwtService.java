@@ -10,7 +10,7 @@ import com.safeapp.admin.web.model.entity.Users;
 
 public interface JwtService {
 
-    Admins getAdminInfoByToken(HttpServletRequest httpServletRequest);
+    Admins getAdminInfoByToken(HttpServletRequest request);
 
     Admins getAdminInfoByTokenAnyway(HttpServletRequest httpServletRequest);
     

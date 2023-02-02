@@ -48,6 +48,12 @@ public class Admins extends BaseTimeEntity {
     @Column(name = "memo")
     private String memo;
 
+    @Column(name = "logged_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime loggedAt;
+
     @Column(name = "marketing_allowed")
     private YN marketingAllowed;
 
@@ -70,6 +76,7 @@ public class Admins extends BaseTimeEntity {
         this.password = admins.password;
         this.adminName = admins.adminName;
         this.phoneNo = admins.phoneNo;
+        this.loggedAt = admins.loggedAt;
         this.marketingAllowed = admins.marketingAllowed;
         this.marketingAllowedAt = admins.marketingAllowedAt;
         this.memo = admins.memo;
@@ -79,13 +86,14 @@ public class Admins extends BaseTimeEntity {
 
     @Builder
     public Admins(long id, String adminId, String email, String password, String adminName, String phoneNo,
-            YN marketingAllowed, LocalDateTime marketingAllowedAt, String memo, AdminType adminType) {
+            LocalDateTime loggedAt, YN marketingAllowed, LocalDateTime marketingAllowedAt, String memo, AdminType adminType) {
 
         this.id = id;
         this.adminId = adminId;
         this.email = email;
         this.password = password;
         this.adminName = adminName;
+        this.loggedAt = loggedAt;
         this.marketingAllowed = marketingAllowed;
         this.marketingAllowedAt = marketingAllowedAt;
         this.phoneNo = phoneNo;
@@ -94,11 +102,12 @@ public class Admins extends BaseTimeEntity {
         this.deleted = YN.N;
     }
 
-    public void update(Admins admin) {
+    public void edit(Admins admin) {
         setAdminId(admin.getAdminId());
         setEmail(admin.getEmail());
         setAdminName(admin.getAdminName());
         setPhoneNo(admin.getPhoneNo());
+        setMemo(admin.getMemo());
     }
 
 }

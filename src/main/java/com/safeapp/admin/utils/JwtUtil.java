@@ -81,7 +81,8 @@ public class JwtUtil {
     public String getAdminIDOrUserIdByAccessToken(String token) {
         final Claims claims = extractAllClaims(token);
 
-        return (String)claims.get("id");
+        // 이메일
+        return (String)claims.get("m");
     }
 
     public String getAdminIDOrUserIdByRefreshToken(String token) {

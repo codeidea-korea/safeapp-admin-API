@@ -18,6 +18,7 @@ import lombok.Data;
 @Data
 @Document
 public class LoginHistory {
+
     @Id
     @ApiModelProperty(value = "몽고 식별자")
     private String docId;
@@ -43,7 +44,9 @@ public class LoginHistory {
     @Builder
     public LoginHistory(String docId, String userId, String password, boolean isSuccess,
             LocalDateTime createDt, String platformInfo) {
+
         super();
+
         this.docId = docId;
         this.userId = userId;
         this.password = password;
@@ -51,4 +54,5 @@ public class LoginHistory {
         this.createDt = createDt;
         this.platformInfo = platformInfo;
     }
+
 }

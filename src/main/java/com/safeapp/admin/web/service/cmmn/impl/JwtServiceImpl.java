@@ -16,6 +16,7 @@ import com.safeapp.admin.web.model.entity.Admins;
 import com.safeapp.admin.web.model.entity.Users;
 import com.safeapp.admin.web.repos.jpa.AdminRepos;
 import com.safeapp.admin.web.repos.jpa.UserRepos;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import com.querydsl.core.util.StringUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 
 @Service
+@Slf4j
 public class JwtServiceImpl implements JwtService {
 
     private final JwtUtil jwtUtil;
@@ -50,32 +52,34 @@ public class JwtServiceImpl implements JwtService {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.");
         }
 
-        String adminId = jwtUtil.getAdminIDOrUserIdByAccessToken(token);
-        if(StringUtils.isNullOrEmpty(adminId)) {
+        // 이메일
+        String email = jwtUtil.getAdminIDOrUserIdByAccessToken(token);
+        if(StringUtils.isNullOrEmpty(email)) {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "인증되지 않은 관리자입니다.");
         }
 
-        Admins admin = adminRepos.findByAdminId(adminId);
+        Admins admin = adminRepos.findByEmail(email);
         if(Objects.isNull(admin)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다.");
         }
     }
     
     private String removeBearer(String token) {
-        if(StringUtils.isNullOrEmpty(token) || (!token.toLowerCase().contains("Bearer "))) {
-            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "반드시 토큰을 넣어주셔야 합니다.");
+        log.error("token: {}", token);
+        if(StringUtils.isNullOrEmpty(token) || (!token.toLowerCase().contains("bearer "))) {
+            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "반드시 토큰을 넣어주셔야 합니다. 123");
         }
         
         return token.replace("Bearer ", "").replace("Bearer ", "");
     }
 
     @Override
-    public Admins getAdminInfoByToken(HttpServletRequest httpServletRequest) {
-        String token = removeBearer(httpServletRequest.getHeader("Authorization"));
+    public Admins getAdminInfoByToken(HttpServletRequest request) {
+        String token = removeBearer(request.getHeader("Authorization"));
         checkToken(token);
 
-        String adminId = jwtUtil.getAdminIDOrUserIdByAccessToken(token);
-        Admins admin = adminRepos.findByAdminId(adminId);
+        String email = jwtUtil.getAdminIDOrUserIdByAccessToken(token);
+        Admins admin = adminRepos.findByEmail(email);
 
         return admin;
     }

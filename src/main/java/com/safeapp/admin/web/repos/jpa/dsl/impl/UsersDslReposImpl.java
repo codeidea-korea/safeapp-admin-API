@@ -42,6 +42,7 @@ public class UsersDslReposImpl extends QuerydslRepositorySupport implements User
         } else if(!StringUtil.isNullOrEmpty(users.getPhoneNo())) {
             query.where(qUsers.phoneNo.like("%" + users.getPhoneNo()  + "%"));
         }
+        query.where(qUsers.deleteYn.eq(false));
 
         return query;
     }

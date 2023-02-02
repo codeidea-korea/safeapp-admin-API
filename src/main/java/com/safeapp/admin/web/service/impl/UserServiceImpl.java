@@ -125,14 +125,13 @@ public class UserServiceImpl implements UserService {
         user.setUserType(UserType.NORMAL);
         user.setDeleted(YN.N);
         user.setDeleted(YN.N);
-        log.error("user.getMarketingAllowed(): {}", user.getMarketingAllowed());
         if(user.getMarketingAllowed() == YN.Y) {
             user.setMarketingAllowedAt(dateUtil.getThisTime());
         } else {
             user.setMarketingAllowedAt(null);
         }
         user.setPassword(passwordUtil.encode(user.getPassword()));
-        log.error("user: {}", user);
+
         Users addedUser = userRepos.save(user);
         if(Objects.isNull(addedUser)) {
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "DB 저장 중 오류가 발생하였습니다.");
@@ -174,14 +173,10 @@ public class UserServiceImpl implements UserService {
     public Users toEntityModify(RequestUsersModifyDTO modifyDto) {
         Users user = new Users();
 
+        user.setUserName(modifyDto.getUserName());
         user.setEmail(modifyDto.getEmail());
         user.setPhoneNo(modifyDto.getPhoneNo());
-        user.setMessageAllowed(modifyDto.getMessageAllowed());
-        if(modifyDto.getMessageAllowed() == YN.Y) {
-            user.setMessageAllowedAt(dateUtil.getThisTime());
-        } else {
-            user.setMessageAllowedAt(null);
-        }
+        user.setEmailAllowed(modifyDto.getEmailAllowed());
         user.setMarketingAllowed(modifyDto.getMarketingAllowed());
         if(modifyDto.getMarketingAllowed() == YN.Y) {
             user.setMarketingAllowedAt(dateUtil.getThisTime());
@@ -212,12 +207,9 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
 
         user.setDeleted(YN.Y);
-        userRepos.save(user);
-    }
+        user.setDeleteYn(true);
 
-    @Override
-    public Users generate(Users oldUser) {
-        return null;
+        userRepos.save(user);
     }
 
     @Override
@@ -226,6 +218,11 @@ public class UserServiceImpl implements UserService {
         List<Users> list = userDslRepos.findAll(user, pages);
 
         return new ListResponse(count, list, pages);
+    }
+
+    @Override
+    public Users generate(Users oldUser) {
+        return null;
     }
 
 }

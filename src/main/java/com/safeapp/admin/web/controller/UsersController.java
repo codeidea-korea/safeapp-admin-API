@@ -10,11 +10,15 @@ import com.safeapp.admin.web.dto.response.ResponseCheckListProjectSelectDTO;
 import com.safeapp.admin.web.dto.response.ResponseUsersDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
+import com.safeapp.admin.web.model.docs.LoginHistory;
 import com.safeapp.admin.web.model.entity.CheckListProject;
 import com.safeapp.admin.web.model.entity.Users;
+import com.safeapp.admin.web.repos.mongo.LoginHistoryRepos;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +27,11 @@ import com.safeapp.admin.web.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.web.client.HttpServerErrorException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -32,9 +39,11 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/user")
 @AllArgsConstructor
 @Api(tags = {"User"}, description = "회원")
+@Slf4j
 public class UsersController {
 
     private final UserService userService;
+    private final LoginHistoryRepos loginHistoryRepos;
 
     @GetMapping(value = "/chk/{userId}")
     @ApiOperation(value = "회원 등록 → 아이디 중복여부 확인", notes = "회원 등록 → 아이디 중복여부 확인")
@@ -67,11 +76,23 @@ public class UsersController {
 
     @GetMapping(value = "/find/{id}")
     @ApiOperation(value = "회원 단독 조회", notes = "회원 단독 조회")
-    public ResponseEntity<ResponseUsersDTO> find(@PathVariable("id") @ApiParam(value = "회원 PK", required = true) long id,
+    public ResponseEntity<HashMap<String, Object>> find(@PathVariable("id") @ApiParam(value = "회원 PK", required = true) long id,
             HttpServletRequest request) throws Exception {
 
-        Users oldUser = userService.find(id, request);
-        return new ResponseEntity<>(ResponseUsersDTO.builder().user(oldUser).build(), OK);
+        HashMap<String, Object> resultMap = new HashMap<>();
+
+        Users userInfo = userService.find(id, request);
+        resultMap.put("userInfo", userInfo);
+
+        LoginHistory loginHistory =
+            loginHistoryRepos.findTopByUserIdAndIsSuccessOrderByCreateDtDesc(userInfo.getUserId(), true);
+        if(!Objects.isNull(loginHistory)) {
+            resultMap.put("loginHistory", loginHistory);
+        }
+
+
+
+        return ResponseUtil.sendResponse(resultMap);
     }
 
     @PatchMapping(value = "/editPass")
