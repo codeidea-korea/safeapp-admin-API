@@ -48,6 +48,9 @@ public class ResponseAdminsDTO {
     @Schema(description = "deleted")
     private YN deleted;
 
+    @Schema(description = "delete_yn")
+    private Boolean deleteYn;
+
     @Builder
     public ResponseAdminsDTO(Admins admin) {
         this.id = admin.getId();
@@ -61,6 +64,7 @@ public class ResponseAdminsDTO {
         this.memo = admin.getMemo();
         this.adminType = admin.getAdminType();
         this.deleted = admin.getDeleted();
+        this.deleteYn = admin.getDeleteYn();
     }
 
 }

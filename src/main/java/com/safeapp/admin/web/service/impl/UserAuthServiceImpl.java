@@ -97,7 +97,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         return UserAuth.builder()
             .id(instance.getId())
             //.userId(instance.getUser().getId())
-            .createdAt(instance.getCreatedAt() == null ? dateUtil.getThisTime() : instance.getCreatedAt())
+            //.createdAt(instance.getCreatedAt() == null ? dateUtil.getThisTime() : instance.getCreatedAt())
             .efectiveEndAt(instance.getEfectiveEndAt())
             .efectiveStartAt(instance.getEfectiveStartAt())
             .paymentWhat(instance.getPaymentWhat())
@@ -108,7 +108,8 @@ public class UserAuthServiceImpl implements UserAuthService {
     @Override
     public UserAuth getEfectiveAuthByUserId(String userId) {
         Users user = userRepos.findByUserId(userId);
-        List<UserAuth> auths = repos.findAllByUserIdAndEfectiveEndAtAfter(user.getId(), dateUtil.getThisTime());
+       // List<UserAuth> auths = repos.findAllByUserIdAndEfectiveEndAtAfter(user.getId(), dateUtil.getThisTime());
+        List<UserAuth> auths = null;
         return auths == null || auths.size() < 1 ? null : auths.get(0);
     }
 }

@@ -20,7 +20,6 @@ import static javax.persistence.FetchType.LAZY;
 @Entity(name = "user_auths")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class UserAuth extends BaseTimeEntity {
 
     @Id
@@ -28,9 +27,11 @@ public class UserAuth extends BaseTimeEntity {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "user")
-    private Users user;
+    @Column(name = "efective_end_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime efectiveEndAt;
 
     @Column(name = "efective_start_at")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -38,36 +39,40 @@ public class UserAuth extends BaseTimeEntity {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime efectiveStartAt;
 
-    @Column(name = "efective_end_at")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime efectiveEndAt;
-
     @Column(name = "payment_what")
-    private int paymentWhat;
+    private Long paymentWhat;
 
     @Column(name = "price")
-    private int price;
+    private Long price;
 
-    @Column(name = "created_at")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime createdAt;
+    @Column(name = "order_type")
+    private String orderType;
+
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "user")
+    private Long user;
+
+    /*
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "user")
+    private Users user;
+    */
 
     @Builder
-    public UserAuth(long id, LocalDateTime efectiveStartAt, LocalDateTime efectiveEndAt,
-            LocalDateTime createdAt, int paymentWhat, int price) {
+    public UserAuth(Long id, LocalDateTime efectiveEndAt, LocalDateTime efectiveStartAt,
+            Long paymentWhat, Long price, String orderType, String status) {
+
+        super();
 
         this.id = id;
-
-        this.efectiveStartAt = efectiveStartAt;
         this.efectiveEndAt = efectiveEndAt;
-        this.createdAt = createdAt;
-
+        this.efectiveStartAt = efectiveStartAt;
         this.paymentWhat = paymentWhat;
         this.price = price;
+        this.orderType = orderType;
+        this.status = status;
     }
 
 }

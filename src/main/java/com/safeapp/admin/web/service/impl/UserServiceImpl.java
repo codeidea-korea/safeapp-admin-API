@@ -18,6 +18,7 @@ import com.safeapp.admin.web.model.entity.CheckListProject;
 import com.safeapp.admin.web.model.entity.CheckListProjectDetail;
 import com.safeapp.admin.web.model.entity.SmsAuthHistory;
 import com.safeapp.admin.web.model.entity.Users;
+import com.safeapp.admin.web.repos.direct.DirectQuery;
 import com.safeapp.admin.web.repos.jpa.SmsAuthHistoryRepos;
 import com.safeapp.admin.web.repos.jpa.UserRepos;
 import com.safeapp.admin.web.repos.jpa.dsl.UsersDslRepos;
@@ -41,6 +42,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepos userRepos;
     private final UsersDslRepos userDslRepos;
     private final SmsAuthHistoryRepos smsAuthHistoryRepos;
+    private final DirectQuery dirRepos;
     private final DirectSendAPIService directSendAPIService;
     private final PasswordUtil passwordUtil;
     private final DateUtil dateUtil;
@@ -124,7 +126,7 @@ public class UserServiceImpl implements UserService {
 
         user.setUserType(UserType.NORMAL);
         user.setDeleted(YN.N);
-        user.setDeleted(YN.N);
+        user.setDeleteYn(false);
         if(user.getMarketingAllowed() == YN.Y) {
             user.setMarketingAllowedAt(dateUtil.getThisTime());
         } else {
@@ -190,7 +192,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public Users edit(Users user, HttpServletRequest request) throws Exception {
-        Users oldUser = 
+        Users oldUser =
             userRepos.findById(user.getId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
 
@@ -214,8 +216,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ListResponse<Users> findAll(Users user, Pages pages, HttpServletRequest request) {
-        long count = userDslRepos.countAll(user);
-        List<Users> list = userDslRepos.findAll(user, pages);
+        long count = dirRepos.countUserList(user);
+        List<Map<String, Object>> list = dirRepos.findUserList(user, pages);
 
         return new ListResponse(count, list, pages);
     }

@@ -155,17 +155,16 @@ public class AdminsServiceImpl implements AdminsService {
         Admins oldAdmin =
             adminRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다."));
-        //if(Objects.isNull(oldAdmin) || oldAdmin.getType() != AdminType.ADMIN) {
 
         return oldAdmin;
     }
 
     @Transactional
     @Override
-    public Admins editPassword(String adminId, String newPass1, String newPass2,
+    public Admins editPassword(String email, String newPass1, String newPass2,
             HttpServletRequest request) throws Exception {
 
-        Admins oldAdmin = adminRepos.findByAdminId(adminId);
+        Admins oldAdmin = adminRepos.findByEmail(email);
         if(Objects.isNull(oldAdmin)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다.");
         }
@@ -184,7 +183,6 @@ public class AdminsServiceImpl implements AdminsService {
         Admins admin = new Admins();
 
         admin.setAdminId(modifyDTO.getAdminId());
-        admin.setEmail(modifyDTO.getEmail());
         admin.setAdminName(modifyDTO.getAdminName());
         admin.setPhoneNo(modifyDTO.getPhoneNo());
         admin.setMemo(modifyDTO.getMemo());

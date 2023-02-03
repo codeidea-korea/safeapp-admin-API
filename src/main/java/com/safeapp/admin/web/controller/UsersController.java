@@ -12,7 +12,9 @@ import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.docs.LoginHistory;
 import com.safeapp.admin.web.model.entity.CheckListProject;
+import com.safeapp.admin.web.model.entity.UserAuth;
 import com.safeapp.admin.web.model.entity.Users;
+import com.safeapp.admin.web.repos.jpa.UserAuthRepos;
 import com.safeapp.admin.web.repos.mongo.LoginHistoryRepos;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +46,7 @@ public class UsersController {
 
     private final UserService userService;
     private final LoginHistoryRepos loginHistoryRepos;
+    private final UserAuthRepos userAuthRepos;
 
     @GetMapping(value = "/chk/{userId}")
     @ApiOperation(value = "회원 등록 → 아이디 중복여부 확인", notes = "회원 등록 → 아이디 중복여부 확인")
@@ -81,13 +84,23 @@ public class UsersController {
 
         HashMap<String, Object> resultMap = new HashMap<>();
 
-        Users userInfo = userService.find(id, request);
-        resultMap.put("userInfo", userInfo);
+        Users oldUser = userService.find(id, request);
+        resultMap.put("oldUser", oldUser);
 
         LoginHistory loginHistory =
-            loginHistoryRepos.findTopByUserIdAndIsSuccessOrderByCreateDtDesc(userInfo.getUserId(), true);
-        if(!Objects.isNull(loginHistory)) {
+            loginHistoryRepos.findTopByUserIdAndIsSuccessOrderByCreateDtDesc(oldUser.getUserId(), true);
+        if(Objects.nonNull(loginHistory)) {
             resultMap.put("loginHistory", loginHistory);
+        } else {
+            resultMap.put("loginHistory", null);
+        }
+
+        UserAuth userAuth =
+            userAuthRepos.findTopByUserAndStatusOrderByIdDesc(oldUser.getId(), "ing");
+        if(Objects.nonNull(userAuth)) {
+            resultMap.put("userAuth", userAuth);
+        } else {
+            resultMap.put("userAuth", null);
         }
 
         return ResponseUtil.sendResponse(resultMap);

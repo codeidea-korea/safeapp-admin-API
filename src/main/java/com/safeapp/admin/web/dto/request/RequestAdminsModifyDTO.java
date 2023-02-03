@@ -14,9 +14,6 @@ public class RequestAdminsModifyDTO {
     @Schema(description = "아이디", example = "admin1")
     String adminId;
 
-    @Schema(description = "이메일", example = "admin1@codeidea.dev")
-    String email;
-
     @Schema(description = "이름", example = "관리자 1")
     String adminName;
 

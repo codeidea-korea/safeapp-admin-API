@@ -77,12 +77,12 @@ public class AdminsController {
     @PatchMapping(value = "/editPass")
     @ApiOperation(value = "관리자 비밀번호 수정", notes = "관리자 비밀번호 수정")
     public ResponseEntity editPassword(
-            @RequestParam(value = "adminId", defaultValue = "admin1") String adminId,
+            @RequestParam(value = "email", defaultValue = "admin1@codeidea.dev") String email,
             @RequestParam(value = "newPass1", defaultValue = "admin2_") String newPass1,
             @RequestParam(value = "newPass2", defaultValue = "admin2_") String newPass2,
             HttpServletRequest request) throws Exception {
 
-        adminsService.editPassword(adminId, newPass1, newPass2, request);
+        adminsService.editPassword(email, newPass1, newPass2, request);
         return ResponseUtil.sendResponse(null);
     }
 

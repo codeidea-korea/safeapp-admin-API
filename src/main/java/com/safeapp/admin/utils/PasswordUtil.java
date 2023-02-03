@@ -44,8 +44,7 @@ public class PasswordUtil {
         int encryptType = generateEncryptType();
         String encryptSeperateCode = generateSeperateCode();
         String encryptBody = generateEncrypt(data, encryptType);
-        log.error("encryptType: {}, encryptSeperateCode: {}, encryptBody: {}, data: {}",
-                encryptType, encryptSeperateCode, encryptBody, data);
+
         initAES256();
         return aes256.encrypt(encryptType + encryptSeperateCode + encryptBody);
     }

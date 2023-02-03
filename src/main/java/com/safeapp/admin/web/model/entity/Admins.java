@@ -69,6 +69,9 @@ public class Admins extends BaseTimeEntity {
     @Column(name = "deleted")
     private YN deleted;
 
+    @Column(name = "delete_yn")
+    private Boolean deleteYn;
+
     public Admins(Admins admins) {
         this.id = admins.id;
         this.adminId = admins.adminId;
@@ -82,6 +85,7 @@ public class Admins extends BaseTimeEntity {
         this.memo = admins.memo;
         this.adminType = admins.adminType;
         this.deleted = admins.deleted;
+        this.deleteYn = admins.deleteYn;
     }
 
     @Builder
@@ -100,11 +104,11 @@ public class Admins extends BaseTimeEntity {
         this.memo = memo;
         this.adminType = adminType;
         this.deleted = YN.N;
+        this.deleteYn = false;
     }
 
     public void edit(Admins admin) {
         setAdminId(admin.getAdminId());
-        setEmail(admin.getEmail());
         setAdminName(admin.getAdminName());
         setPhoneNo(admin.getPhoneNo());
         setMemo(admin.getMemo());

@@ -65,7 +65,6 @@ public class JwtServiceImpl implements JwtService {
     }
     
     private String removeBearer(String token) {
-        log.error("token: {}", token);
         if(StringUtils.isNullOrEmpty(token) || (!token.toLowerCase().contains("bearer "))) {
             throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "반드시 토큰을 넣어주셔야 합니다. 123");
         }

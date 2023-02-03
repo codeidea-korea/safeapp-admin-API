@@ -85,16 +85,34 @@ public class Users extends BaseTimeEntity {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime messageAllowedAt;
 
+    @Column(name = "max_project_group_count")
+    private Integer maxProjectGroupCount;
+
     @Column(name = "email_allowed")
-    private Boolean emailAllowed = false;
+    private Boolean emailAllowed;
+
+    @Column(name = "delete_yn")
+    private Boolean deleteYn;
+
+    @Transient
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime efectiveStartAt;
+
+    @Transient
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime efectiveEndAt;
+
+    @Transient
+    private String orderType;
 
     // 자식 테이블 맵핑
     /*
     @OneToMany(mappedBy = "user")
     private List<CheckListProject> checkListProjectList = new ArrayList<>();
-    */
-
-    /*
     @OneToMany(mappedBy = "user")
     private List<UserAuth> userAuthList = new ArrayList<>();
     */
@@ -114,14 +132,16 @@ public class Users extends BaseTimeEntity {
         this.marketingAllowedAt = users.marketingAllowedAt;
         this.messageAllowed = users.messageAllowed;
         this.messageAllowedAt = users.messageAllowedAt;
+        this.maxProjectGroupCount = users.maxProjectGroupCount;
         this.emailAllowed = users.emailAllowed;
+        this.deleteYn = users.deleteYn;
     }
 
     @Builder
     public Users(Long id, String email, String password, String phoneNo, UserType userType, String userId, String userName, String image,
             YN snsAllowed, YN marketingAllowed, LocalDateTime marketingAllowedAt, YN messageAllowed, LocalDateTime messageAllowedAt,
-            Boolean emailAllowed) {
-        
+            Integer maxProjectGroupCount, Boolean emailAllowed) {
+
         this.id = id;
         this.deleted = YN.N;
         this.email = email;
@@ -136,7 +156,9 @@ public class Users extends BaseTimeEntity {
         this.marketingAllowedAt = marketingAllowedAt;
         this.messageAllowed = messageAllowed;
         this.messageAllowedAt = messageAllowedAt;
+        this.maxProjectGroupCount = maxProjectGroupCount;
         this.emailAllowed = emailAllowed;
+        this.deleteYn = false;
     }
 
     public void edit(Users user) {
