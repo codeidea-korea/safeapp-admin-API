@@ -213,6 +213,57 @@ public class DirectQuery {
         }
     }
 
+    public Map<String, Object> findMyAuth(long id) {
+        try {
+            Map<String, Object> myAuthMap =
+                jdbcTemplate.queryForMap(
+                    "SELECT u.id, u.user_id, u.user_name, ua.order_type FROM users u " +
+                    "LEFT JOIN user_auths ua ON u.id = ua.user AND ua.created_at = (SELECT MAX(ua2.created_at) FROM user_auths ua2 WHERE ua2.user = u.id) " +
+                    "WHERE 1 = 1 AND u.id = " + id
+                );
+
+            return myAuthMap;
+
+        } catch (Exception e) {
+            e.getStackTrace();
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+
+            return null;
+        }
+    }
+    
+    // 마스터 관리자의 결제기간이 유효해야함
+    public List<Map<String, Object>> findMyProject(long id) {
+        try {
+            List<Map<String, Object>> myProject =
+                jdbcTemplate.queryForList(
+                    "SELECT p.id, p.name, p.updated_at, pg.user_auth_type FROM projects p " +
+                    "LEFT JOIN project_groups pg ON p.id = pg.project " +
+                    "WHERE p.id IN " +
+                    "(" +
+                        "SELECT DISTINCT(pg.project) FROM project_groups pg " +
+                        "LEFT JOIN user_auths ua ON pg.user = ua.user " +
+                        "WHERE 1 = 1 " +
+                            "AND pg.project IN (SELECT project FROM project_groups WHERE 1 = 1 AND user = " + id + " AND delete_yn = false) " +
+                            "AND pg.user_auth_type = 'TEAM_MASTER' " +
+                            "AND ua.status = 'ing' " +
+                    ") " +
+                    "AND pg.user = 13 " +
+                    "ORDER BY pg.project ASC"
+                );
+
+            return myProject;
+
+        } catch (Exception e) {
+            e.getStackTrace();
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+
+            return null;
+        }
+    }
+
     public long countUserList(Users user) {
         try {
             String whereOption = "";
@@ -230,9 +281,9 @@ public class DirectQuery {
                 jdbcTemplate.queryForMap(
                 "SELECT COUNT(A.id) AS cnt FROM " +
                     "(" +
-                    "SELECT u.*, ua.efective_start_at, ua.efective_end_at, ua.order_type FROM users u LEFT JOIN user_auths ua ON u.id = ua.user " +
-                    "UNION " +
-                    "SELECT u.*, ua.efective_start_at, ua.efective_end_at, ua.order_type FROM users u RIGHT JOIN user_auths ua ON u.id = ua.user WHERE 1 = 1 AND u.delete_yn = false AND ua.status = 'ing'" +
+                        "SELECT u.*, ua.efective_start_at, ua.efective_end_at, ua.order_type FROM users u " +
+                        "LEFT JOIN user_auths ua ON u.id = ua.user AND ua.created_at = (SELECT MAX(ua2.created_at) FROM user_auths ua2 WHERE ua2.user = u.id) " +
+                        "WHERE u.delete_yn = false" +
                     ") A " +
                     "WHERE 1 = 1 " + whereOption
                 );
@@ -265,12 +316,102 @@ public class DirectQuery {
                 jdbcTemplate.queryForList(
                 "SELECT A.* FROM " +
                     "(" +
-                        "SELECT u.*, ua.efective_start_at, ua.efective_end_at, ua.order_type FROM users u LEFT JOIN user_auths ua ON u.id = ua.user " +
-                        "UNION " +
-                        "SELECT u.*, ua.efective_start_at, ua.efective_end_at, ua.order_type FROM users u RIGHT JOIN user_auths ua ON u.id = ua.user WHERE 1 = 1 AND u.delete_yn = false AND ua.status = 'ing'" +
+                        "SELECT u.*, ua.efective_start_at, ua.efective_end_at, ua.order_type FROM users u " +
+                        "LEFT JOIN user_auths ua ON u.id = ua.user AND ua.created_at = (SELECT MAX(ua2.created_at) FROM user_auths ua2 WHERE ua2.user = u.id) " +
+                        "WHERE u.delete_yn = false" +
                      ") A " +
                     "WHERE 1 = 1 " + whereOption +
                     "ORDER BY A.id DESC LIMIT " + (pages.getPageNo() - 1) * pages.getPageSize() + ", " + pages.getPageSize()
+                );
+
+            return resultList;
+
+        } catch (Exception e) {
+            e.getStackTrace();
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+
+            return null;
+        }
+    }
+
+    public long countProjectList(long userId) {
+        try {
+            Map<String, Object> myProject =
+                jdbcTemplate.queryForMap(
+                "SELECT COUNT(id) AS cnt FROM project_groups " +
+                    "WHERE 1 = 1 " +
+                        "AND user IN " +
+                        "(" +
+                            "SELECT user FROM user_auths " +
+                            "WHERE 1 = 1 " +
+                                "AND user IN " +
+                                "(" +
+                                    "SELECT DISTINCT(user) FROM project_groups " +
+                                    "WHERE 1 = 1 " +
+                                        "AND project IN " +
+                                        "(" +
+                                            "SELECT project FROM project_groups " +
+                                            "WHERE 1 = 1 " +
+                                                "AND user = " + userId + " AND delete_yn = false " +
+                                        ") " +
+                                        "AND delete_yn = false AND user_auth_type = 'TEAM_MASTER' " +
+                                ") AND status = 'ing'" +
+                            ") AND user_auth_type = 'TEAM_MASTER' " +
+                    "GROUP BY project ORDER BY project DESC"
+                );
+
+            return (long)myProject.get("cnt");
+
+        } catch (Exception e) {
+            e.getStackTrace();
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+
+            return 0;
+        }
+    }
+
+    public List<Map<String, Object>> findProjectList(String name, String userName, String orderType, String status,
+            String createdAtStart, String createdAtEnd, int pageNo, int pageSize) {
+
+        try {
+            String whereOption = "";
+            if(StringUtils.isNotEmpty(name)) {
+                whereOption = whereOption + "AND A.name LIKE '%" + name + "%' ";
+            }
+            if(StringUtils.isNotEmpty(userName)) {
+                whereOption = whereOption + "AND A.user_name LIKE '%" + userName + "%' ";
+            }
+            if(StringUtils.isNotEmpty(orderType)) {
+                whereOption = whereOption + "AND A.order_type LIKE '%" + orderType + "%' ";
+            }
+            if(StringUtils.isNotEmpty(status)) {
+                whereOption = whereOption + "AND A.status LIKE '%" + status + "%' ";
+            }
+            if(StringUtils.isNotEmpty(createdAtEnd)) {
+                whereOption = whereOption + "AND A.created_at >= '" + createdAtStart + "' ";
+            }
+            if(StringUtils.isNotEmpty(createdAtStart)) {
+                whereOption = whereOption + "AND A.created_at <= '" + createdAtEnd + "' ";
+            }
+
+            List<Map<String, Object>> resultList =
+                jdbcTemplate.queryForList(
+                "SELECT A.* FROM " +
+                    "(" +
+                        "SELECT p.id, p.name, p.created_at, u.user_name, ua.order_type, ua.status, " +
+                        "(SELECT COUNT(pg2.id) FROM project_groups pg2 LEFT JOIN users u2 ON pg2.user = u2.id " +
+                        "WHERE pg2.project = p.id AND pg2.delete_yn = false AND u2.delete_yn = false) AS group_cnt " +
+                        "FROM projects p " +
+                        "LEFT JOIN project_groups pg ON p.id = pg.project AND pg.delete_yn = false " +
+                        "AND pg.user_auth_type = 'TEAM_MASTER' " +
+                        "LEFT JOIN user_auths ua ON pg.user = ua.user AND pg.user_auth_type = 'TEAM_MASTER' " +
+                        "LEFT JOIN users u ON pg.user = u.id AND u.delete_yn = false " +
+                        "WHERE p.delete_yn = false" +
+                    ") A " +
+                    "WHERE 1 = 1 " + whereOption +
+                    "ORDER BY A.id DESC LIMIT " + (pageNo - 1) * pageSize + ", " + pageSize
                 );
 
             return resultList;

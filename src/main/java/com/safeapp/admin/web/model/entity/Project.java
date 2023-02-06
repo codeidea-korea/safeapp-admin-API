@@ -19,7 +19,6 @@ import lombok.NoArgsConstructor;
 @Entity(name = "projects")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Project extends BaseTimeEntity {
 
     @Id
@@ -62,7 +61,7 @@ public class Project extends BaseTimeEntity {
 
     @Builder
     public Project(Long id, String name, LocalDateTime startAt, LocalDateTime endAt, Long maxUserCount, String address,
-            String addressDetail, String contents, String image, ProjectType status, LocalDateTime createdAt) {
+            String addressDetail, String contents, String image, ProjectType status) {
 
         this.id = id;
         this.name = name;

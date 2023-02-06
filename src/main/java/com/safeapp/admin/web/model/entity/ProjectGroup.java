@@ -31,7 +31,7 @@ public class ProjectGroup extends BaseTimeEntity {
     @JoinColumn(name = "project")
     private Project project;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user")
     private Users user;
 

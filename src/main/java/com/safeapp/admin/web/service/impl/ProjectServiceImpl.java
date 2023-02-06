@@ -16,6 +16,7 @@ import com.safeapp.admin.web.model.docs.InviteHistory;
 import com.safeapp.admin.web.model.entity.*;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
+import com.safeapp.admin.web.repos.direct.DirectQuery;
 import com.safeapp.admin.web.repos.jpa.ProjectGroupRepos;
 import com.safeapp.admin.web.repos.mongo.InviteHistoryRepos;
 import com.safeapp.admin.web.service.cmmn.DirectSendAPIService;
@@ -41,8 +42,12 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectDslRepos prjDslRepos;
     private final InviteHistoryRepos ivtHstRepos;
     private final ProjectGroupRepos prjGrRepos;
+    private final DirectQuery dirRepos;
     private final DateUtil dateUtil;
     private final DirectSendAPIService directSendAPIService;
+
+    @Override
+    public Project add(Project project, HttpServletRequest request) throws Exception { return null; }
 
     @Override
     public Project find(long id, HttpServletRequest request) throws Exception {
@@ -150,34 +155,22 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public List<Map<String, Object>> findProjectList(String name, String userName, String orderType, String status,
+            String createdAtStart, String createdAtEnd, int pageNo, int pageSize, HttpServletRequest request) throws Exception {
+
+        return dirRepos.findProjectList(name, userName, orderType, status, createdAtStart,
+                createdAtEnd, pageNo, pageSize);
+    }
+
+    @Override
+    public Project generate(Project oldProject) { return null; }
+
+    @Override
     public ListResponse<Project> findAll(Project project, Pages pages, HttpServletRequest request) throws Exception {
-        log.error("pages: {}", pages);
         long count = prjDslRepos.countAll(project);
         List<Project> list = prjDslRepos.findAll(project, pages);
 
         return new ListResponse<>(count, list, pages);
-    }
-
-    @Override
-    public Project add(Project project, HttpServletRequest request) throws Exception { return null; }
-
-    @Override
-    public Project generate(Project oldProject) {
-        return
-            Project
-            .builder()
-            .id(oldProject.getId())
-            .address(oldProject.getAddress())
-            .addressDetail(oldProject.getAddressDetail())
-            .contents(oldProject.getContents())
-            .createdAt(oldProject.getCreatedAt() == null ? dateUtil.getThisTime() : oldProject.getCreatedAt())
-            .endAt(oldProject.getEndAt())
-            .image(oldProject.getImage())
-            .maxUserCount(oldProject.getMaxUserCount())
-            .name(oldProject.getName())
-            .startAt(oldProject.getStartAt())
-            .status(oldProject.getStatus())
-            .build();
     }
 
 }

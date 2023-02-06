@@ -37,20 +37,12 @@ public class ProjectDslReposImpl extends QuerydslRepositorySupport implements Pr
         JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
         JPAQuery query = jpaQueryFactory.selectFrom(qProject);
 
-        /*
         if(!StringUtil.isNullOrEmpty(project.getName())) {
             query.where(qProject.name.like(project.getName()));
         }
         if(!StringUtil.isNullOrEmpty(project.getContents())) {
-            query.where(qProject.name.like(project.getContents()));
+            query.where(qProject.contents.like(project.getContents()));
         }
-        if(project.getStatus() != null) {
-            query.where(qProject.status.eq(project.getStatus()));
-        }
-        if(project.getId() > 0) {
-            query.where(qProject.id.eq(project.getId()));
-        }
-        */
 
         return query;
     }
@@ -69,11 +61,12 @@ public class ProjectDslReposImpl extends QuerydslRepositorySupport implements Pr
         JPAQuery query = selectFromWhere(project, qProject);
 
         query
-            .offset(pages.getOffset())
-            .limit(pages.getPageSize())
-            .orderBy(
-                new OrderSpecifier(com.querydsl.core.types.Order.DESC, new PathBuilder(QProject.class, qProject.id.getMetadata()))
-            );
+        .offset(pages.getOffset())
+        .limit(pages.getPageSize())
+        .orderBy
+        (
+            new OrderSpecifier(com.querydsl.core.types.Order.DESC, new PathBuilder(QProject.class, qProject.id.getMetadata()))
+        );
 
         return query.fetch();
     }

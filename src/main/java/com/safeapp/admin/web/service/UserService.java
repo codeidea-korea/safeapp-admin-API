@@ -13,7 +13,9 @@ import com.safeapp.admin.web.model.entity.Users;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface UserService extends CRUDService<Users> {
 
@@ -23,9 +25,13 @@ public interface UserService extends CRUDService<Users> {
 
     boolean isCorrectSMSCode(String phoneNo, String authNo) throws Exception;
 
+    Map<String, Object> findMyAuth(long id, HttpServletRequest request);
+
+    List<Map<String, Object>> findMyProject(long id, HttpServletRequest request);
+
     Users toEntity(RequestUsersDTO addDto);
 
-    Users editPassword(String userId, String newPass1, String newPass2, HttpServletRequest httpServletRequest) throws Exception;
+    Users editPassword(String userId, String newPass1, String newPass2, HttpServletRequest request) throws Exception;
 
     Users toEntityModify(RequestUsersModifyDTO modifyDto);
 

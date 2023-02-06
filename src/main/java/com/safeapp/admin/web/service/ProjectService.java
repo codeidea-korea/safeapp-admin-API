@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 public interface ProjectService extends CRUDService<Project> {
 
@@ -19,5 +20,8 @@ public interface ProjectService extends CRUDService<Project> {
     void removeGroup(long id, HttpServletRequest request) throws Exception;
 
     List<ResponseProjectGroupDTO> findAllGroupByCondition(long id, int pageNo, int pageSize, HttpServletRequest request) throws Exception;
+
+    List<Map<String, Object>> findProjectList(String name, String userName, String orderType, String status,
+            String createdAtStart, String createdAtEnd, int pageNo, int pageSize, HttpServletRequest request) throws Exception;
 
 }

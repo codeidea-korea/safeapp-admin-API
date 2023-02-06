@@ -109,6 +109,9 @@ public class Users extends BaseTimeEntity {
     @Transient
     private String orderType;
 
+    @Transient
+    private Long projectCount;
+
     // 자식 테이블 맵핑
     /*
     @OneToMany(mappedBy = "user")

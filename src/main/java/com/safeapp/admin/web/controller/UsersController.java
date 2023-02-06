@@ -33,6 +33,7 @@ import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -102,6 +103,22 @@ public class UsersController {
         } else {
             resultMap.put("userAuth", null);
         }
+
+        return ResponseUtil.sendResponse(resultMap);
+    }
+
+    @GetMapping(value = "/find/{id}/project")
+    @ApiOperation(value = "회원 단독 프로젝트 조회", notes = "회원 단독 프로젝트 조회")
+    public ResponseEntity<HashMap<String, Object>> findProject(@PathVariable("id") @ApiParam(value = "회원 PK", required = true) long id,
+            HttpServletRequest request) {
+
+        HashMap<String, Object> resultMap = new HashMap<>();
+
+        Map<String, Object> myAuth = userService.findMyAuth(id, request);
+        resultMap.put("myAuth", myAuth);
+
+        List<Map<String, Object>> myProject = userService.findMyProject(id, request);
+        resultMap.put("myProject", myProject);
 
         return ResponseUtil.sendResponse(resultMap);
     }

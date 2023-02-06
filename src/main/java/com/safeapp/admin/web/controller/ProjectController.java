@@ -3,6 +3,7 @@ package com.safeapp.admin.web.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.utils.ResponseUtil;
+import com.safeapp.admin.web.data.ProjectType;
 import com.safeapp.admin.web.dto.request.RequestProjectGroupEditDTO;
 import com.safeapp.admin.web.dto.response.ResponseProjectGroupDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
@@ -22,6 +23,7 @@ import io.swagger.annotations.ApiParam;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -114,13 +116,20 @@ public class ProjectController {
 
     @GetMapping(value = "/list")
     @ApiOperation(value = "프로젝트 목록 조회", notes = "프로젝트 목록 조회")
-    public ResponseEntity<ListResponse> findAll(
+    public ResponseEntity<List<Map<String, Object>>> findAll(
+            @RequestParam(value = "name", required = false, defaultValue = "") String name,
+            @RequestParam(value = "userName", required = false, defaultValue = "") String userName,
+            @RequestParam(value = "orderType", required = false, defaultValue = "") String orderType,
+            @RequestParam(value = "status", required = false, defaultValue = "") String status,
+            @RequestParam(value = "createdAtStart", required = false, defaultValue = "") String createdAtStart,
+            @RequestParam(value = "createdAtEnd", required = false, defaultValue = "") String createdAtEnd,
             @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             HttpServletRequest request) throws Exception {
 
-        Pages pages = new Pages(pageNo, pageSize);
-        return ResponseUtil.sendResponse(projectService.findAll(Project.builder().build(), pages, request));
+        return
+            new ResponseEntity<>(projectService.findProjectList(name, userName, orderType, status, createdAtStart,
+            createdAtEnd, pageNo, pageSize, request), OK);
     }
 
 }

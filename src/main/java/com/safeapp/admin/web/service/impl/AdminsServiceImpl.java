@@ -216,23 +216,14 @@ public class AdminsServiceImpl implements AdminsService {
     }
 
     @Override
-    public Admins generate(Admins oldAdmin) {
-        return
-            Admins
-            .builder()
-            .adminId(oldAdmin.getAdminId())
-            .adminName(oldAdmin.getAdminName())
-            .email(oldAdmin.getEmail())
-            .phoneNo(oldAdmin.getPhoneNo())
-            .build();
-    }
-
-    @Override
     public ListResponse<Admins> findAll(Admins admin, Pages pages, HttpServletRequest request) {
         long count = adminsDslRepos.countAll(admin);
         List<Admins> list = adminsDslRepos.findAll(admin, pages);
 
         return new ListResponse(count, list, pages);
     }
+
+    @Override
+    public Admins generate(Admins oldAdmin) { return null; }
 
 }

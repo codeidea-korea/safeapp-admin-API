@@ -2,10 +2,10 @@ package com.safeapp.admin.web.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.safeapp.admin.web.dto.request.RequestCheckListProjectModifyDTO;
 import com.safeapp.admin.web.dto.request.RequestUsersDTO;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
@@ -14,8 +14,6 @@ import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.dto.request.RequestUsersModifyDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
-import com.safeapp.admin.web.model.entity.CheckListProject;
-import com.safeapp.admin.web.model.entity.CheckListProjectDetail;
 import com.safeapp.admin.web.model.entity.SmsAuthHistory;
 import com.safeapp.admin.web.model.entity.Users;
 import com.safeapp.admin.web.repos.direct.DirectQuery;
@@ -24,7 +22,6 @@ import com.safeapp.admin.web.repos.jpa.UserRepos;
 import com.safeapp.admin.web.repos.jpa.dsl.UsersDslRepos;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -151,6 +148,20 @@ public class UserServiceImpl implements UserService {
         return oldUser;
     }
 
+    @Override
+    public Map<String, Object> findMyAuth(long id, HttpServletRequest request) {
+        Map<String, Object> myAuth = dirRepos.findMyAuth(id);
+
+        return myAuth;
+    }
+
+    @Override
+    public List<Map<String, Object>> findMyProject(long id, HttpServletRequest request) {
+        List<Map<String, Object>> myProject = dirRepos.findMyProject(id);
+
+        return myProject;
+    }
+
     @Transactional
     @Override
     public Users editPassword(String userId, String newPass1, String newPass2,
@@ -217,9 +228,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public ListResponse<Users> findAll(Users user, Pages pages, HttpServletRequest request) {
         long count = dirRepos.countUserList(user);
-        List<Map<String, Object>> list = dirRepos.findUserList(user, pages);
 
-        return new ListResponse(count, list, pages);
+        List<Map<String, Object>> userList = dirRepos.findUserList(user, pages);
+        userList.forEach(u -> {
+            u.put("myProjectCnt", dirRepos.countProjectList(Long.parseLong(u.get("id").toString())));
+        });
+
+        return new ListResponse(count, userList, pages);
     }
 
     @Override
