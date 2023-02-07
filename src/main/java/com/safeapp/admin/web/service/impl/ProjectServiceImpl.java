@@ -18,7 +18,9 @@ import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.repos.direct.DirectQuery;
 import com.safeapp.admin.web.repos.jpa.ProjectGroupRepos;
+import com.safeapp.admin.web.repos.jpa.UserRepos;
 import com.safeapp.admin.web.repos.mongo.InviteHistoryRepos;
+import com.safeapp.admin.web.service.UserService;
 import com.safeapp.admin.web.service.cmmn.DirectSendAPIService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -40,14 +42,43 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepos prjRepos;
     private final ProjectDslRepos prjDslRepos;
-    private final InviteHistoryRepos ivtHstRepos;
     private final ProjectGroupRepos prjGrRepos;
+    private final UserRepos userRepos;
+    private final InviteHistoryRepos ivtHstRepos;
     private final DirectQuery dirRepos;
     private final DateUtil dateUtil;
     private final DirectSendAPIService directSendAPIService;
 
+    @Transactional
     @Override
-    public Project add(Project project, HttpServletRequest request) throws Exception { return null; }
+    public Project add(Project project, HttpServletRequest request) throws Exception {
+        if(Objects.isNull(project)) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 프로젝트입니다.");
+        }
+
+        project.setDeleteYn(false);
+
+        Project addedProject = prjRepos.save(project);
+        if(Objects.isNull(addedProject)) {
+            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "DB 저장 중 오류가 발생하였습니다.");
+        }
+
+        Users user =
+            userRepos.findById(project.getUserId())
+            .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
+
+        ProjectGroup prjGr =
+                ProjectGroup
+                .builder()
+                .userAuthType("TEAM_MASTER")
+                .project(addedProject)
+                .user(user)
+                .name(addedProject.getName())
+                .build();
+        prjGrRepos.save(prjGr);
+
+        return addedProject;
+    }
 
     @Override
     public Project find(long id, HttpServletRequest request) throws Exception {
@@ -158,8 +189,7 @@ public class ProjectServiceImpl implements ProjectService {
     public List<Map<String, Object>> findProjectList(String name, String userName, String orderType, String status,
             String createdAtStart, String createdAtEnd, int pageNo, int pageSize, HttpServletRequest request) throws Exception {
 
-        return dirRepos.findProjectList(name, userName, orderType, status, createdAtStart,
-                createdAtEnd, pageNo, pageSize);
+        return dirRepos.findProjectList(name, userName, orderType, status, createdAtStart, createdAtEnd, pageNo, pageSize);
     }
 
     @Override

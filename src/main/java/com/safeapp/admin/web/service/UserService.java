@@ -27,7 +27,9 @@ public interface UserService extends CRUDService<Users> {
 
     Map<String, Object> findMyAuth(long id, HttpServletRequest request);
 
-    List<Map<String, Object>> findMyProject(long id, HttpServletRequest request);
+    long countMyProjectList(long id, HttpServletRequest request);
+
+    List<Map<String, Object>> findMyProjectList(long id, HttpServletRequest request);
 
     Users toEntity(RequestUsersDTO addDto);
 

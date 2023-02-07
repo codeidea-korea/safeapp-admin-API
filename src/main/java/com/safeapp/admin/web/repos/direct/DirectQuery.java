@@ -232,9 +232,39 @@ public class DirectQuery {
             return null;
         }
     }
+
+    // 마스터 관리자의 결제기간이 유효해야함
+    public long countMyProjectList(long id) {
+        try {
+            Map<String, Object> myProjectMap =
+                jdbcTemplate.queryForMap(
+                "SELECT COUNT(p.id) AS cnt FROM projects p " +
+                    "LEFT JOIN project_groups pg ON p.id = pg.project " +
+                    "WHERE p.id IN " +
+                    "(" +
+                        "SELECT DISTINCT(pg.project) FROM project_groups pg " +
+                        "LEFT JOIN user_auths ua ON pg.user = ua.user " +
+                        "WHERE 1 = 1 " +
+                            "AND pg.project IN (SELECT project FROM project_groups WHERE 1 = 1 AND user = " + id + " AND delete_yn = false) " +
+                            "AND pg.user_auth_type = 'TEAM_MASTER' " +
+                            "AND ua.status = 'ing' " +
+                    ") " +
+                    "AND pg.user = 13 "
+                );
+
+            return (long)myProjectMap.get("cnt");
+
+        } catch (Exception e) {
+            e.getStackTrace();
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+
+            return 0;
+        }
+    }
     
     // 마스터 관리자의 결제기간이 유효해야함
-    public List<Map<String, Object>> findMyProject(long id) {
+    public List<Map<String, Object>> findMyProjectList(long id) {
         try {
             List<Map<String, Object>> myProject =
                 jdbcTemplate.queryForList(
@@ -339,26 +369,13 @@ public class DirectQuery {
         try {
             Map<String, Object> myProject =
                 jdbcTemplate.queryForMap(
-                "SELECT COUNT(id) AS cnt FROM project_groups " +
+                "SELECT COUNT(pg.id) AS cnt FROM project_groups pg " +
+                    "LEFT JOIN user_auths ua ON pg.user = ua.user " +
                     "WHERE 1 = 1 " +
-                        "AND user IN " +
-                        "(" +
-                            "SELECT user FROM user_auths " +
-                            "WHERE 1 = 1 " +
-                                "AND user IN " +
-                                "(" +
-                                    "SELECT DISTINCT(user) FROM project_groups " +
-                                    "WHERE 1 = 1 " +
-                                        "AND project IN " +
-                                        "(" +
-                                            "SELECT project FROM project_groups " +
-                                            "WHERE 1 = 1 " +
-                                                "AND user = " + userId + " AND delete_yn = false " +
-                                        ") " +
-                                        "AND delete_yn = false AND user_auth_type = 'TEAM_MASTER' " +
-                                ") AND status = 'ing'" +
-                            ") AND user_auth_type = 'TEAM_MASTER' " +
-                    "GROUP BY project ORDER BY project DESC"
+                        "AND pg.project IN (SELECT DISTINCT(project) FROM project_groups WHERE 1 = 1 AND user = " + userId + " AND delete_yn = false) " +
+                        "AND pg.user_auth_type = 'TEAM_MASTER' " +
+                        "AND ua.status = 'ing' " +
+                    "ORDER BY pg.project ASC"
                 );
 
             return (long)myProject.get("cnt");

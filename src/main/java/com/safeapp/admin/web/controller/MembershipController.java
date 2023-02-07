@@ -5,6 +5,8 @@ import javax.servlet.http.HttpServletRequest;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Auth;
+import com.safeapp.admin.web.model.entity.UserAuth;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,41 +18,37 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.safeapp.admin.web.service.AuthService;
+import com.safeapp.admin.web.service.MembershipService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 @RestController
-@RequestMapping("/api/auth")
-@Api(tags = {"Auth"}, description = "권한", basePath = "/api/auth")
-public class AuthController {
+@RequestMapping("/membership")
+@AllArgsConstructor
+@Api(tags = {"Membership"}, description = "멤버쉽")
+public class MembershipController {
 
-    private final AuthService authService;
+    private final MembershipService membershipService;
 
-    @Autowired
-    public AuthController(AuthService authService) {
-        this.authService = authService;
+    @PostMapping(value = "/add")
+    @ApiOperation(value = "멤버쉽 결제 등록", notes = "멤버쉽 결제 등록")
+    public UserAuth add(@RequestBody UserAuth userAuth, HttpServletRequest request) throws Exception {
+
+        return membershipService.add(userAuth, request);
     }
 
-    @PostMapping(value = "")
-    @ApiOperation(value = "등록", notes = "등록")
-    public Auth add(
-        @RequestBody Auth params,
-        HttpServletRequest request) throws Exception {
-        return authService.add(params, request);
-    }
-
+    /*
     @PutMapping(value = "/{id}")
     @ApiOperation(value = "수정", notes = "수정")
     public Auth modify(
         @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
-        @RequestBody Auth params,
+        @RequestBody UserAuth params,
         HttpServletRequest request) throws Exception {
 
         params.setId(id);
-        return authService.edit(params, request);
+        return membershipService.edit(params, request);
     }
 
     @DeleteMapping(value = "")
@@ -84,4 +82,6 @@ public class AuthController {
             bfPage,
             request);
     }
+    */
+
 }

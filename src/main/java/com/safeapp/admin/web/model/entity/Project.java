@@ -59,6 +59,9 @@ public class Project extends BaseTimeEntity {
     @Column(name = "status")
     private ProjectType status;
 
+    @Transient
+    private Long userId;
+
     @Builder
     public Project(Long id, String name, LocalDateTime startAt, LocalDateTime endAt, Long maxUserCount, String address,
             String addressDetail, String contents, String image, ProjectType status) {

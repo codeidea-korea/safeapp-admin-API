@@ -36,6 +36,13 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
+    @PostMapping(value = "/add")
+    @ApiOperation(value = "프로젝트 등록", notes = "프로젝트 등록")
+    public ResponseEntity add(@RequestBody Project project, HttpServletRequest request) throws Exception {
+
+        return ResponseUtil.sendResponse(projectService.add(project, request));
+    }
+
     @GetMapping(value = "/find/{id}")
     @ApiOperation(value = "프로젝트 단독 조회", notes = "프로젝트 단독 조회")
     public ResponseEntity find(@PathVariable("id") @ApiParam(value = "프로젝트 PK", required = true) long id,

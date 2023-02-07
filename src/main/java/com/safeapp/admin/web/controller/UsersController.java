@@ -95,6 +95,7 @@ public class UsersController {
         } else {
             resultMap.put("loginHistory", null);
         }
+        //log.error("oldUser.getId(): {}", oldUser.getId());
 
         UserAuth userAuth =
             userAuthRepos.findTopByUserAndStatusOrderByIdDesc(oldUser.getId(), "ing");
@@ -103,13 +104,17 @@ public class UsersController {
         } else {
             resultMap.put("userAuth", null);
         }
+        //log.error("userAuth: {}", userAuth);
 
         return ResponseUtil.sendResponse(resultMap);
     }
 
     @GetMapping(value = "/find/{id}/project")
     @ApiOperation(value = "회원 단독 프로젝트 조회", notes = "회원 단독 프로젝트 조회")
-    public ResponseEntity<HashMap<String, Object>> findProject(@PathVariable("id") @ApiParam(value = "회원 PK", required = true) long id,
+    public ResponseEntity<HashMap<String, Object>> findProject(
+            @PathVariable("id") @ApiParam(value = "회원 PK", required = true) long id,
+            @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             HttpServletRequest request) {
 
         HashMap<String, Object> resultMap = new HashMap<>();
@@ -117,8 +122,12 @@ public class UsersController {
         Map<String, Object> myAuth = userService.findMyAuth(id, request);
         resultMap.put("myAuth", myAuth);
 
-        List<Map<String, Object>> myProject = userService.findMyProject(id, request);
-        resultMap.put("myProject", myProject);
+        long count = userService.countMyProjectList(id, request);
+        List<Map<String, Object>> myProjectList = userService.findMyProjectList(id, request);
+        Pages pages = new Pages(pageNo, pageSize);
+
+        ListResponse myProjectListResponse = new ListResponse(count, myProjectList, pages);
+        resultMap.put("myProjectList", myProjectListResponse);
 
         return ResponseUtil.sendResponse(resultMap);
     }
