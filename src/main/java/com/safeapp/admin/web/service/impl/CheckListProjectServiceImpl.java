@@ -43,10 +43,13 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
     public CheckListProject toEntity(RequestCheckListProjectDTO addDto) throws NotFoundException {
         CheckListProject checkListProject = new CheckListProject();
 
-        if(addDto.getProjectId() != null) {
-            checkListProject.setProject(prjRepos.findById(addDto.getProjectId()).orElseThrow(() -> new NotFoundException("Input Project ID: " + addDto.getProjectId())));
-        }
+        checkListProject.setName(addDto.getName());
+        checkListProject.setVisibled(addDto.getVisibled());
+        checkListProject.setTag(addDto.getTag());
+        checkListProject.setRelatedAcidNo(addDto.getRelatedAcidNo());
+        checkListProject.setRecheckReason(addDto.getRecheckReason());
         checkListProject.setUser(userRepos.findById(addDto.getUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + addDto.getUserId())));
+
         if(addDto.getCheckerId() != null) {
             checkListProject.setChecker(userRepos.findById(addDto.getCheckerId()).orElseThrow(() -> new NotFoundException("Input Checker ID: " + addDto.getCheckerId())));
             checkListProject.setCheckAt(LocalDateTime.now());
@@ -59,12 +62,9 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
             checkListProject.setApprover(userRepos.findById(addDto.getApproverId()).orElseThrow(() -> new NotFoundException("Input User ID: " + addDto.getUserId())));
             checkListProject.setApprove_at(LocalDateTime.now());
         }
-
-        checkListProject.setName(addDto.getName());
-        checkListProject.setVisibled(addDto.getVisibled());
-        checkListProject.setTag(addDto.getTag());
-        checkListProject.setRelatedAcidNo(addDto.getRelatedAcidNo());
-        checkListProject.setRecheckReason(addDto.getRecheckReason());
+        if(addDto.getProjectId() != null) {
+            checkListProject.setProject(prjRepos.findById(addDto.getProjectId()).orElseThrow(() -> new NotFoundException("Input Project ID: " + addDto.getProjectId())));
+        }
 
         return checkListProject;
     }
@@ -102,11 +102,8 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
         checkListProject.setTag(modifyDto.getTag());
         checkListProject.setRelatedAcidNo(modifyDto.getRelatedAcidNo());
         checkListProject.setRecheckReason(modifyDto.getRecheckReason());
-
-        if(modifyDto.getProjectId() != null) {
-            checkListProject.setProject(prjRepos.findById(modifyDto.getProjectId()).orElseThrow(() -> new NotFoundException("Input Project ID: " + modifyDto.getProjectId())));
-        }
         checkListProject.setUser(userRepos.findById(modifyDto.getUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + modifyDto.getUserId())));
+
         if(modifyDto.getCheckerId() != null) {
             checkListProject.setChecker(userRepos.findById(modifyDto.getCheckerId()).orElseThrow(() -> new NotFoundException("Input Checker ID: " + modifyDto.getCheckerId())));
             checkListProject.setCheckAt(LocalDateTime.now());
@@ -118,6 +115,9 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
         if(modifyDto.getApproverId() != null) {
             checkListProject.setApprover(userRepos.findById(modifyDto.getApproverId()).orElseThrow(() -> new NotFoundException("Input User ID: " + modifyDto.getUserId())));
             checkListProject.setApprove_at(LocalDateTime.now());
+        }
+        if(modifyDto.getProjectId() != null) {
+            checkListProject.setProject(prjRepos.findById(modifyDto.getProjectId()).orElseThrow(() -> new NotFoundException("Input Project ID: " + modifyDto.getProjectId())));
         }
 
         List<CheckListProjectDetail> chkPrjDets = new ArrayList<>();
@@ -170,10 +170,35 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
     }
 
     @Override
-    public List<ResponseCheckListProjectDTO> findAllByCondition(String tag, YN visibled, YN created_at_descended,
-            YN likes_descended, YN views_descended, Pageable pageable, HttpServletRequest request) {
+    public Long countAllByCondition(String keyword, String userName, String phoneNo, YN visibled,
+            LocalDateTime createdAtStart, LocalDateTime createdAtEnd) {
 
-        return chkPrjRepos.findAllByConditionAndOrderBy(tag, visibled, created_at_descended, likes_descended, views_descended, pageable);
+        return chkPrjRepos.countAllByCondition(keyword, userName, phoneNo, visibled, createdAtStart, createdAtEnd);
+    }
+
+    @Override
+    public List<ResponseCheckListProjectDTO> findAllByConditionAndOrderBy(String keyword, String userName, String phoneNo,
+            YN visibled, LocalDateTime createdAtStart, LocalDateTime createdAtEnd, YN createdAtDesc, YN likesDesc, YN viewsDesc,
+            int pageNo, int pageSize, HttpServletRequest request) {
+
+        List<CheckListProject> list =
+                chkPrjRepos.findAllByConditionAndOrderBy(keyword, userName, phoneNo,
+                visibled, createdAtStart, createdAtEnd, createdAtDesc, likesDesc, viewsDesc,
+                pageNo, pageSize);
+
+        List<ResponseCheckListProjectDTO> resultList = new ArrayList<>();
+        for(CheckListProject chkPrj : list) {
+            List<String> contents = chkPrjRepos.findContentsByCheckListId(chkPrj.getId());
+            ResponseCheckListProjectDTO result =
+                    ResponseCheckListProjectDTO
+                    .builder()
+                    .checkListProject(chkPrj)
+                    .contents(contents)
+                    .build();
+            resultList.add(result);
+        }
+
+        return resultList;
     }
 
     @Override

@@ -12,6 +12,7 @@ import com.safeapp.admin.web.model.entity.CheckListProject;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CheckListProjectService extends CRUDService<CheckListProject> {
@@ -20,7 +21,12 @@ public interface CheckListProjectService extends CRUDService<CheckListProject> {
 
     CheckListProject toEntityModify(RequestCheckListProjectModifyDTO modifyDto) throws NotFoundException;
 
-    List<ResponseCheckListProjectDTO> findAllByCondition(String tag, YN visibled, YN created_at_descended,
-        YN views_descended, YN likes_descended, Pageable pageable, HttpServletRequest request);
+    Long countAllByCondition(String keyword, String userName, String phoneNo, YN visibled,
+            LocalDateTime createdAtStart, LocalDateTime createdAtEnd);
+
+    List<ResponseCheckListProjectDTO> findAllByConditionAndOrderBy(String keyword, String userName, String phoneNo,
+        YN visibled, LocalDateTime createdAtStart, LocalDateTime createdAtEnd, YN createdAtDesc, YN likesDesc, YN viewsDesc,
+        int PageNo, int pageSize, HttpServletRequest request);
+
 
 }

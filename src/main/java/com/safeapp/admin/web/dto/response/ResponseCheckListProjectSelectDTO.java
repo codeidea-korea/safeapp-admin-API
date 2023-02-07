@@ -14,21 +14,27 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Schema(description = "체크리스트 정보 확인 응답")
+@Schema(description = "체크리스트 단독 조회 응답")
 @Data
 public class ResponseCheckListProjectSelectDTO {
 
-    @Schema(description = "PK")
+    @Schema(description = "체크리스트 PK")
     Long id;
 
     @Schema(description = "제목")
     String name;
+
+    @Schema(description = "등록자 PK")
+    Long userId;
 
     @Schema(description = "등록자 이름")
     String userName;
 
     @Schema(description = "프로젝트 PK")
     Long projectId;
+
+    @Schema(description = "등록자 프로필 이미지")
+    String image;
 
     @Schema(description = "등록일시")
     LocalDateTime createdDate;
@@ -78,13 +84,14 @@ public class ResponseCheckListProjectSelectDTO {
     @Schema(description = "상태")
     StatusType status;
 
-    @Schema(description = "상세")
+    @Schema(description = "체크리스트 상세")
     List<ResponseCheckListProjectDetailDTO> details = new ArrayList<>();
 
     @Builder
     public ResponseCheckListProjectSelectDTO(CheckListProject checkListProject) {
         this.id = checkListProject.getId();
         this.name = checkListProject.getName();
+        this.userId = checkListProject.getUser().getId();
         this.userName = checkListProject.getUser().getUserName();
         this.createdDate = checkListProject.getCreatedAt();
         this.views = checkListProject.getViews();

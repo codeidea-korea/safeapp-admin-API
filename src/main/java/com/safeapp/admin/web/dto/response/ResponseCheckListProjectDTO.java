@@ -11,6 +11,7 @@ import java.util.List;
 
 @Schema(description = "체크리스트 응답")
 @Data
+@NoArgsConstructor
 public class ResponseCheckListProjectDTO {
 
     @Schema(description = "체크리스트 PK")
@@ -19,8 +20,8 @@ public class ResponseCheckListProjectDTO {
     @Schema(description = "제목")
     String name;
 
-    @Schema(description = "등록자 이름")
-    String userName;
+    @Schema(description = "등록자 ID")
+    String userId;
 
     @Schema(description = "프로젝트 PK")
     Long projectId;
@@ -38,22 +39,17 @@ public class ResponseCheckListProjectDTO {
     List<String> contents = new ArrayList<>();
 
     @Builder
-    public ResponseCheckListProjectDTO(CheckListProject checkListProject) {
+    public ResponseCheckListProjectDTO(CheckListProject checkListProject, List<String> contents) {
         this.id = checkListProject.getId();
         this.name = checkListProject.getName();
-        this.userName = checkListProject.getUser().getUserName();
+        this.userId = checkListProject.getUser().getUserId();
         this.createdDate = checkListProject.getCreatedAt();
         this.views = checkListProject.getViews();
         this.likeCount = checkListProject.getLikes();
+        this.contents = contents;
 
         if(checkListProject.getProject() != null) {
             this.projectId = checkListProject.getProject().getId();
-        }
-
-        if(checkListProject.getCheckListProjectDetailList().isEmpty() == false) {
-            for(CheckListProjectDetail detail : checkListProject.getCheckListProjectDetailList()) {
-                this.contents.add(detail.getContents());
-            }
         }
     }
 

@@ -6,6 +6,7 @@ import com.safeapp.admin.web.data.StatusType;
 import com.safeapp.admin.web.dto.request.RequestCheckListProjectDTO;
 import com.safeapp.admin.web.dto.request.RequestCheckListProjectModifyDTO;
 import com.safeapp.admin.web.dto.response.ResponseCheckListProjectDTO;
+import com.safeapp.admin.web.dto.response.ResponseCheckListProjectListDTO;
 import com.safeapp.admin.web.dto.response.ResponseCheckListProjectSelectDTO;
 import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.data.YN;
@@ -33,6 +34,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -40,7 +42,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/checkList")
 @AllArgsConstructor
-@Api(tags = {"CheckListProject"}, description = "체크리스트 관리")
+@Api(tags = {"CheckListProject"}, description = "리스트 관리 > 체크리스트")
 public class CheckListProjectController {
 
     private final CheckListProjectService checkListProjectService;
@@ -85,18 +87,29 @@ public class CheckListProjectController {
     }
 
     @GetMapping(value = "/list")
-    @ApiOperation(value = "체크리스트 목록", notes = "체크리스트 목록")
-    public ResponseEntity<List<ResponseCheckListProjectDTO>> findAllByCondition(
-        @RequestParam(value = "tag", required = false) @Parameter(description = "키워드") String tag,
-        @RequestParam(value = "visibled", required = false) @Parameter(description = "공개상태") YN visibled,
-        @RequestParam(value = "created_at_descended", required = false) @Parameter(description = "최신순") YN created_at_descended,
-        @RequestParam(value = "likes_descended", required = false) @Parameter(description = "좋아요순") YN likes_descended,
-        @RequestParam(value = "views_descended", required = false) @Parameter(description = "조회순") YN views_descended,
-        Pageable pageable, HttpServletRequest request) throws Exception {
+    @ApiOperation(value = "체크리스트 목록 조회", notes = "체크리스트 목록 조회")
+    public ResponseEntity<List<ResponseCheckListProjectDTO>> findAll(
+            @RequestParam(value = "keyword", required = false, defaultValue = "") @Parameter(description = "키워드") String keyword,
+            @RequestParam(value = "userName", required = false, defaultValue = "") @Parameter(description = "이름") String userName,
+            @RequestParam(value = "phoneNo", required = false, defaultValue = "") @Parameter(description = "휴대폰번호") String phoneNo,
+            @RequestParam(value = "visibled", required = false, defaultValue = "") @Parameter(description = "공개상태") YN visibled,
+            @RequestParam(value = "createdAtStart", required = false, defaultValue = "") LocalDateTime createdAtStart,
+            @RequestParam(value = "createdAtEnd", required = false, defaultValue = "") LocalDateTime createdAtEnd,
+            @RequestParam(value = "createdAtDesc", required = false) @Parameter(description = "최신순") YN createdAtDesc,
+            @RequestParam(value = "likesDesc", required = false) @Parameter(description = "좋아요순") YN likesDesc,
+            @RequestParam(value = "viewsDesc", required = false) @Parameter(description = "조회순") YN viewsDesc,
+            @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            HttpServletRequest request) throws Exception {
 
-        return
-            new ResponseEntity<>(checkListProjectService.findAllByCondition(tag, visibled, created_at_descended,
-                views_descended, likes_descended, pageable, request), OK);
+        Long count =
+            checkListProjectService.countAllByCondition(keyword, userName, phoneNo, visibled, createdAtStart, createdAtEnd);
+        List<ResponseCheckListProjectDTO> list =
+            checkListProjectService.findAllByConditionAndOrderBy(keyword, userName, phoneNo,
+            visibled, createdAtStart, createdAtEnd, createdAtDesc, likesDesc, viewsDesc,
+            pageNo, pageSize, request);
+
+        return new ResponseEntity(new ResponseCheckListProjectListDTO(count, list), OK);
     }
 
 }
