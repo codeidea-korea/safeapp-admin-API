@@ -163,8 +163,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Map<String, Object>> findMyProjectList(long id, HttpServletRequest request) {
-        List<Map<String, Object>> myProjectList = dirRepos.findMyProjectList(id);
+    public List<Map<String, Object>> findMyProjectList(long id, Pages pages, HttpServletRequest request) {
+        List<Map<String, Object>> myProjectList = dirRepos.findMyProjectList(id, pages);
 
         return myProjectList;
     }

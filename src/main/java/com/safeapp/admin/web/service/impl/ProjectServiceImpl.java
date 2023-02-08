@@ -186,6 +186,13 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public long countProjectList(String name, String userName, String orderType, String status,
+            String createdAtStart, String createdAtEnd, HttpServletRequest request) throws Exception {
+
+        return dirRepos.countProjectList(name, userName, orderType, status, createdAtStart, createdAtEnd);
+    }
+
+    @Override
     public List<Map<String, Object>> findProjectList(String name, String userName, String orderType, String status,
             String createdAtStart, String createdAtEnd, int pageNo, int pageSize, HttpServletRequest request) throws Exception {
 

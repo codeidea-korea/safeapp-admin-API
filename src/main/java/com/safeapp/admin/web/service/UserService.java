@@ -6,10 +6,12 @@ import com.safeapp.admin.web.dto.request.RequestUsersDTO;
 import com.safeapp.admin.web.dto.request.RequestUsersModifyDTO;
 import com.safeapp.admin.web.dto.response.ResponseRiskcheckDTO;
 import com.safeapp.admin.web.dto.response.ResponseUsersDTO;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.cmmn.Token;
 import com.safeapp.admin.web.model.cmmn.service.CRUDService;
 import com.safeapp.admin.web.model.entity.Admins;
 import com.safeapp.admin.web.model.entity.Users;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +31,7 @@ public interface UserService extends CRUDService<Users> {
 
     long countMyProjectList(long id, HttpServletRequest request);
 
-    List<Map<String, Object>> findMyProjectList(long id, HttpServletRequest request);
+    List<Map<String, Object>> findMyProjectList(long id, Pages pages, HttpServletRequest request);
 
     Users toEntity(RequestUsersDTO addDto);
 

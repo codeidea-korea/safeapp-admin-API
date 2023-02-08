@@ -264,7 +264,7 @@ public class DirectQuery {
     }
     
     // 마스터 관리자의 결제기간이 유효해야함
-    public List<Map<String, Object>> findMyProjectList(long id) {
+    public List<Map<String, Object>> findMyProjectList(long id, Pages pages) {
         try {
             List<Map<String, Object>> myProject =
                 jdbcTemplate.queryForList(
@@ -280,7 +280,8 @@ public class DirectQuery {
                             "AND ua.status = 'ing' " +
                     ") " +
                     "AND pg.user = 13 " +
-                    "ORDER BY pg.project ASC"
+                    "ORDER BY pg.project ASC " +
+                    "LIMIT " + (pages.getPageNo() - 1) * pages.getPageSize() + ", " + pages.getPageSize()
                 );
 
             return myProject;
@@ -387,6 +388,55 @@ public class DirectQuery {
 
             return 0;
         }
+    }
+
+    public long countProjectList(String name, String userName, String orderType, String status,
+            String createdAtStart, String createdAtEnd) {
+
+        try {
+            String whereOption = "";
+            if(StringUtils.isNotEmpty(name)) {
+                whereOption = whereOption + "AND A.name LIKE '%" + name + "%' ";
+            }
+            if(StringUtils.isNotEmpty(userName)) {
+                whereOption = whereOption + "AND A.user_name LIKE '%" + userName + "%' ";
+            }
+            if(StringUtils.isNotEmpty(orderType)) {
+                whereOption = whereOption + "AND A.order_type LIKE '%" + orderType + "%' ";
+            }
+            if(StringUtils.isNotEmpty(status)) {
+                whereOption = whereOption + "AND A.status LIKE '%" + status + "%' ";
+            }
+            if(StringUtils.isNotEmpty(createdAtEnd)) {
+                whereOption = whereOption + "AND A.created_at >= '" + createdAtStart + "' ";
+            }
+            if(StringUtils.isNotEmpty(createdAtStart)) {
+                whereOption = whereOption + "AND A.created_at <= '" + createdAtEnd + "' ";
+            }
+
+            Map<String, Object> resultMap =
+                jdbcTemplate.queryForMap(
+                "SELECT COUNT(A.id) AS cnt FROM " +
+                    "(" +
+                        "SELECT p.id FROM projects p " +
+                        "LEFT JOIN project_groups pg ON p.id = pg.project AND pg.delete_yn = false AND pg.user_auth_type = 'TEAM_MASTER' " +
+                        "LEFT JOIN user_auths ua ON pg.user = ua.user AND pg.user_auth_type = 'TEAM_MASTER' " +
+                        "LEFT JOIN users u ON pg.user = u.id AND u.delete_yn = false " +
+                        "WHERE p.delete_yn = false" +
+                    ") A " +
+                    "WHERE 1 = 1 " + whereOption
+                );
+
+            return (long)resultMap.get("cnt");
+
+        } catch (Exception e) {
+            e.getStackTrace();
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+
+            return 0;
+        }
+
     }
 
     public List<Map<String, Object>> findProjectList(String name, String userName, String orderType, String status,

@@ -134,9 +134,16 @@ public class ProjectController {
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             HttpServletRequest request) throws Exception {
 
-        return
-            new ResponseEntity<>(projectService.findProjectList(name, userName, orderType, status, createdAtStart,
-            createdAtEnd, pageNo, pageSize, request), OK);
+        long count =
+            projectService.countProjectList(name, userName, orderType, status, createdAtStart,
+            createdAtEnd, request);
+        Pages pages = new Pages(pageNo, pageSize);
+        List<Map<String, Object>> projectList =
+            projectService.findProjectList(name, userName, orderType, status, createdAtStart,
+            createdAtEnd, pageNo, pageSize, request);
+
+        ListResponse projectListResponse = new ListResponse(count, projectList, pages);
+        return ResponseUtil.sendResponse(projectListResponse);
     }
 
 }

@@ -51,14 +51,14 @@ public class UserAuth extends BaseTimeEntity {
     @Column(name = "status")
     private String status;
 
+    /*
     @Column(name = "user")
     private Long user;
+    */
 
-    /*
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user")
     private Users user;
-    */
 
     @Builder
     public UserAuth(Long id, LocalDateTime efectiveEndAt, LocalDateTime efectiveStartAt,
