@@ -24,7 +24,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/checkList/detail")
 @AllArgsConstructor
-@Api(tags = {"CheckListProjectDetail"}, description = "체크리스트 상세")
+@Api(tags = {"CheckListProjectDetail"}, description = "리스트 관리 > 체크리스트 > 체크리스트 상세")
 public class CheckListProjectDetailController {
 
     private final CheckListProjectDetailService checkListProjectDetailService;
@@ -72,11 +72,13 @@ public class CheckListProjectDetailController {
         return ResponseUtil.sendResponse(null);
     }
 
+    /*
     @GetMapping(value = "/list")
     @ApiOperation(value = "체크리스트 상세 목록 조회", notes = "체크리스트 상세 목록 조회")
     public ListResponse findAll(Pages pages, HttpServletRequest request) throws Exception {
 
         return checkListProjectDetailService.findAll(CheckListProjectDetail.builder().build(), pages, request);
     }
+    */
 
 }

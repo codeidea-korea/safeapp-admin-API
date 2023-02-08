@@ -41,7 +41,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/user")
 @AllArgsConstructor
-@Api(tags = {"User"}, description = "회원")
+@Api(tags = {"User"}, description = "회원 관리")
 @Slf4j
 public class UsersController {
 

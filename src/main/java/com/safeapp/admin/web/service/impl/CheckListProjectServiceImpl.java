@@ -166,7 +166,8 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
             chkPrjRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 체크리스트입니다."));
 
-        chkPrjRepos.delete(chkPrj);
+        chkPrj.setDeleteYn(true);
+        chkPrjRepos.save(chkPrj);
     }
 
     @Override

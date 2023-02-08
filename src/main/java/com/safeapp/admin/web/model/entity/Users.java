@@ -91,9 +91,6 @@ public class Users extends BaseTimeEntity {
     @Column(name = "email_allowed")
     private Boolean emailAllowed;
 
-    @Column(name = "delete_yn")
-    private Boolean deleteYn;
-
     @Transient
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -137,7 +134,6 @@ public class Users extends BaseTimeEntity {
         this.messageAllowedAt = users.messageAllowedAt;
         this.maxProjectGroupCount = users.maxProjectGroupCount;
         this.emailAllowed = users.emailAllowed;
-        this.deleteYn = users.deleteYn;
     }
 
     @Builder
@@ -161,7 +157,6 @@ public class Users extends BaseTimeEntity {
         this.messageAllowedAt = messageAllowedAt;
         this.maxProjectGroupCount = maxProjectGroupCount;
         this.emailAllowed = emailAllowed;
-        this.deleteYn = false;
     }
 
     public void edit(Users user) {

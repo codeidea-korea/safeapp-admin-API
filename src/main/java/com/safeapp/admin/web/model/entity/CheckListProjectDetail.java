@@ -68,4 +68,14 @@ public class CheckListProjectDetail {
         this.types = types;
     }
 
+    public void edit(CheckListProjectDetail chkPrjDet) {
+        setDepth(chkPrjDet.getDepth());
+        setIsDepth(chkPrjDet.getIsDepth());
+        setParentDepth(chkPrjDet.getParentDepth());
+        setContents(chkPrjDet.getContents());
+        setOrders(chkPrjDet.getOrders());
+        setParentOrders(chkPrjDet.getParentOrders());
+        setTypes(chkPrjDet.getTypes());
+    }
+
 }

@@ -4,6 +4,7 @@ public enum CheckType {
 
     YES,
     NO,
-    NONE
+    NONE,
+    NOT_CHECK
 
 }

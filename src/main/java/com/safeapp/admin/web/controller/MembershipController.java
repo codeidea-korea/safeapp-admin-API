@@ -27,7 +27,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/membership")
 @AllArgsConstructor
-@Api(tags = {"Membership"}, description = "멤버쉽")
+@Api(tags = {"Membership"}, description = "멤버쉽 결제 관리")
 public class MembershipController {
 
     private final MembershipService membershipService;

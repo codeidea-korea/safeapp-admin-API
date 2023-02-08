@@ -23,7 +23,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/admin")
 @AllArgsConstructor
-@Api(tags = {"Admin"}, description = "관리자")
+@Api(tags = {"Admin"}, description = "Admin 관리")
 @Slf4j
 public class AdminsController {
 

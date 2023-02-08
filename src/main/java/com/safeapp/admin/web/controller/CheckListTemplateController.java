@@ -39,7 +39,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/checkList/template")
 @AllArgsConstructor
-@Api(tags = {"CheckListTemplate"}, description = "체크리스트 템플릿")
+@Api(tags = {"CheckListTemplate"}, description = "리스트 관리 > 체크리스트 > 체크리스트 템플릿")
 public class CheckListTemplateController {
 
     private final CheckListTemplateService checkListTemplateService;

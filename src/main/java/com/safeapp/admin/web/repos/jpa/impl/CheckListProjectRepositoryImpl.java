@@ -13,6 +13,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.types.Projections.list;
 
 @AllArgsConstructor
+@Slf4j
 public class CheckListProjectRepositoryImpl implements CheckListProjectRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
@@ -61,17 +63,16 @@ public class CheckListProjectRepositoryImpl implements CheckListProjectRepositor
         return (createdAtEnd != null) ? checkListProject.createdAt.before(createdAtEnd) : null;
     }
 
-    private OrderSpecifier<LocalDateTime> isCreatedAtDesc(YN createdAtDesc) {
-
-        return (createdAtDesc == YN.Y) ? checkListProject.createdAt.desc() : null;
-    }
-    private OrderSpecifier<Integer> isLikesDesc(YN likesDesc) {
-
-        return (likesDesc == YN.Y) ? checkListProject.likes.desc() : null;
-    }
-    private OrderSpecifier<Integer> isViewsDesc(YN viewsDesc) {
-
-        return (viewsDesc == YN.Y) ? checkListProject.views.desc() : null;
+    private OrderSpecifier<?> orderBy(YN createdAtDesc, YN likesDesc, YN viewsDesc) {
+        if(createdAtDesc != null) {
+            return (createdAtDesc == YN.Y) ? checkListProject.createdAt.desc() : null;
+        } else if(likesDesc != null) {
+            return (likesDesc == YN.Y) ? checkListProject.likes.desc() : null;
+        } else if(viewsDesc != null) {
+            return (viewsDesc == YN.Y) ? checkListProject.likes.desc() : null;
+        } else {
+            return checkListProject.createdAt.desc();
+        }
     }
 
     @Override
@@ -103,7 +104,7 @@ public class CheckListProjectRepositoryImpl implements CheckListProjectRepositor
                 .selectFrom(checkListProject)
                 .leftJoin(user).on(user.id.eq(checkListProject.user.id))
                 .leftJoin(project).on(project.id.eq(checkListProject.project.id))
-                .innerJoin(checkListProjectDetail).on(checkListProject.id.eq(checkListProjectDetail.checkListProject.id))
+                .innerJoin(checkListProjectDetail).on(checkListProjectDetail.checkListProject.id.eq(checkListProject.id))
                 .where
                 (
                     isKeyword(keyword),
@@ -111,7 +112,8 @@ public class CheckListProjectRepositoryImpl implements CheckListProjectRepositor
                     isPhoneNo(phoneNo),
                     isVisibled(visibled),
                     isCreatedAtStart(createdAtStart),
-                    isCreatedAtEnd(createdAtEnd)
+                    isCreatedAtEnd(createdAtEnd),
+                    checkListProject.deleteYn.isFalse()
                 )
                 .groupBy(checkListProject.id)
                 .fetchResults();
@@ -139,7 +141,7 @@ public class CheckListProjectRepositoryImpl implements CheckListProjectRepositor
                 .selectFrom(checkListProject)
                 .leftJoin(user).on(user.id.eq(checkListProject.user.id))
                 .leftJoin(project).on(project.id.eq(checkListProject.project.id))
-                .innerJoin(checkListProjectDetail).on(checkListProject.id.eq(checkListProjectDetail.checkListProject.id))
+                .innerJoin(checkListProjectDetail).on(checkListProjectDetail.checkListProject.id.eq(checkListProject.id))
                 .where
                 (
                     isKeyword(keyword),
@@ -147,14 +149,10 @@ public class CheckListProjectRepositoryImpl implements CheckListProjectRepositor
                     isPhoneNo(phoneNo),
                     isVisibled(visibled),
                     isCreatedAtStart(createdAtStart),
-                    isCreatedAtEnd(createdAtEnd)
+                    isCreatedAtEnd(createdAtEnd),
+                    checkListProject.deleteYn.isFalse()
                 )
-                .orderBy
-                (
-                    isCreatedAtDesc(createdAtDesc),
-                    isLikesDesc(likesDesc),
-                    isViewsDesc(viewsDesc)
-                )
+                .orderBy(orderBy(createdAtDesc, likesDesc, viewsDesc))
                 .groupBy(checkListProject.id)
                 .limit(pageSize)
                 .offset((pageNo - 1) * pageSize)

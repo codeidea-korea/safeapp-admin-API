@@ -100,6 +100,33 @@ public class CheckListProject extends BaseTimeEntity {
     @JsonManagedReference
     private List<CheckListProjectDetail> checkListProjectDetailList = new ArrayList<>();
 
+    @Builder
+    public CheckListProject(Long id, Project project, Users user, String name, YN visibled, String tag, String relatedAcidNo,
+            Users checker, Users reviewer, Users approver, List<CheckListProjectDetail> details, String detailContents) {
+
+        super();
+
+        this.id = id;
+        this.name = name;
+        this.visibled = visibled;
+        this.tag = tag;
+        this.relatedAcidNo = relatedAcidNo;
+        this.project = project;
+        this.user = user;
+        this.detailContents = detailContents;
+        this.checkListProjectDetailList = details;
+
+        if(checker != null) {
+            this.checker = checker;
+        }
+        if(reviewer != null) {
+            this.reviewer = reviewer;
+        }
+        if(approver != null) {
+            this.approver = approver;
+        }
+    }
+
     public void edit(CheckListProject checkListProject) {
         setApprover(checkListProject.getApprover());
         setCheckAt(checkListProject.getCheckAt());
@@ -126,33 +153,6 @@ public class CheckListProject extends BaseTimeEntity {
                     checkListProjectDetailList.remove(removeDetail);
                 }
             }
-        }
-    }
-
-    @Builder
-    public CheckListProject(Long id, Project project, Users user, String name, YN visibled, String tag, String relatedAcidNo,
-            Users checker, Users reviewer, Users approver, List<CheckListProjectDetail> details, String detailContents) {
-
-        super();
-
-        this.id = id;
-        this.name = name;
-        this.visibled = visibled;
-        this.tag = tag;
-        this.relatedAcidNo = relatedAcidNo;
-        this.project = project;
-        this.user = user;
-        this.detailContents = detailContents;
-        this.checkListProjectDetailList = details;
-
-        if(checker != null) {
-            this.checker = checker;
-        }
-        if(reviewer != null) {
-            this.reviewer = reviewer;
-        }
-        if(approver != null) {
-            this.approver = approver;
         }
     }
 

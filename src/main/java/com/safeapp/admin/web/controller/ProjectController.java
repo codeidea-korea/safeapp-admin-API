@@ -30,7 +30,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/project")
 @AllArgsConstructor
-@Api(tags = {"Project"}, description = "프로젝트")
+@Api(tags = {"Project"}, description = "프로젝트 관리")
 @Slf4j
 public class ProjectController {
 
@@ -137,10 +137,10 @@ public class ProjectController {
         long count =
             projectService.countProjectList(name, userName, orderType, status, createdAtStart,
             createdAtEnd, request);
-        Pages pages = new Pages(pageNo, pageSize);
         List<Map<String, Object>> projectList =
             projectService.findProjectList(name, userName, orderType, status, createdAtStart,
             createdAtEnd, pageNo, pageSize, request);
+        Pages pages = new Pages(pageNo, pageSize);
 
         ListResponse projectListResponse = new ListResponse(count, projectList, pages);
         return ResponseUtil.sendResponse(projectListResponse);
