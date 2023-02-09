@@ -3,14 +3,15 @@ package com.safeapp.admin.web.dto.response;
 import com.safeapp.admin.web.model.entity.RiskCheckDetail;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
 @Schema(description = "위험성체크 상세")
+@Data
 public class ResponseRiskCheckDetailDTO {
-    @Schema(description = "상세 ID")
+
+    @Schema(description = "위험성 평가표 상세 PK")
     Long id;
 
     @Schema(description = "내용")
@@ -25,40 +26,40 @@ public class ResponseRiskCheckDetailDTO {
     @Schema(description = "도구")
     String tools;
 
-    @Schema(description = "위험팩터타입")
+    @Schema(description = "위험 요소 유형")
     String riskFactorType;
 
-    @Schema(description = "관련법")
+    @Schema(description = "관련 법")
     String relateLaw;
 
-    @Schema(description = "관련가이드")
+    @Schema(description = "관련 가이드")
     String relatedGuide;
 
-    @Schema(description = "위험타입")
+    @Schema(description = "위험 유형")
     String riskType;
 
-    @Schema(description = "감소응답")
+    @Schema(description = "감소 응답")
     String reduceReponse;
 
-    @Schema(description = "체크메모")
+    @Schema(description = "체크 메모")
     String checkMemo;
 
-    @Schema(description = "due유저ID")
+    @Schema(description = "이행 담당자 PK")
     Long dueUserId;
 
-    @Schema(description = "due유저이름")
+    @Schema(description = "이행 담당자 이름")
     String dueUserName;
 
-    @Schema(description = "체크유저ID")
+    @Schema(description = "점검자 PK")
     Long checkUserId;
 
-    @Schema(description = "체크유저이름")
+    @Schema(description = "점검자 이름")
     String checkUserName;
 
     @Schema(description = "상태")
     String status;
 
-    @Schema(description = "부모순서")
+    @Schema(description = "부모 순서")
     int parentOrder;
 
     @Schema(description = "순서")
@@ -67,11 +68,11 @@ public class ResponseRiskCheckDetailDTO {
     @Schema(description = "깊이")
     int depth;
 
-    @Schema(description = "부모깊이")
+    @Schema(description = "부모 깊이")
     int parentDepth;
 
     @Builder
-    public ResponseRiskCheckDetailDTO(RiskCheckDetail detail){
+    public ResponseRiskCheckDetailDTO(RiskCheckDetail detail) {
         this.id = detail.getId();
         this.contents = detail.getContents();
         this.address = detail.getAddress();
@@ -83,6 +84,13 @@ public class ResponseRiskCheckDetailDTO {
         this.riskType = detail.getRiskType();
         this.reduceReponse = detail.getReduceResponse();
         this.checkMemo = detail.getCheckMemo();
+
+        this.status = detail.getStatus();
+        this.parentOrder = detail.getParentOrders();
+        this.depth = detail.getDepth();
+        this.orders = detail.getOrders();
+        this.parentDepth = detail.getParentDepth();
+
         if(detail.getDueUser() != null) {
             this.dueUserId = detail.getDueUser().getId();
             this.dueUserName = detail.getDueUser().getUserName();
@@ -91,10 +99,6 @@ public class ResponseRiskCheckDetailDTO {
             this.checkUserId = detail.getCheckUser().getId();
             this.checkUserName =detail.getCheckUser().getUserName();
         }
-        this.status = detail.getStatus();
-        this.parentOrder = detail.getParentOrders();
-        this.depth = detail.getDepth();
-        this.orders = detail.getOrders();
-        this.parentDepth = detail.getParentDepth();
     }
+
 }

@@ -68,8 +68,8 @@ public class CheckListTemplate extends BaseTimeEntity {
     private List<CheckListTemplateDetail> details = new ArrayList<>();
 
     @Builder
-    public CheckListTemplate(Long id, Project project,  Users user, String name, String tag, String relatedAcidNo,
-            Users checker, Users reviewer,  Users approver, List<CheckListTemplateDetail> details) {
+    public CheckListTemplate(Long id, Project project, Users user, String name, String tag, String relatedAcidNo,
+            Users checker, Users reviewer, Users approver, List<CheckListTemplateDetail> details) {
 
         super();
 

@@ -89,7 +89,7 @@ public class CheckListTemplateController {
             @RequestParam(value = "userId", required = false) @Parameter(description = "회원 PK") Long userId,
             @RequestParam(value = "name", required = false) @Parameter(description = "제목") String name,
             @RequestParam(value = "tag", required = false) @Parameter(description = "태그") String tag,
-            @RequestParam(value = "visibled", required = false) @Parameter(description = "전체공개여부") YN visibled,
+            @RequestParam(value = "visibled", required = false) @Parameter(description = "공개 여부") YN visibled,
             @RequestParam(value = "created_at_descended", required = false) @Parameter(description = "작성순") YN created_at_descended,
             @RequestParam(value = "views_descended", required = false) @Parameter(description = "조회순") YN views_descended,
             @RequestParam(value = "likes_descended", required = false) @Parameter(description = "좋아요순") YN likes_descended,

@@ -10,10 +10,11 @@ import lombok.NoArgsConstructor;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity(name = "risk_check_details")
-@AllArgsConstructor
 @Data
 @NoArgsConstructor
-public class RiskCheckDetail extends BaseTimeEntity{
+@AllArgsConstructor
+public class RiskCheckDetail extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -53,15 +54,15 @@ public class RiskCheckDetail extends BaseTimeEntity{
     private String checkMemo;
 
     @ManyToOne
-    @JoinColumn(name = "due_user", columnDefinition = "bigint COMMENT '유저'")
+    @JoinColumn(name = "due_user")
     private Users dueUser;
 
     @ManyToOne
-    @JoinColumn(name = "check_user", columnDefinition = "bigint COMMENT '체크 유저'")
+    @JoinColumn(name = "check_user")
     private Users checkUser;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "risk_check", columnDefinition = "bigint COMMENT '리스크 체크'")
+    @JoinColumn(name = "risk_check")
     private RiskCheck riskCheck;
 
     @Column(name = "status")
@@ -81,10 +82,12 @@ public class RiskCheckDetail extends BaseTimeEntity{
 
     @Builder
     public RiskCheckDetail(long id, long riskCheckId, String contents, String address, String addressDetail,
-        String tools, String riskFactorType, String relateLaw, String relateGuide, String riskType,
-        String reduceResponse, String checkMemo, long dueUserId, Users dueUser, long checkUserId, Users checkUser,
-        String status, int parentOrders, int orders, int depth, int parentDepth) {
+            String tools, String riskFactorType, String relateLaw, String relateGuide, String riskType,
+            String reduceResponse, String checkMemo, Users dueUser, Users checkUser,
+            String status, int parentOrders, int orders, int depth, int parentDepth) {
+
         super();
+
         this.id = id;
         this.riskCheckId = riskCheckId;
         this.contents = contents;
@@ -105,4 +108,5 @@ public class RiskCheckDetail extends BaseTimeEntity{
         this.depth = depth;
         this.parentDepth = parentDepth;
     }
+
 }

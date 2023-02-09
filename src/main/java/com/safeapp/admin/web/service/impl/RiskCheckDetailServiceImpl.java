@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.safeapp.admin.web.dto.request.RequestRiskcheckDetailDTO;
+import com.safeapp.admin.web.dto.request.RequestRiskCheckDetailDTO;
 import com.safeapp.admin.web.repos.jpa.RiskCheckRepository;
 import com.safeapp.admin.web.repos.jpa.UserRepos;
 import com.safeapp.admin.utils.DateUtil;
@@ -104,7 +104,7 @@ public class RiskCheckDetailServiceImpl implements RiskCheckDetailService {
     }
 
     @Override
-    public RiskCheckDetail toEntity(RequestRiskcheckDetailDTO dto) throws NotFoundException {
+    public RiskCheckDetail toEntity(RequestRiskCheckDetailDTO dto) throws NotFoundException {
         RiskCheckDetail detail = new RiskCheckDetail();
         detail.setRiskCheck(riskCheckRepository.findById(dto.getRiskCheckId()).orElseThrow(() -> new NotFoundException("riskCheck does not exist. input riskCheck id: " + dto.getRiskCheckId())));
         detail.setContents(dto.getContents());

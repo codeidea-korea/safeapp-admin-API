@@ -1,7 +1,7 @@
 package com.safeapp.admin.web.repos.jpa.impl;
 
 import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.dto.response.ResponseRiskcheckDTO;
+import com.safeapp.admin.web.dto.response.ResponseRiskCheckDTO;
 import com.safeapp.admin.web.model.entity.QProject;
 import com.safeapp.admin.web.model.entity.QRiskCheck;
 import com.safeapp.admin.web.model.entity.QRiskCheckDetail;
@@ -13,7 +13,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +34,7 @@ public class RiskCheckRepositoryImpl implements RIskCheckRepositoryCustom {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ResponseRiskcheckDTO> findAllByCondition(
+    public List<ResponseRiskCheckDTO> findAllByCondition(
             Long userId,
             Long projectId,
             String name,
@@ -48,7 +47,7 @@ public class RiskCheckRepositoryImpl implements RIskCheckRepositoryCustom {
             String detail_contents,
             Pageable page
     ){
-        List<ResponseRiskcheckDTO> result = jpaQueryFactory
+        List<ResponseRiskCheckDTO> result = jpaQueryFactory
                 .from(riskCheck)
                 .leftJoin(user).on(user.id.eq(riskCheck.user.id))
                 .leftJoin(project).on(project.id.eq(riskCheck.project.id))
@@ -71,7 +70,7 @@ public class RiskCheckRepositoryImpl implements RIskCheckRepositoryCustom {
                 .transform(
                         groupBy(riskCheck.id).list(
                                 Projections.fields(
-                                        ResponseRiskcheckDTO.class,
+                                        ResponseRiskCheckDTO.class,
                                         riskCheck.id.as("id"),
                                         riskCheck.name.as("name"),
                                         riskCheck.project.id.as("projectId"),

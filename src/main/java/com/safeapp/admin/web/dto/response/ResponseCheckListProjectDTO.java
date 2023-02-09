@@ -17,14 +17,14 @@ public class ResponseCheckListProjectDTO {
     @Schema(description = "체크리스트 PK")
     Long id;
 
+    @Schema(description = "프로젝트 PK")
+    Long projectId;
+
     @Schema(description = "제목")
     String name;
 
     @Schema(description = "등록자 ID")
     String userId;
-
-    @Schema(description = "프로젝트 PK")
-    Long projectId;
 
     @Schema(description = "등록일시")
     LocalDateTime createdDate;

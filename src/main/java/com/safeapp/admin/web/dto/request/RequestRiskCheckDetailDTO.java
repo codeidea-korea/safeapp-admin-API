@@ -3,18 +3,18 @@ package com.safeapp.admin.web.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.annotation.Description;
 
 import java.time.format.DecimalStyle;
 
-@Getter
-@Setter
-@Schema(description = "위험성체크 상세")
-public class RequestRiskcheckDetailDTO {
+@Schema(description = "위험성 평가표 상세 요청")
+@Data
+public class RequestRiskCheckDetailDTO {
 
-    @Schema(description = "위험체크 본문 ID")
+    @Schema(description = "위험성 평가표 PK")
     Long riskCheckId;
 
     @Schema(description = "내용")
@@ -29,28 +29,28 @@ public class RequestRiskcheckDetailDTO {
     @Schema(description = "도구")
     String tools;
 
-    @Schema(description = "위험요소타입")
+    @Schema(description = "위험 요소 유형")
     String riskFactorType;
 
-    @Schema(description = "관련법")
+    @Schema(description = "관련 법")
     String relatedLaw;
 
-    @Schema(description = "관련가이드")
+    @Schema(description = "관련 가이드")
     String relatedGuide;
 
-    @Schema(description = "위험타입")
+    @Schema(description = "위험 유형")
     String riskType;
 
-    @Schema(description = "감소율?감소응답?")
+    @Schema(description = "감소 응답")
     String reduceResponse;
 
-    @Schema(description = "체크메모?")
+    @Schema(description = "체크 메모")
     String checkMemo;
 
-    @Schema(description = "due유저ID")
+    @Schema(description = "이행 담당자 PK")
     Long dueUserId;
 
-    @Schema(description = "체크 유저 ID")
+    @Schema(description = "점검자 PK")
     Long checkerUserId;
 
     @Schema(description = "상태")
@@ -65,6 +65,6 @@ public class RequestRiskcheckDetailDTO {
     @Schema(description = "깊이")
     int depth;
 
-    @Schema(description = "부모순서")
+    @Schema(description = "부모 깊이")
     int parentDepth;
 }

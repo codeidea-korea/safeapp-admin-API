@@ -203,7 +203,7 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
     }
 
     @Override
-    public CheckListProject generate(CheckListProject chkPrj) { return null; }
+    public CheckListProject generate(CheckListProject oldChkPrj) { return null; }
 
     @Override
     public ListResponse<CheckListProject> findAll(CheckListProject chkPrj, Pages pages, HttpServletRequest request) throws Exception {

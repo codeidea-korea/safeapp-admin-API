@@ -94,7 +94,7 @@ public class CheckListProjectController {
             @RequestParam(value = "keyword", required = false) @Parameter(description = "키워드") String keyword,
             @RequestParam(value = "userName", required = false) @Parameter(description = "이름") String userName,
             @RequestParam(value = "phoneNo", required = false) @Parameter(description = "휴대폰번호") String phoneNo,
-            @RequestParam(value = "visibled", required = false) @Parameter(description = "공개상태") YN visibled,
+            @RequestParam(value = "visibled", required = false) @Parameter(description = "공개 여부") YN visibled,
             @RequestParam(value = "createdAtStart", required = false) LocalDateTime createdAtStart,
             @RequestParam(value = "createdAtEnd", required = false) LocalDateTime createdAtEnd,
             @RequestParam(value = "createdAtDesc", required = false) @Parameter(description = "최신순") YN createdAtDesc,

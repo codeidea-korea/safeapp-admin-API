@@ -23,21 +23,22 @@ import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity(name = "risk_checks")
-@AllArgsConstructor
 @Data
 @NoArgsConstructor
-public class RiskCheck extends BaseTimeEntity{
+@AllArgsConstructor
+public class RiskCheck extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "project", columnDefinition = "bigint COMMENT '프로젝트'")
+    @JoinColumn(name = "project")
     private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "user", columnDefinition = "bigint COMMENT '유저'")
+    @JoinColumn(name = "user")
     private Users user;
 
     @Column(name = "name")
@@ -56,25 +57,47 @@ public class RiskCheck extends BaseTimeEntity{
     private String relatedAcidNo;
 
     @ManyToOne
-    @JoinColumn(name = "checker", columnDefinition = "bigint COMMENT '체커'")
+    @JoinColumn(name = "due_user")
+    private Users dueUser;
+
+    @ManyToOne
+    @JoinColumn(name = "check_user")
+    private Users checkUser;
+
+    @ManyToOne
+    @JoinColumn(name = "checker")
     private Users checker;
 
     @Column(name = "check_at")
     private LocalDateTime checkAt;
 
     @ManyToOne
-    @JoinColumn(name = "reviewer", columnDefinition = "bigint COMMENT '리뷰어'")
-    private Users reviewer;
-
-    @Column(name = "review_at")
-    private  LocalDateTime reviewAt;
-
-    @ManyToOne
-    @JoinColumn(name = "approver", columnDefinition = "bigint COMMENT '승인자'")
+    @JoinColumn(name = "approver")
     private Users approver;
 
     @Column(name = "approve_at")
     private LocalDateTime approveAt;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "reviewer1")
+    private Users reviewer1;
+
+    @Column(name = "review1_at")
+    private LocalDateTime review1_at;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "reviewer2")
+    private Users reviewer2;
+
+    @Column(name = "review2_at")
+    private LocalDateTime review2_at;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "reviewer3")
+    private Users reviewer3;
+
+    @Column(name = "review3_at")
+    private LocalDateTime review3_at;
 
     @Column(name = "visibled")
     private YN visibled;
@@ -86,7 +109,7 @@ public class RiskCheck extends BaseTimeEntity{
     private String instructDetail;
 
     @Enumerated(STRING)
-    @Column(name = "status", columnDefinition = "varchar(255) COMMENT '상태'")
+    @Column(name = "status")
     private StatusType status = StatusType.READY;
 
     @Column(name = "work_start_at")
@@ -103,10 +126,6 @@ public class RiskCheck extends BaseTimeEntity{
 
     @Column(name = "etc_risk_memo")
     private String etcRiskMemo;
-
-    @ManyToOne
-    @JoinColumn(name = "check_user_id", insertable = false, updatable = false)
-    private Users checkUser;
 
     @Column(name = "recheck_reason")
     private String recheckReason;
@@ -129,10 +148,56 @@ public class RiskCheck extends BaseTimeEntity{
     @OneToMany(mappedBy = "riskCheck")
     private List<RiskCheckDetail> riskCheckDetailList = new ArrayList<>();
 
-    public void update(RiskCheck riskCheck){
+    @Builder
+    public RiskCheck(Long id, Project project, Users user, String name, int views, int likes, String tag, String relatedAcidNo,
+            Users checker, Users approver, YN visibled, String instructWork, Users reviewer1, Users reviewer2, Users reviewer3,
+            String instructDetail, LocalDateTime workStartAt, LocalDateTime workEndAt, String etcRiskMemo,
+            YN liked, YN createdAtDescended, YN viewsDescended, YN likesDescended, String detailContents) {
+
+        super();
+
+        this.id = id;
+        this.user = user;
+        this.name = name;
+        this.project = project;
+
+        this.views = views;
+        this.likes = likes;
+        this.tag = tag;
+        this.relatedAcidNo = relatedAcidNo;
+
+        this.visibled = visibled;
+        this.instructWork = instructWork;
+        this.instructDetail = instructDetail;
+        this.workStartAt = workStartAt;
+        this.workEndAt = workEndAt;
+        this.etcRiskMemo = etcRiskMemo;
+        this.liked = liked;
+        this.createdAtDescended = createdAtDescended;
+        this.viewsDescended = viewsDescended;
+        this.likesDescended = likesDescended;
+        this.detailContents = detailContents;
+
+        if(checker != null) {
+            this.checker = checker;
+        }
+        if(approver != null) {
+            this.approver = approver;
+        }
+        if(reviewer1 != null) {
+            this.reviewer1 = reviewer1;
+        }
+        if(reviewer2 != null) {
+            this.reviewer2 = reviewer2;
+        }
+        if(reviewer3 != null) {
+            this.reviewer3 = reviewer3;
+        }
+    }
+
+    public void edit(RiskCheck riskCheck) {
         setApprover(riskCheck.getApprover());
         setChecker(riskCheck.getChecker());
-        setCheckUser(riskCheck.getCheckUser());
         setEtcRiskMemo(riskCheck.getEtcRiskMemo());
         setInstructDetail(riskCheck.getInstructDetail());
         setInstructWork(riskCheck.getInstructWork());
@@ -146,47 +211,6 @@ public class RiskCheck extends BaseTimeEntity{
         setWorkEndAt(riskCheck.getWorkEndAt());
         setWorkStartAt(riskCheck.getWorkStartAt());
         setUser(riskCheck.getUser());
-        setReviewer(riskCheck.getReviewer());
     }
 
-    @Builder
-    public RiskCheck(Long id, Project project, long userId, Users user, String name, LocalDateTime createdAt,
-        LocalDateTime updatedAt, int views, int likes, String tag, String relatedAcidNo, long checkerId, Users checker,
-        long reviewerId, Users reviewer, long approverId, Users approver, YN visibled, String instructWork,
-        String instructDetail, LocalDateTime workStartAt, LocalDateTime workEndAt, String etcRiskMemo, long dueUserId,
-        long checkUserId, Users checkUser, String status, String recheckReason, List<RiskCheckDetail> details, YN liked,
-        YN createdAtDescended, YN viewsDescended, YN likesDescended, String detailContents) {
-        super();
-        this.id = id;
-        this.user = user;
-        this.name = name;
-        this.project = project;
-
-        this.views = views;
-        this.likes = likes;
-        this.tag = tag;
-        this.relatedAcidNo = relatedAcidNo;
-
-        if(checker != null){
-            this.checker = checker;
-        }
-        if(reviewer != null){
-            this.reviewer = reviewer;
-        }
-        if(approver != null){
-            this.approver = approver;
-        }
-        this.visibled = visibled;
-        this.instructWork = instructWork;
-        this.instructDetail = instructDetail;
-        this.workStartAt = workStartAt;
-        this.workEndAt = workEndAt;
-        this.etcRiskMemo = etcRiskMemo;
-        this.recheckReason = recheckReason;
-        this.liked = liked;
-        this.createdAtDescended = createdAtDescended;
-        this.viewsDescended = viewsDescended;
-        this.likesDescended = likesDescended;
-        this.detailContents = detailContents;
-    }
 }

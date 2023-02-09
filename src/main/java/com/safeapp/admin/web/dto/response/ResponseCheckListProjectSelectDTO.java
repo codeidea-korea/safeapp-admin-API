@@ -51,19 +51,19 @@ public class ResponseCheckListProjectSelectDTO {
     @Schema(description = "태그")
     String tag;
 
-    @Schema(description = "점검자 ID")
+    @Schema(description = "점검자 PK")
     Long checkerId;
 
     @Schema(description = "점검자 이름")
     String checkerName;
 
-    @Schema(description = "검토자 ID")
+    @Schema(description = "검토자 PK")
     Long reviewerId;
 
     @Schema(description = "검토자 이름")
     String reviewerName;
 
-    @Schema(description = "승인자 ID")
+    @Schema(description = "승인자 PK")
     Long approverId;
 
     @Schema(description = "승인자 이름")

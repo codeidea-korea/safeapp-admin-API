@@ -2,7 +2,7 @@ package com.safeapp.admin.web.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.safeapp.admin.web.dto.request.RequestRiskcheckDetailDTO;
+import com.safeapp.admin.web.dto.request.RequestRiskCheckDetailDTO;
 import com.safeapp.admin.web.dto.response.ResponseRiskCheckDetailDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.safeapp.admin.web.service.RiskCheckDetailService;
 
@@ -41,7 +40,7 @@ public class RiskCheckDetailController {
     @PostMapping(value = "")
     @ApiOperation(value = "등록", notes = "등록")
     public ResponseEntity<ResponseRiskCheckDetailDTO> add(
-        @RequestBody RequestRiskcheckDetailDTO dto,
+        @RequestBody RequestRiskCheckDetailDTO dto,
         HttpServletRequest request) throws Exception {
         RiskCheckDetail params = riskCheckDetailService.toEntity(dto);
         RiskCheckDetail result = riskCheckDetailService.add(params, request);
@@ -55,7 +54,7 @@ public class RiskCheckDetailController {
     @ApiOperation(value = "수정", notes = "수정")
     public ResponseEntity<ResponseRiskCheckDetailDTO> modify(
         @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
-        @RequestBody RequestRiskcheckDetailDTO dto,
+        @RequestBody RequestRiskCheckDetailDTO dto,
         HttpServletRequest request) throws Exception {
         RiskCheckDetail params = riskCheckDetailService.toEntity(dto);
         params.setId(id);

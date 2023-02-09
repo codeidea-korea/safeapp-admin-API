@@ -270,16 +270,18 @@ public class DirectQuery {
                 jdbcTemplate.queryForList(
                     "SELECT p.id, p.name, p.updated_at, pg.user_auth_type FROM projects p " +
                     "LEFT JOIN project_groups pg ON p.id = pg.project " +
-                    "WHERE p.id IN " +
-                    "(" +
-                        "SELECT DISTINCT(pg.project) FROM project_groups pg " +
-                        "LEFT JOIN user_auths ua ON pg.user = ua.user " +
-                        "WHERE 1 = 1 " +
-                            "AND pg.project IN (SELECT project FROM project_groups WHERE 1 = 1 AND user = " + id + " AND delete_yn = false) " +
-                            "AND pg.user_auth_type = 'TEAM_MASTER' " +
-                            "AND ua.status = 'ing' " +
-                    ") " +
-                    "AND pg.user = 13 " +
+                    "WHERE 1 = 1 " +
+                        "AND p.delete_yn = false " +
+                        "AND p.id IN " +
+                        "(" +
+                            "SELECT DISTINCT(pg.project) FROM project_groups pg " +
+                            "LEFT JOIN user_auths ua ON pg.user = ua.user " +
+                            "WHERE 1 = 1 " +
+                                "AND pg.project IN (SELECT project FROM project_groups WHERE 1 = 1 AND user = " + id + " AND delete_yn = false) " +
+                                "AND pg.user_auth_type = 'TEAM_MASTER' " +
+                                "AND ua.status = 'ing' " +
+                        ") " +
+                        "AND pg.user = " + id + " " +
                     "ORDER BY pg.project ASC " +
                     "LIMIT " + (pages.getPageNo() - 1) * pages.getPageSize() + ", " + pages.getPageSize()
                 );
