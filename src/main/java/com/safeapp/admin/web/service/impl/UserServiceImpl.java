@@ -37,7 +37,6 @@ import com.querydsl.core.util.StringUtils;
 public class UserServiceImpl implements UserService {
 
     private final UserRepos userRepos;
-    private final UsersDslRepos userDslRepos;
     private final SmsAuthHistoryRepos smsAuthHistoryRepos;
     private final DirectQuery dirRepos;
     private final DirectSendAPIService directSendAPIService;

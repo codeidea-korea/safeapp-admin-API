@@ -240,16 +240,18 @@ public class DirectQuery {
                 jdbcTemplate.queryForMap(
                 "SELECT COUNT(p.id) AS cnt FROM projects p " +
                     "LEFT JOIN project_groups pg ON p.id = pg.project " +
-                    "WHERE p.id IN " +
-                    "(" +
-                        "SELECT DISTINCT(pg.project) FROM project_groups pg " +
-                        "LEFT JOIN user_auths ua ON pg.user = ua.user " +
-                        "WHERE 1 = 1 " +
-                            "AND pg.project IN (SELECT project FROM project_groups WHERE 1 = 1 AND user = " + id + " AND delete_yn = false) " +
-                            "AND pg.user_auth_type = 'TEAM_MASTER' " +
-                            "AND ua.status = 'ing' " +
-                    ") " +
-                    "AND pg.user = 13 "
+                    "WHERE 1 = 1 " +
+                        "AND p.delete_yn = false " +
+                        "AND p.id IN " +
+                        "(" +
+                            "SELECT DISTINCT(pg.project) FROM project_groups pg " +
+                            "LEFT JOIN user_auths ua ON pg.user = ua.user " +
+                            "WHERE 1 = 1 " +
+                                "AND pg.project IN (SELECT project FROM project_groups WHERE 1 = 1 AND user = " + id + " AND delete_yn = false) " +
+                                "AND pg.user_auth_type = 'TEAM_MASTER' " +
+                                "AND ua.status = 'ing' " +
+                        ") " +
+                        "AND pg.user = 13 "
                 );
 
             return (long)myProjectMap.get("cnt");
@@ -374,10 +376,12 @@ public class DirectQuery {
                 jdbcTemplate.queryForMap(
                 "SELECT COUNT(pg.id) AS cnt FROM project_groups pg " +
                     "LEFT JOIN user_auths ua ON pg.user = ua.user " +
+                    "LEFT JOIN projects p ON pg.project = p.id " +
                     "WHERE 1 = 1 " +
                         "AND pg.project IN (SELECT DISTINCT(project) FROM project_groups WHERE 1 = 1 AND user = " + userId + " AND delete_yn = false) " +
                         "AND pg.user_auth_type = 'TEAM_MASTER' " +
                         "AND ua.status = 'ing' " +
+                        "AND p.delete_yn = false " +
                     "ORDER BY pg.project ASC"
                 );
 
@@ -420,7 +424,7 @@ public class DirectQuery {
                 jdbcTemplate.queryForMap(
                 "SELECT COUNT(A.id) AS cnt FROM " +
                     "(" +
-                        "SELECT p.id FROM projects p " +
+                        "SELECT DISTINCT(p.id) FROM projects p " +
                         "LEFT JOIN project_groups pg ON p.id = pg.project AND pg.delete_yn = false AND pg.user_auth_type = 'TEAM_MASTER' " +
                         "LEFT JOIN user_auths ua ON pg.user = ua.user AND pg.user_auth_type = 'TEAM_MASTER' " +
                         "LEFT JOIN users u ON pg.user = u.id AND u.delete_yn = false " +
