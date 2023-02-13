@@ -8,4 +8,5 @@ import com.safeapp.admin.web.model.entity.RiskCheck;
 
 @Repository
 public interface RiskCheckRepository extends JpaRepository<RiskCheck, Long>, RIskCheckRepositoryCustom {
+
 }

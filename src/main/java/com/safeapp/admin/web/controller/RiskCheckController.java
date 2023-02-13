@@ -46,7 +46,7 @@ public class RiskCheckController {
     @PostMapping(value = "/add")
     @ApiOperation(value = "위험성 평가표 등록", notes = "위험성 평가표 등록")
     public ResponseEntity<ResponseRiskCheckDTO> add(@RequestBody RequestRiskCheckDTO addDto,
-                                                    HttpServletRequest request) throws Exception {
+            HttpServletRequest request) throws Exception {
 
         RiskCheck addedRiskChk = riskCheckService.add(riskCheckService.toEntity(addDto), request);
         return new ResponseEntity<>(ResponseRiskCheckDTO.builder().riskCheck(addedRiskChk).build(), OK);
@@ -64,7 +64,7 @@ public class RiskCheckController {
     @PutMapping(value = "/edit/{id}")
     @ApiOperation(value = "수정", notes = "수정")
     public ResponseEntity<ResponseRiskCheckDTO> edit(@PathVariable("id") @ApiParam(value = "위험성 평가표 PK", required = true) long id,
-                                                     @RequestBody RequestRiskCheckDTO modifyDto, HttpServletRequest request) throws Exception {
+            @RequestBody RequestRiskCheckDTO modifyDto, HttpServletRequest request) throws Exception {
 
         RiskCheck riskChk = riskCheckService.toEntity(modifyDto);
         riskChk.setId(id);

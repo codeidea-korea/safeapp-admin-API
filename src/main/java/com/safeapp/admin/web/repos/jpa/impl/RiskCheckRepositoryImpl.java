@@ -1,11 +1,9 @@
 package com.safeapp.admin.web.repos.jpa.impl;
 
+import com.querydsl.core.QueryResults;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.dto.response.ResponseRiskCheckDTO;
-import com.safeapp.admin.web.model.entity.QProject;
-import com.safeapp.admin.web.model.entity.QRiskCheck;
-import com.safeapp.admin.web.model.entity.QRiskCheckDetail;
-import com.safeapp.admin.web.model.entity.QUsers;
+import com.safeapp.admin.web.model.entity.*;
 import com.safeapp.admin.web.repos.jpa.custom.RIskCheckRepositoryCustom;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.OrderSpecifier;
@@ -18,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 
@@ -32,96 +31,132 @@ public class RiskCheckRepositoryImpl implements RIskCheckRepositoryCustom {
     final QProject project = QProject.project;
     final QRiskCheckDetail riskCheckDetail = QRiskCheckDetail.riskCheckDetail;
 
+    private BooleanExpression isKeyword(String keyword) {
+        return
+            (keyword != null) ?
+                riskCheck.name.contains(keyword).or(riskCheck.tag.contains(keyword))
+                .or(riskCheckDetail.contents.contains(keyword)).or(riskCheckDetail.checkMemo.contains(keyword)) : null;
+    }
+    private BooleanExpression isUserName(String userName) {
+
+        return (userName != null) ? riskCheck.user.userName.contains(userName) : null;
+    }
+    private BooleanExpression isPhoneNo(String phoneNo) {
+
+        return (phoneNo != null) ? riskCheck.user.phoneNo.contains(phoneNo) : null;
+    }
+    private BooleanExpression isVisibled(YN visibled) {
+
+        return (visibled != null) ? riskCheck.visibled.eq(visibled) : null;
+    }
+    private BooleanExpression isCreatedAtStart(LocalDateTime createdAtStart) {
+
+        return (createdAtStart != null) ? riskCheck.createdAt.after(createdAtStart) : null;
+    }
+    private BooleanExpression isCreatedAtEnd(LocalDateTime createdAtEnd) {
+
+        return (createdAtEnd != null) ? riskCheck.createdAt.before(createdAtEnd) : null;
+    }
+
+    private OrderSpecifier<?> orderBy(YN createdAtDesc, YN likesDesc, YN viewsDesc) {
+        if(createdAtDesc != null) {
+            return (createdAtDesc == YN.Y) ? riskCheck.createdAt.desc() : null;
+        } else if(likesDesc != null) {
+            return (likesDesc == YN.Y) ? riskCheck.likes.desc() : null;
+        } else if(viewsDesc != null) {
+            return (viewsDesc == YN.Y) ? riskCheck.views.desc() : null;
+        } else {
+            return riskCheck.createdAt.desc();
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> findContentsByRiskChecktId(Long riskCheckId) {
+        return
+            jpaQueryFactory
+            .select(riskCheckDetail.relateGuide)
+            .from(riskCheckDetail)
+            .where(riskCheckDetail.riskCheck.id.eq(riskCheckId))
+            .limit(3)
+            .fetch()
+            .stream().collect(Collectors.toList());
+    }
+
     @Transactional(readOnly = true)
     @Override
-    public List<ResponseRiskCheckDTO> findAllByCondition(
-            Long userId,
-            Long projectId,
-            String name,
-            String tag,
-            YN visibled,
-            String status,
-            YN created_at_descended,
-            YN views_descended,
-            YN likes_descended,
-            String detail_contents,
-            Pageable page
-    ){
-        List<ResponseRiskCheckDTO> result = jpaQueryFactory
-                .from(riskCheck)
+    public Long countAllByCondition(String keyword, String userName, String phoneNo, YN visibled,
+            LocalDateTime createdAtStart, LocalDateTime createdAtEnd) {
+
+        try {
+            QueryResults<RiskCheck> result =
+                jpaQueryFactory
+                .selectFrom(riskCheck)
                 .leftJoin(user).on(user.id.eq(riskCheck.user.id))
                 .leftJoin(project).on(project.id.eq(riskCheck.project.id))
-                .innerJoin(riskCheckDetail).on(riskCheck.id.eq(riskCheckDetail.riskCheck.id))
-                .where(
-                        isUserIdEq(userId),
-                        isProjectIdEq(projectId),
-                        isNameLike(name),
-                        isTagLike(tag),
-                        isContentsLike(detail_contents),
-                        isVisible(visibled)
+                .innerJoin(riskCheckDetail).on(riskCheckDetail.riskCheck.id.eq(riskCheck.id))
+                .where
+                (
+                    isKeyword(keyword),
+                    isUserName(userName),
+                    isPhoneNo(phoneNo),
+                    isVisibled(visibled),
+                    isCreatedAtStart(createdAtStart),
+                    isCreatedAtEnd(createdAtEnd),
+                    riskCheck.deleteYn.isFalse()
                 )
-                .orderBy(
-                        isDescendView(views_descended),
-                        isDescendDate(created_at_descended),
-                        isDescendLike(likes_descended)
+                .groupBy(riskCheck.id)
+                .fetchResults();
+
+            return result.getTotal();
+
+        } catch(Exception e) {
+            e.getStackTrace();
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+
+            throw e;
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<RiskCheck> findAllByConditionAndOrderBy(String keyword, String userName, String phoneNo, YN visibled,
+           LocalDateTime createdAtStart, LocalDateTime createdAtEnd, YN createdAtDesc, YN likesDesc, YN viewsDesc,
+           int pageNo, int pageSize) {
+
+        try {
+            List<RiskCheck> list =
+                jpaQueryFactory
+                .selectFrom(riskCheck)
+                .leftJoin(user).on(user.id.eq(riskCheck.user.id))
+                .leftJoin(project).on(project.id.eq(riskCheck.project.id))
+                .innerJoin(riskCheckDetail).on(riskCheckDetail.riskCheck.id.eq(riskCheck.id))
+                .where
+                (
+                    isKeyword(keyword),
+                    isUserName(userName),
+                    isPhoneNo(phoneNo),
+                    isVisibled(visibled),
+                    isCreatedAtStart(createdAtStart),
+                    isCreatedAtEnd(createdAtEnd),
+                    riskCheck.deleteYn.isFalse()
                 )
-                .offset(page.getOffset())
-                .limit(page.getPageSize())
-                .transform(
-                        groupBy(riskCheck.id).list(
-                                Projections.fields(
-                                        ResponseRiskCheckDTO.class,
-                                        riskCheck.id.as("id"),
-                                        riskCheck.name.as("name"),
-                                        riskCheck.project.id.as("projectId"),
-                                        riskCheck.user.userName.as("userName"),
-                                        riskCheck.createdAt.as("createdDate"),
-                                        riskCheck.views.as("views"),
-                                        riskCheck.likes.as("likeCount"),
-                                        GroupBy.list(
-                                                riskCheckDetail.contents
-                                        ).as("content")
-                                )
-                        )
-                );
+                .orderBy(orderBy(createdAtDesc, likesDesc, viewsDesc))
+                .groupBy(riskCheck.id)
+                .limit(pageSize)
+                .offset((pageNo - 1) * pageSize)
+                .fetch();
 
-        return result;
+            return list;
+
+        } catch (Exception e) {
+            e.getStackTrace();
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+
+            throw e;
+        }
     }
 
-    private BooleanExpression isUserIdEq(Long userId) {
-        return userId != null ? user.id.eq(userId) : null;
-    }
-
-    private BooleanExpression isProjectIdEq(Long projectId) {
-        return projectId != null ? project.id.eq(projectId) : null;
-    }
-
-    private BooleanExpression isNameLike(String name) {
-        return name != null ? riskCheck.name.contains(name) : null;
-    }
-
-    private BooleanExpression isTagLike(String tag) {
-        return tag != null ? riskCheck.tag.contains(tag) : null;
-    }
-
-    private BooleanExpression isVisible(YN visibled) {
-        return visibled != null ? riskCheck.visibled.eq(visibled) : null;
-    }
-
-    private OrderSpecifier<Integer> isDescendView(YN view) {
-        return view == YN.Y ? riskCheck.views.desc() : riskCheck.views.asc();
-    }
-
-    private OrderSpecifier<LocalDateTime> isDescendDate(YN date) {
-        return date == YN.Y ? riskCheck.createdAt.desc() : riskCheck.createdAt.asc();
-    }
-
-    private OrderSpecifier<Integer> isDescendLike(YN like) {
-        return like == YN.Y ? riskCheck.likes.desc() : riskCheck.likes.asc();
-    }
-
-
-    private BooleanExpression isContentsLike(String contents) {
-        return contents != null ? riskCheck.riskCheckDetailList.any().contents.contains(contents) : null;
-    }
 }

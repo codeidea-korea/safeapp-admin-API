@@ -100,8 +100,6 @@ public class UserAuthServiceImpl implements UserAuthService {
             //.createdAt(instance.getCreatedAt() == null ? dateUtil.getThisTime() : instance.getCreatedAt())
             .efectiveEndAt(instance.getEfectiveEndAt())
             .efectiveStartAt(instance.getEfectiveStartAt())
-            .paymentWhat(instance.getPaymentWhat())
-            .price(instance.getPrice())
             .build();
     }
 

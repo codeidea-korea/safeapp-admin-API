@@ -81,16 +81,16 @@ public class ResponseRiskCheckSelectDTO {
     @Schema(description = "검토자 1 검토일시")
     LocalDateTime review1At;
 
-    @Schema(description = "검토자 1 PK")
+    @Schema(description = "검토자 2 PK")
     Long reviewer2Id;
 
-    @Schema(description = "검토자 1 이름")
+    @Schema(description = "검토자 2 이름")
     String reviewer2Name;
 
     @Schema(description = "검토자 2 검토일시")
     LocalDateTime review2At;
 
-    @Schema(description = "검토자 2 PK")
+    @Schema(description = "검토자 3 PK")
     Long reviewer3Id;
 
     @Schema(description = "검토자 3 이름")

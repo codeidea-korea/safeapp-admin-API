@@ -6,7 +6,9 @@ import com.safeapp.admin.web.model.entity.RiskCheckDetail;
 import org.apache.ibatis.javassist.NotFoundException;
 
 public interface RiskCheckDetailService extends CRUDService<RiskCheckDetail> {
-    RiskCheckDetail generate(RiskCheckDetail userSeq);
 
-    RiskCheckDetail toEntity(RequestRiskCheckDetailDTO dto) throws NotFoundException;
+    RiskCheckDetail generate(RiskCheckDetail oldRiskChkDet);
+
+    RiskCheckDetail toEntity(RequestRiskCheckDetailDTO addDto) throws NotFoundException;
+
 }

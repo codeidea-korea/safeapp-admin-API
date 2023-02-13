@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum RiskCheckStatus {
+
     NONE(1);
 
     private final int code;
@@ -11,4 +12,5 @@ public enum RiskCheckStatus {
     RiskCheckStatus(int code) {
         this.code = code;
     }
+
 }

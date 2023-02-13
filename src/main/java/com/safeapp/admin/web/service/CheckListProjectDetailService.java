@@ -8,6 +8,6 @@ public interface CheckListProjectDetailService extends CRUDService<CheckListProj
 
     CheckListProjectDetail toEntity(RequestCheckListProjectDetailDTO addDto);
 
-    CheckListProjectDetail generate(CheckListProjectDetail userSeq);
+    CheckListProjectDetail generate(CheckListProjectDetail oldChkPrjDet);
 
 }

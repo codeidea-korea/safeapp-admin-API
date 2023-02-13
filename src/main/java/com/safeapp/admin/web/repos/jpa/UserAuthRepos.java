@@ -8,8 +8,6 @@ import com.safeapp.admin.web.model.entity.UserAuth;
 @Repository
 public interface UserAuthRepos extends JpaRepository<UserAuth, Long> {
 
-    //List<UserAuth> findAllByUserIdAndEfectiveEndAtAfter(long userId, LocalDateTime targetTime);
-
     UserAuth findTopByUserAndStatusOrderByIdDesc(long user, String status);
 
 }

@@ -26,7 +26,7 @@ public interface CheckListProjectService extends CRUDService<CheckListProject> {
 
     List<ResponseCheckListProjectDTO> findAllByConditionAndOrderBy(String keyword, String userName, String phoneNo,
         YN visibled, LocalDateTime createdAtStart, LocalDateTime createdAtEnd, YN createdAtDesc, YN likesDesc, YN viewsDesc,
-        int PageNo, int pageSize, HttpServletRequest request);
+        int pageNo, int pageSize, HttpServletRequest request);
 
 
 }

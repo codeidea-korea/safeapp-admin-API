@@ -1,5 +1,8 @@
 package com.safeapp.admin.web.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +14,7 @@ import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Auth;
 import com.safeapp.admin.web.model.entity.UserAuth;
+import com.safeapp.admin.web.repos.direct.DirectQuery;
 import com.safeapp.admin.web.repos.jpa.AuthRepos;
 import com.safeapp.admin.web.repos.jpa.UserAuthRepos;
 import lombok.AllArgsConstructor;
@@ -29,13 +33,7 @@ import com.safeapp.admin.web.service.MembershipService;
 public class MembershipServiceImpl implements MembershipService {
 
     private final UserAuthRepos userAuthRepos;
-
-    @Override
-    public UserAuth generate(UserAuth userAuth) {
-        return
-            UserAuth.builder()
-            .build();
-    }
+    private final DirectQuery dirRepos;
 
     @Transactional
     @Override
@@ -62,6 +60,13 @@ public class MembershipServiceImpl implements MembershipService {
     }
 
     @Override
+    public Map<String, Object> findMembership(long id, HttpServletRequest request) {
+        Map<String, Object> oldMemberShip = dirRepos.findMembership(id);
+
+        return oldMemberShip;
+    }
+
+    @Override
     public UserAuth edit(UserAuth userAuth, HttpServletRequest request) throws Exception {
         UserAuth oldUserAuth =
             userAuthRepos.findById(userAuth.getId())
@@ -79,6 +84,26 @@ public class MembershipServiceImpl implements MembershipService {
 
         userAuth.setDeleteYn(true);
         userAuthRepos.save(userAuth);
+    }
+
+    @Override
+    public Long countMembershipList(String userName, String orderType, String status,
+            LocalDateTime createdAtStart, LocalDateTime createdAtEnd) {
+
+        return dirRepos.countMembershipList(userName, orderType, status, createdAtStart, createdAtEnd);
+    }
+
+    @Override
+    public List<Map<String, Object>> findMembershipList(String userName, String orderType, String status,
+            LocalDateTime createdAtStart, LocalDateTime createdAtEnd, int pageNo, int pageSize, HttpServletRequest request) {
+
+        return dirRepos.findMembershipList(userName, orderType, status, createdAtStart, createdAtEnd, pageNo, pageSize, request);
+    }
+
+    @Override
+    public UserAuth generate(UserAuth oldUserAuth) {
+
+        return null;
     }
 
     @Override

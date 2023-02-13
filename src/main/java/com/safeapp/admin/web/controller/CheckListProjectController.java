@@ -2,26 +2,20 @@ package com.safeapp.admin.web.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.safeapp.admin.web.data.StatusType;
 import com.safeapp.admin.web.dto.request.RequestCheckListProjectDTO;
 import com.safeapp.admin.web.dto.request.RequestCheckListProjectModifyDTO;
 import com.safeapp.admin.web.dto.response.ResponseCheckListProjectDTO;
-import com.safeapp.admin.web.dto.response.ResponseCheckListProjectListDTO;
 import com.safeapp.admin.web.dto.response.ResponseCheckListProjectSelectDTO;
 import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.dto.response.ResponseCheckListTemplateDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.CheckListProject;
-import com.safeapp.admin.web.model.entity.Users;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;

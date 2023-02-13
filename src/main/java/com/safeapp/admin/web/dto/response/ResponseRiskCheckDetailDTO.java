@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Schema(description = "위험성체크 상세")
+@Schema(description = "위험성 평가표 상세 응답")
 @Data
 public class ResponseRiskCheckDetailDTO {
 

@@ -1,6 +1,5 @@
 package com.safeapp.admin.web.dto.response;
 
-import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.entity.RiskCheck;
 import com.safeapp.admin.web.model.entity.RiskCheckDetail;
 import io.swagger.v3.oas.annotations.media.Schema;

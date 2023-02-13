@@ -1,7 +1,9 @@
 package com.safeapp.admin.web.repos.direct;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.cmmn.Pages;
@@ -14,204 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Repository
 @AllArgsConstructor
 @Slf4j
 public class DirectQuery {
 
     private final JdbcTemplate jdbcTemplate;
-
-    public long countUnionCheckListAndRisk(String title, String type, Long projectId) {
-        try {
-            String whereOption = "";
-            if(StringUtils.isNotEmpty(title)) {
-                whereOption = whereOption + " AND rf.name LIKE '%" + title + "%' ";
-            }
-            if(StringUtils.isNotEmpty(type)) {
-                whereOption = whereOption + " AND rf.type = '" + type + "' ";
-            }
-            if(projectId != null) {
-                whereOption = whereOption + " AND rf.project = " + projectId + " ";
-            }
-
-            Map<String, Object> result =
-                jdbcTemplate.queryForMap(
-                "SELECT COUNT(rf.id) cnt " +
-                    "FROM ( " +
-                        "   SELECT p.id, p.project, p.name, p.created_at, u1.id AS user_id, u1.user_id AS user_email_id, u1.user_name, 'checkList' AS type FROM checklist_projects p JOIN users u1 ON p.user = u1.id " +
-                        "   UNION ALL " +
-                        "   SELECT r.id, r.project, r.name, r.created_at, u2.id as user_id, u2.user_id as user_email_id, u2.user_name, 'risk_assessment' as type from risk_checks r join users u2 on r.user = u2.id " +
-                    ") rf " +
-                    "WHERE 1 = 1 " + whereOption
-                );
-
-            return (long)result.get("cnt");
-
-        } catch (Exception e) {
-            e.getStackTrace();
-            System.out.println(e.getCause());
-            System.out.println(e.getMessage());
-
-            return 0;
-        }
-    }
-
-    public List<Map<String, Object>> findAllUnionCheckListAndRisk(String title, String type, YN createdAtDescended, YN nameDescended,
-            YN userIdDescended, Long projectId, Pages pages) {
-
-        try {
-            String whereOption = "";
-            if(StringUtils.isNotEmpty(title)) {
-                whereOption = whereOption + " AND rf.name LIKE '%" + title + "%' ";
-            }
-            if(StringUtils.isNotEmpty(type)) {
-                whereOption = whereOption + " AND rf.type = '" + type + "' ";
-            }
-            if(projectId != null) {
-                whereOption = whereOption + " AND rf.project = " + projectId + " ";
-            }
-
-            String orderOption = "";
-            if(createdAtDescended != null) {
-                orderOption =
-                    orderOption + (!orderOption.equals("") ? ", " : "") + " rf.created_at "
-                    + (createdAtDescended == YN.Y ? "DESC" : "ASC");
-            }
-            if(nameDescended != null) {
-                orderOption =
-                    orderOption + (!orderOption.equals("") ? ", " : "") + " rf.name "
-                    + (nameDescended == YN.Y ? "DESC" : "ASC");
-            }
-            if(userIdDescended != null) {
-                orderOption =
-                    orderOption + (!orderOption.equals("") ? ", " : "") + " rf.user_email_id "
-                    + (userIdDescended == YN.Y ? "DESC" : "ASC");
-            }
-            if(orderOption.equals("")) {
-                orderOption = " ORDER BY rf.created_at DESC ";
-            } else {
-                orderOption = " ORDER BY " + orderOption + " ";
-            }
-
-            List<Map<String, Object>> result =
-                jdbcTemplate.queryForList(
-                "SELECT rf.id, rf.name, rf.created_at, rf.type, rf.user_id, rf.user_email_id, rf.user_name, rf.project " +
-                    "FROM (" +
-                    "       SELECT p.id, p.project, p.name, p.created_at, u1.id AS user_id, u1.user_id AS user_email_id, u1.user_name, 'checkList' AS type FROM checklist_projects p JOIN users u1 ON p.user = u1.id " +
-                    "       UNION ALL " +
-                    "       SELECT r.id, r.project, r.name, r.created_at, u2.id AS user_id, u2.user_id AS user_email_id, u2.user_name, 'risk' AS type FROM risk_checks r JOIN users u2 ON r.user = u2.id " +
-                    ") rf " +
-                    "WHERE 1 = 1 " + whereOption +
-                    orderOption +
-                    "LIMIT " + pages.getOffset() + ", " + pages.getPageSize()
-                );
-
-            return result;
-
-        } catch (Exception e) {
-            e.getStackTrace();
-            System.out.println(e.getCause());
-            System.out.println(e.getMessage());
-
-            return null;
-        }
-    }
-
-    public long countAllUnionCheckListTemplateAndRiskTemplate(String title, String type, Long projectId) {
-        try {
-            String whereOption = "";
-            if(StringUtils.isNotEmpty(title)) {
-                whereOption = whereOption + " AND rf.name LIKE '%" + title + "%' ";
-            }
-            if(StringUtils.isNotEmpty(type)) {
-                whereOption = whereOption + " AND rf.type = '" + type + "' ";
-            }
-            if(projectId != null) {
-                whereOption = whereOption + " AND rf.project = " + projectId + " ";
-            }
-
-            Map<String, Object> result =
-                jdbcTemplate.queryForMap(
-                "SELECT COUNT(rf.id) cnt " +
-                    "FROM ( " +
-                    "       SELECT p.id, p.project, p.name, p.created_at, u1.id AS user_id, u1.user_id AS user_email_id, u1.user_name, 'checkList' AS type FROM checklist_templates p JOIN users u1 ON p.user = u1.id " +
-                    "       UNION ALL " +
-                    "       SELECT r.id, r.project, r.name, r.created_at, u2.id AS user_id, u2.user_id AS user_email_id, u2.user_name, 'risk_assessment' AS type FROM risk_templates r JOIN users u2 ON r.user = u2.id " +
-                    ") rf " +
-                    "WHERE 1 = 1 " + whereOption
-                );
-
-            return (long)result.get("cnt");
-
-        } catch (Exception e) {
-            e.getStackTrace();
-            System.out.println(e.getCause());
-            System.out.println(e.getMessage());
-
-            return 0;
-        }
-    }
-
-    public List<Map<String, Object>> findAllUnionCheckListTemplateAndRiskTemplate(String title, String type, YN createdAtDescended,
-            YN nameDescended, YN userIdDescended, Long projectId, Pages pages) {
-
-        try {
-            String whereOption = "";
-            if(StringUtils.isNotEmpty(title)) {
-                whereOption = whereOption + " AND rf.name LIKE '%" + title + "%' ";
-            }
-            if(StringUtils.isNotEmpty(type)) {
-                whereOption = whereOption + " AND rf.type = '" + type + "' ";
-            }
-            if(projectId != null) {
-                whereOption = whereOption + " AND rf.project = " + projectId + " ";
-            }
-
-            String orderOption = "";
-            if(createdAtDescended != null) {
-                orderOption =
-                    orderOption + (!orderOption.equals("") ? ", " : "") + " rf.created_at "
-                    + (createdAtDescended == YN.Y ? "DESC" : "ASC");
-            }
-            if(nameDescended != null) {
-                orderOption =
-                    orderOption + (!orderOption.equals("") ? ", " : "") + " rf.name "
-                    + (nameDescended == YN.Y ? "DESC" : "ASC");
-            }
-            if(userIdDescended != null) {
-                orderOption =
-                    orderOption + (!orderOption.equals("") ? ", " : "") + " rf.user_email_id "
-                    + (userIdDescended == YN.Y ? "DESC" : "ASC");
-            }
-            if(orderOption.equals("")) {
-                orderOption = " ORDER BY rf.created_at DESC ";
-            } else {
-                orderOption = " ORDER BY " + orderOption + " ";;
-            }
-
-            List<Map<String, Object>> result =
-                jdbcTemplate.queryForList(
-                "SELECT rf.id, rf.name, rf.created_at, rf.type, rf.user_id, rf.user_email_id, rf.user_name, rf.project " +
-                    "FROM ( " +
-                    "       SELECT p.id, p.project, p.name, p.created_at, u1.id AS user_id, u1.user_id AS user_email_id, u1.user_name, 'checkList' AS type FROM checklist_templates p JOIN users u1 ON p.user = u1.id " +
-                    "       UNION ALL " +
-                    "       SELECT r.id, r.project, r.name, r.created_at, u2.id AS user_id, u2.user_id AS user_email_id, u2.user_name, 'risk_assessment' AS type FROM risk_templates r JOIN users u2 ON r.user = u2.id " +
-                    ") rf " +
-                    "WHERE 1 = 1 " + whereOption +
-                    orderOption +
-                    "LIMIT " + pages.getOffset() + ", " + pages.getPageSize()
-                );
-
-            return result;
-
-        } catch (Exception e) {
-            e.getStackTrace();
-            System.out.println(e.getCause());
-            System.out.println(e.getMessage());
-
-            return null;
-        }
-    }
 
     public Map<String, Object> findMyAuth(long id) {
         try {
@@ -413,10 +225,10 @@ public class DirectQuery {
             if(StringUtils.isNotEmpty(status)) {
                 whereOption = whereOption + "AND A.status LIKE '%" + status + "%' ";
             }
-            if(StringUtils.isNotEmpty(createdAtEnd)) {
+            if(StringUtils.isNotEmpty(createdAtStart)) {
                 whereOption = whereOption + "AND A.created_at >= '" + createdAtStart + "' ";
             }
-            if(StringUtils.isNotEmpty(createdAtStart)) {
+            if(StringUtils.isNotEmpty(createdAtEnd)) {
                 whereOption = whereOption + "AND A.created_at <= '" + createdAtEnd + "' ";
             }
 
@@ -462,10 +274,10 @@ public class DirectQuery {
             if(StringUtils.isNotEmpty(status)) {
                 whereOption = whereOption + "AND A.status LIKE '%" + status + "%' ";
             }
-            if(StringUtils.isNotEmpty(createdAtEnd)) {
+            if(StringUtils.isNotEmpty(createdAtStart)) {
                 whereOption = whereOption + "AND A.created_at >= '" + createdAtStart + "' ";
             }
-            if(StringUtils.isNotEmpty(createdAtStart)) {
+            if(StringUtils.isNotEmpty(createdAtEnd)) {
                 whereOption = whereOption + "AND A.created_at <= '" + createdAtEnd + "' ";
             }
 
@@ -496,6 +308,125 @@ public class DirectQuery {
 
             return null;
         }
+    }
+
+    public Map<String, Object> findMembership(long id) {
+        try {
+            Map<String, Object> oldMembership =
+                jdbcTemplate.queryForMap(
+                "SELECT " +
+                        "auth.id, payment.merchant_uid, usr.user_id, usr.user_name, usr.phone_no, auth.order_type, " +
+                        "auth.status AS auth_status, auth.efective_start_at, auth.efective_end_at, auth.created_at, payment.amount, " +
+                        "payment.pay_method, payment.status AS pay_status, auth.memo, billing.use_yn " +
+                    "FROM user_auths auth " +
+                    "LEFT JOIN if_payments payment ON auth.payment_id = payment.id AND auth.delete_yn = false AND payment.delete_yn = false " +
+                    "LEFT JOIN user_billing billing ON payment.id = billing.payment_id AND billing.delete_yn = false " +
+                    "LEFT JOIN users usr ON auth.user = usr.id " +
+                    "WHERE 1 = 1 AND auth.id = " + id
+                );
+
+            return oldMembership;
+
+        } catch (Exception e) {
+            e.getStackTrace();
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+
+            return null;
+        }
+    }
+
+    public long countMembershipList(String userName, String orderType, String status,
+            LocalDateTime createdAtStart, LocalDateTime createdAtEnd) {
+
+        try {
+            String whereOption = "";
+            if(StringUtils.isNotEmpty(userName)) {
+                whereOption = whereOption + "AND usr.user_name LIKE '%" + userName + "%' ";
+            }
+            if(StringUtils.isNotEmpty(orderType)) {
+                whereOption = whereOption + "AND auth.order_type LIKE '%" + orderType + "%' ";
+            }
+            if(StringUtils.isNotEmpty(status)) {
+                whereOption = whereOption + "AND auth.status LIKE '%" + status + "%' ";
+            }
+            if(!Objects.isNull(createdAtStart)) {
+                whereOption = whereOption + "AND auth.created_at >= '" + createdAtStart + "' ";
+            }
+            if(!Objects.isNull(createdAtEnd)) {
+                whereOption = whereOption + "AND auth.created_at <= '" + createdAtEnd + "' ";
+            }
+
+            Map<String, Object> resultMap =
+                jdbcTemplate.queryForMap(
+                    "SELECT COUNT(auth.id) AS cnt FROM user_auths auth " +
+                    "LEFT JOIN users usr ON auth.user = usr.id " +
+                    "WHERE 1 = 1 AND auth.status NOT IN ('first', 'temp') " + whereOption
+                );
+
+            return (long)resultMap.get("cnt");
+
+        } catch (Exception e) {
+            e.getStackTrace();
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+
+            return 0;
+        }
+
+    }
+
+    public List<Map<String, Object>> findMembershipList(String userName, String orderType, String status,
+            LocalDateTime createdAtStart, LocalDateTime createdAtEnd, int pageNo, int pageSize, HttpServletRequest request) {
+
+        try {
+            String whereOption = "";
+            if(StringUtils.isNotEmpty(userName)) {
+                whereOption = whereOption + "AND usr.user_name LIKE '%" + userName + "%' ";
+            }
+            if(StringUtils.isNotEmpty(orderType)) {
+                whereOption = whereOption + "AND auth.order_type LIKE '%" + orderType + "%' ";
+            }
+            if(StringUtils.isNotEmpty(status)) {
+                whereOption = whereOption + "AND auth.status LIKE '%" + status + "%' ";
+            }
+            if(!Objects.isNull(createdAtStart)) {
+                whereOption = whereOption + "AND auth.created_at >= '" + createdAtStart + "' ";
+            }
+            if(!Objects.isNull(createdAtEnd)) {
+                whereOption = whereOption + "AND auth.created_at <= '" + createdAtEnd + "' ";
+            }
+
+            List<Map<String, Object>> resultList =
+                jdbcTemplate.queryForList(
+                "SELECT A.* FROM " +
+                    "(" +
+                        "SELECT " +
+                            "auth.id, payment.merchant_uid, usr.user_id, usr.user_name, usr.phone_no, auth.order_type, " +
+                            "auth.status AS auth_status, auth.efective_start_at, auth.efective_end_at, auth.created_at, payment.amount, " +
+                            "payment.pay_method, payment.status AS pay_status, auth.memo, billing.use_yn " +
+                        "FROM user_auths auth " +
+                        "LEFT JOIN if_payments payment ON auth.payment_id = payment.id AND auth.delete_yn = false AND payment.delete_yn = false " +
+                        /*"AND auth.created_at = (SELECT MAX(created_at) FROM if_payments WHERE payment_id = auth.payment_id) " +*/
+                        "LEFT JOIN user_billing billing ON payment.id = billing.payment_id AND billing.delete_yn = false " +
+                        "LEFT JOIN users usr ON auth.user = usr.id " +
+                        "WHERE 1 = 1 " +
+                            "AND auth.status NOT IN ('first', 'temp') " +
+                            whereOption +
+                    ") A " +
+                    "ORDER BY A.id DESC LIMIT " + (pageNo - 1) * pageSize + ", " + pageSize
+                );
+
+            return resultList;
+
+        } catch (Exception e) {
+            e.getStackTrace();
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+
+            return null;
+        }
+
     }
 
 }

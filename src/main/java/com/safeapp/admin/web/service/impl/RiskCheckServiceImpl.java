@@ -96,6 +96,9 @@ public class RiskCheckServiceImpl implements RiskCheckService {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 위험성 평가표입니다.");
         }
 
+        riskChk.setViews(0);
+        riskChk.setLikes(0);
+
         RiskCheck addedRiskChk = riskChkRepos.save(riskChk);
         if(Objects.isNull(addedRiskChk)) {
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "DB 저장 중 오류가 발생하였습니다.");
@@ -109,13 +112,20 @@ public class RiskCheckServiceImpl implements RiskCheckService {
         RiskCheck oldRiskChk = riskChkRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 위험성 평가표입니다."));
 
+        if(oldRiskChk.getViews() != null) {
+            oldRiskChk.setViews(oldRiskChk.getViews() + 1);
+        } else {
+            oldRiskChk.setViews(1);
+        }
+
+        oldRiskChk = riskChkRepos.save(oldRiskChk);
+
         return oldRiskChk;
     }
 
     @Transactional
     @Override
     public RiskCheck edit(RiskCheck riskChk, HttpServletRequest httpServletRequest) throws Exception {
-
         RiskCheck oldRiskChk = riskChkRepos.findById(riskChk.getId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 위험성 평가표입니다."));
         if(Objects.isNull(oldRiskChk)) {
@@ -139,10 +149,9 @@ public class RiskCheckServiceImpl implements RiskCheckService {
 
     @Override
     public Long countAllByCondition(String keyword, String userName, String phoneNo, YN visibled,
-                                    LocalDateTime createdAtStart, LocalDateTime createdAtEnd) {
+            LocalDateTime createdAtStart, LocalDateTime createdAtEnd) {
 
-        return Long.parseLong("0");
-        //return riskChkRepos.countAllByCondition(keyword, userName, phoneNo, visibled, createdAtStart, createdAtEnd);
+        return riskChkRepos.countAllByCondition(keyword, userName, phoneNo, visibled, createdAtStart, createdAtEnd);
     }
 
     @Override
@@ -150,8 +159,6 @@ public class RiskCheckServiceImpl implements RiskCheckService {
             YN visibled, LocalDateTime createdAtStart, LocalDateTime createdAtEnd, YN createdAtDesc, YN likesDesc, YN viewsDesc,
             int pageNo, int pageSize, HttpServletRequest request) {
 
-        return null;
-        /*
         List<RiskCheck> list =
             riskChkRepos.findAllByConditionAndOrderBy(keyword, userName, phoneNo,
             visibled, createdAtStart, createdAtEnd, createdAtDesc, likesDesc, viewsDesc,
@@ -171,7 +178,6 @@ public class RiskCheckServiceImpl implements RiskCheckService {
         }
 
         return resultList;
-        */
     }
 
     @Override

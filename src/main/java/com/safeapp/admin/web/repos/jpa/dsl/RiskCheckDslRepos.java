@@ -4,4 +4,5 @@ import com.safeapp.admin.web.model.cmmn.repos.IFDslRepos;
 import com.safeapp.admin.web.model.entity.RiskCheck;
 
 public interface RiskCheckDslRepos extends IFDslRepos<RiskCheck> {
+
 }

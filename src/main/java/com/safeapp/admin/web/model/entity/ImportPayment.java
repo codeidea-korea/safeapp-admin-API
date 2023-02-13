@@ -1,25 +1,25 @@
 package com.safeapp.admin.web.model.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
+import com.safeapp.admin.web.data.PayMethod;
 import com.safeapp.admin.web.data.YN;
 
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import static javax.persistence.EnumType.STRING;
+
 @Entity(name = "if_payments")
 @Data
 @NoArgsConstructor
-public class ImportPayment extends BaseTimeEntity{
+public class ImportPayment extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "imp_uid")
     private String impUid;
@@ -28,7 +28,8 @@ public class ImportPayment extends BaseTimeEntity{
     private String merchantUid;
 
     @Column(name = "pay_method")
-    private String payMethod;
+    @Enumerated(EnumType.STRING)
+    private PayMethod payMethod;
 
     @Column(name = "channel")
     private String channel;
@@ -79,22 +80,22 @@ public class ImportPayment extends BaseTimeEntity{
     private String vbankHolder;
 
     @Column(name = "vbank_date")
-    private int vbankDate;
+    private Long vbankDate;
 
     @Column(name = "vbank_issued_at")
-    private int vbankIssuedAt;
+    private Integer vbankIssuedAt;
 
     @Column(name = "card_quota")
-    private int cardQuota;
+    private Integer cardQuota;
 
     @Column(name = "name")
     private String name;
 
     @Column(name = "amount")
-    private int amount;
+    private Integer amount;
 
     @Column(name = "cancel_amount")
-    private int cancelAmount;
+    private Integer cancelAmount;
 
     @Column(name = "currency")
     private String currency;
@@ -124,13 +125,13 @@ public class ImportPayment extends BaseTimeEntity{
     private String status;
 
     @Column(name = "started_at")
-    private int startedAt;
+    private Integer startedAt;
 
     @Column(name = "paid_at")
-    private int paidAt;
+    private Integer paidAt;
 
     @Column(name = "failed_at")
-    private int failedAt;
+    private Integer failedAt;
 
     @Column(name = "fail_reason")
     private String failReason;
@@ -153,16 +154,30 @@ public class ImportPayment extends BaseTimeEntity{
     @Column(name = "cash_receipt_issued")
     private YN cashReceiptIssued;
 
+    @Enumerated(STRING)
+    @Column(name = "update_yn")
+    private YN updateYN;
+
+    @Enumerated(STRING)
+    @Column(name = "billing_yn")
+    private YN billingYN;
+
+    @Enumerated(STRING)
+    @Column(name = "cancel_request_yn")
+    private YN cancelRequestYN;
+
     @Builder
-    public ImportPayment(long id, String impUid, String merchantUid, String payMethod, String channel,
-        String pgProvider, String embPgProvider, String pgTid, String pgId, String applyNum, String bankCode,
-        String bankName, String cardCode, String cardName, String cardNumber, String cardType, String vbankCode,
-        String vbankName, String vbankNum, String vbankHolder, int vbankDate, int vbankIssuedAt, int cardQuota,
-        String name, int amount, int cancelAmount, String currency, String buyerName, String buyerEmail,
-        String buyerTel, String buyerAddr, String buyerPostcode, String customData, String userAgent, String status,
-        int startedAt, int paidAt, int failedAt, String failReason, String cancelReason, String receiptUrl,
-        String cancelledAt, String customerUid, YN escrow, YN cashReceiptIssued) {
+    public ImportPayment(Long id, String impUid, String merchantUid, PayMethod payMethod, String channel,
+            String pgProvider, String embPgProvider, String pgTid, String pgId, String applyNum, String bankCode,
+            String bankName, String cardCode, String cardName, String cardNumber, String cardType, String vbankCode,
+            String vbankName, String vbankNum, String vbankHolder, Long vbankDate, Integer vbankIssuedAt, Integer cardQuota,
+            String name, Integer amount, Integer cancelAmount, String currency, String buyerName, String buyerEmail,
+            String buyerTel, String buyerAddr, String buyerPostcode, String customData, String userAgent, String status,
+            Integer startedAt, Integer paidAt, Integer failedAt, String failReason, String cancelReason, String receiptUrl,
+            String cancelledAt, String customerUid, YN escrow, YN cashReceiptIssued, YN updateYN, YN billingYN, YN cancelRequestYN) {
+
         super();
+
         this.id = id;
         this.impUid = impUid;
         this.merchantUid = merchantUid;
@@ -208,5 +223,9 @@ public class ImportPayment extends BaseTimeEntity{
         this.customerUid = customerUid;
         this.escrow = escrow;
         this.cashReceiptIssued = cashReceiptIssued;
+        this.updateYN = updateYN;
+        this.billingYN = billingYN;
+        this.cancelRequestYN = cancelRequestYN;
     }
+
 }

@@ -43,14 +43,13 @@ public class RiskCheckDslReposImpl extends QuerydslRepositorySupport implements 
         if (!StringUtil.isNullOrEmpty(instance.getName())) {
             query.where(qRiskCheck.name.like(instance.getName()));
         }
-
         if (instance.getVisibled() != null) {
             query.where(qRiskCheck.visibled.eq(instance.getVisibled()));
         }
-
         if (instance.getId() > 0) {
             query.where(qRiskCheck.id.eq(instance.getId()));
         }
+
         return query;
     }
 
@@ -80,6 +79,14 @@ public class RiskCheckDslReposImpl extends QuerydslRepositorySupport implements 
     }
 
     @Override
+    public long countAll(RiskCheck instance) {
+        QRiskCheck qFile = QRiskCheck.riskCheck;
+        JPAQuery query = selectFromWhere(instance, qFile);
+
+        return query.fetchCount();
+    }
+
+    @Override
     public List<RiskCheck> findAll(RiskCheck instance, Pages bfPage) {
         QRiskCheck qRiskCheck = QRiskCheck.riskCheck;
         JPAQuery query = selectFromWhere(instance, qRiskCheck);
@@ -92,10 +99,4 @@ public class RiskCheckDslReposImpl extends QuerydslRepositorySupport implements 
         return query.fetch();
     }
 
-    @Override
-    public long countAll(RiskCheck instance) {
-        QRiskCheck qFile = QRiskCheck.riskCheck;
-        JPAQuery query = selectFromWhere(instance, qFile);
-        return query.fetchCount();
-    }
 }

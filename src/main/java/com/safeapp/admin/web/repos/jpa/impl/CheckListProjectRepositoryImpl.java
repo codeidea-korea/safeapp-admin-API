@@ -69,7 +69,7 @@ public class CheckListProjectRepositoryImpl implements CheckListProjectRepositor
         } else if(likesDesc != null) {
             return (likesDesc == YN.Y) ? checkListProject.likes.desc() : null;
         } else if(viewsDesc != null) {
-            return (viewsDesc == YN.Y) ? checkListProject.likes.desc() : null;
+            return (viewsDesc == YN.Y) ? checkListProject.views.desc() : null;
         } else {
             return checkListProject.createdAt.desc();
         }
@@ -120,7 +120,7 @@ public class CheckListProjectRepositoryImpl implements CheckListProjectRepositor
 
             return count.getTotal();
 
-        } catch (Exception e) {
+        } catch(Exception e) {
             e.getStackTrace();
             System.out.println(e.getCause());
             System.out.println(e.getMessage());

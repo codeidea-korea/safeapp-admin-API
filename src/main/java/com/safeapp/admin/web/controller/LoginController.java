@@ -14,7 +14,7 @@ import io.swagger.annotations.ApiParam;
 
 @RestController
 @RequestMapping("/login")
-@Api(tags = {"Login"}, description = "로그인")
+@Api(tags = {"Login"}, description = "로그인 관리")
 public class LoginController {
 
     private final LoginService loginService;
@@ -35,7 +35,7 @@ public class LoginController {
     }
 
     @GetMapping(value = "/findMe")
-    @ApiOperation(value = "로그인된 계정정보 조회", notes = "로그인된 계정정보 조회")
+    @ApiOperation(value = "로그인 된 회원 단독 조회", notes = "로그인 된 회원 단독 조회")
     public ResponseEntity findMe(HttpServletRequest request) {
         
         return ResponseUtil.sendResponse(loginService.findMe(request));
