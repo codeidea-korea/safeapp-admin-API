@@ -10,10 +10,13 @@ import javax.servlet.http.HttpServletRequest;
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.YN;
+import com.safeapp.admin.web.dto.request.RequestMembershipModifyDTO;
+import com.safeapp.admin.web.dto.request.RequestUsersModifyDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Auth;
 import com.safeapp.admin.web.model.entity.UserAuth;
+import com.safeapp.admin.web.model.entity.Users;
 import com.safeapp.admin.web.repos.direct.DirectQuery;
 import com.safeapp.admin.web.repos.jpa.AuthRepos;
 import com.safeapp.admin.web.repos.jpa.UserAuthRepos;
@@ -67,13 +70,32 @@ public class MembershipServiceImpl implements MembershipService {
     }
 
     @Override
+    public UserAuth toEntityModify(RequestMembershipModifyDTO modifyDto) {
+        UserAuth userAuth = new UserAuth();
+
+        userAuth.setEfectiveStartAt(LocalDateTime.parse(modifyDto.getEfectiveStartAt()));
+        userAuth.setEfectiveEndAt(LocalDateTime.parse(modifyDto.getEfectiveEndAt()));
+        userAuth.setMemo(modifyDto.getMemo());
+
+        return userAuth;
+    }
+
+    @Override
     public UserAuth edit(UserAuth userAuth, HttpServletRequest request) throws Exception {
         UserAuth oldUserAuth =
             userAuthRepos.findById(userAuth.getId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 멤버쉽 결제입니다."));
 
-        UserAuth editedUserAuth = userAuthRepos.save(generate(oldUserAuth));
+        oldUserAuth.edit(userAuth);
+
+        UserAuth editedUserAuth = userAuthRepos.save(oldUserAuth);
         return editedUserAuth;
+    }
+
+    @Override
+    public void unsubscribe(long id, HttpServletRequest request) {
+
+        dirRepos.unsubscribe(id);
     }
 
     @Override
@@ -88,22 +110,27 @@ public class MembershipServiceImpl implements MembershipService {
 
     @Override
     public Long countMembershipList(String userName, String orderType, String status,
-            LocalDateTime createdAtStart, LocalDateTime createdAtEnd) {
+            String createdAtStart, String createdAtEnd) {
 
         return dirRepos.countMembershipList(userName, orderType, status, createdAtStart, createdAtEnd);
     }
 
     @Override
     public List<Map<String, Object>> findMembershipList(String userName, String orderType, String status,
-            LocalDateTime createdAtStart, LocalDateTime createdAtEnd, int pageNo, int pageSize, HttpServletRequest request) {
+            String createdAtStart, String createdAtEnd, int pageNo, int pageSize, HttpServletRequest request) {
 
         return dirRepos.findMembershipList(userName, orderType, status, createdAtStart, createdAtEnd, pageNo, pageSize, request);
     }
 
     @Override
     public UserAuth generate(UserAuth oldUserAuth) {
-
-        return null;
+        return
+            UserAuth.builder()
+            .id(oldUserAuth.getId())
+            .efectiveStartAt(oldUserAuth.getEfectiveStartAt())
+            .efectiveEndAt(oldUserAuth.getEfectiveEndAt())
+            .memo(oldUserAuth.getMemo())
+            .build();
     }
 
     @Override

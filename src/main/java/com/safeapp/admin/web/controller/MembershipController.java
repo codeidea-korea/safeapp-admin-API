@@ -4,11 +4,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.data.YN;
+import com.safeapp.admin.web.dto.request.RequestMembershipModifyDTO;
 import com.safeapp.admin.web.dto.response.ResponseCheckListProjectDTO;
+import com.safeapp.admin.web.dto.response.ResponseMembershipDTO;
+import com.safeapp.admin.web.dto.response.ResponseUsersDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Auth;
 import com.safeapp.admin.web.model.entity.UserAuth;
+import com.safeapp.admin.web.model.entity.Users;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +38,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.springframework.http.HttpStatus.OK;
+
 @RestController
 @RequestMapping("/membership")
 @AllArgsConstructor
@@ -50,19 +56,8 @@ public class MembershipController {
         return membershipService.add(userAuth, request);
     }
 
-    @PutMapping(value = "/{id}")
-    @ApiOperation(value = "수정", notes = "수정")
-    public Auth modify(
-        @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
-        @RequestBody UserAuth params,
-        HttpServletRequest request) throws Exception {
-
-        params.setId(id);
-        return membershipService.edit(params, request);
-    }
-
     @DeleteMapping(value = "")
-    @ApiOperation(value = "삭제", notes = "삭제")
+    @ApiOperation(value = "멤버쉽 결제 삭제", notes = "멤버쉽 결제 삭제")
     public void remove(
         @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
         HttpServletRequest request) throws Exception {
@@ -78,14 +73,35 @@ public class MembershipController {
         return membershipService.findMembership(id, request);
     }
 
+    @PutMapping(value = "/edit/{id}")
+    @ApiOperation(value = "멤버쉽 결제 수정", notes = "멤버쉽 결제 수정")
+    public ResponseEntity<ResponseMembershipDTO> edit(@PathVariable("id") @ApiParam(value = "멤버쉽 결제 PK", required = true) long id,
+            @RequestBody RequestMembershipModifyDTO modifyDto, HttpServletRequest request) throws Exception {
+
+        UserAuth oldUserAuth = membershipService.toEntityModify(modifyDto);
+        oldUserAuth.setId(id);
+
+        UserAuth editedUserAuth = membershipService.edit(oldUserAuth, request);
+        return new ResponseEntity<>(ResponseMembershipDTO.builder().userAuth(editedUserAuth).build(), OK);
+    }
+
+    @PutMapping(value = "/unsubscribe/{id}")
+    @ApiOperation(value = "멤버쉽 결제 해지(구독해지)", notes = "멤버쉽 결제 해지(구독해지)")
+    public ResponseEntity unsubscribe(@PathVariable("id") @ApiParam(value = "멤버쉽 결제 PK", required = true) long id,
+            HttpServletRequest request) {
+
+        membershipService.unsubscribe(id, request);
+        return ResponseUtil.sendResponse(null);
+    }
+
     @GetMapping(value = "/list")
     @ApiOperation(value = "멤버쉽 결제 목록 조회", notes = "멤버쉽 결제 목록 조회")
     public ResponseEntity findAll(
             @RequestParam(value = "userName", required = false) @Parameter(description = "멤버쉽 결제자 이름") String userName,
             @RequestParam(value = "orderType", required = false) @Parameter(description = "멤버쉽 유형") String orderType,
             @RequestParam(value = "status", required = false) @Parameter(description = "멤버십 상태") String status,
-            @RequestParam(value = "createdAtStart", required = false) LocalDateTime createdAtStart,
-            @RequestParam(value = "createdAtEnd", required = false) LocalDateTime createdAtEnd,
+            @RequestParam(value = "createdAtStart", required = false) String createdAtStart,
+            @RequestParam(value = "createdAtEnd", required = false) String createdAtEnd,
             @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             HttpServletRequest request) throws Exception {

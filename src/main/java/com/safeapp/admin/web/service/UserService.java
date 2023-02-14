@@ -19,13 +19,13 @@ public interface UserService extends CRUDService<Users> {
 
     boolean isCorrectSMSCode(String phoneNo, String authNo) throws Exception;
 
+    Users toEntity(RequestUsersDTO addDto);
+
     Map<String, Object> findMyAuth(long id, HttpServletRequest request);
 
     long countMyProjectList(long id, HttpServletRequest request);
 
     List<Map<String, Object>> findMyProjectList(long id, Pages pages, HttpServletRequest request);
-
-    Users toEntity(RequestUsersDTO addDto);
 
     Users editPassword(String userId, String newPass1, String newPass2, HttpServletRequest request) throws Exception;
 

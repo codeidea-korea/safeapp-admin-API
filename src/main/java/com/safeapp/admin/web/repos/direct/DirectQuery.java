@@ -320,7 +320,7 @@ public class DirectQuery {
                         "payment.pay_method, payment.status AS pay_status, auth.memo, billing.use_yn " +
                     "FROM user_auths auth " +
                     "LEFT JOIN if_payments payment ON auth.payment_id = payment.id AND auth.delete_yn = false AND payment.delete_yn = false " +
-                    "LEFT JOIN user_billing billing ON payment.id = billing.payment_id AND billing.delete_yn = false " +
+                    "LEFT JOIN user_billing billing ON auth.user = billing.user_id AND billing.delete_yn = false AND billing.use_yn = 'Y' " +
                     "LEFT JOIN users usr ON auth.user = usr.id " +
                     "WHERE 1 = 1 AND auth.id = " + id
                 );
@@ -336,11 +336,27 @@ public class DirectQuery {
         }
     }
 
+    public void unsubscribe(long id) {
+        try {
+            jdbcTemplate.update(
+            "UPDATE user_billing " +
+                "SET use_yn = 'N' " +
+                "WHERE user_id = (SELECT user FROM user_auths WHERE id = " + id + ")"
+            );
+
+        } catch (Exception e) {
+            e.getStackTrace();
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+        }
+    }
+
     public long countMembershipList(String userName, String orderType, String status,
-            LocalDateTime createdAtStart, LocalDateTime createdAtEnd) {
+            String createdAtStart, String createdAtEnd) {
 
         try {
             String whereOption = "";
+            String whereOption2 = "";
             if(StringUtils.isNotEmpty(userName)) {
                 whereOption = whereOption + "AND usr.user_name LIKE '%" + userName + "%' ";
             }
@@ -348,7 +364,11 @@ public class DirectQuery {
                 whereOption = whereOption + "AND auth.order_type LIKE '%" + orderType + "%' ";
             }
             if(StringUtils.isNotEmpty(status)) {
-                whereOption = whereOption + "AND auth.status LIKE '%" + status + "%' ";
+                if(status.equals("unsubscribe")) {
+                    whereOption2 = "AND A.use_yn IS NULL ";
+                } else {
+                    whereOption = whereOption + "AND auth.status LIKE '%" + status + "%' ";
+                }
             }
             if(!Objects.isNull(createdAtStart)) {
                 whereOption = whereOption + "AND auth.created_at >= '" + createdAtStart + "' ";
@@ -359,9 +379,15 @@ public class DirectQuery {
 
             Map<String, Object> resultMap =
                 jdbcTemplate.queryForMap(
-                    "SELECT COUNT(auth.id) AS cnt FROM user_auths auth " +
-                    "LEFT JOIN users usr ON auth.user = usr.id " +
-                    "WHERE 1 = 1 AND auth.status NOT IN ('first', 'temp') " + whereOption
+                "SELECT COUNT(A.id) AS cnt, A.use_yn FROM " +
+                    "(" +
+                        "SELECT auth.id, usr.user_name, auth.order_type, auth.status, auth.created_at, billing.use_yn FROM user_auths auth " +
+                        "LEFT JOIN user_billing billing ON auth.user = billing.user_id AND billing.delete_yn = false AND billing.use_yn = 'Y' " +
+                        "LEFT JOIN users usr ON auth.user = usr.id " +
+                        "WHERE 1 = 1 " +
+                            "AND auth.status NOT IN ('first', 'temp') " + whereOption +
+                    ") A " +
+                    "WHERE 1 = 1 " + whereOption2
                 );
 
             return (long)resultMap.get("cnt");
@@ -377,10 +403,11 @@ public class DirectQuery {
     }
 
     public List<Map<String, Object>> findMembershipList(String userName, String orderType, String status,
-            LocalDateTime createdAtStart, LocalDateTime createdAtEnd, int pageNo, int pageSize, HttpServletRequest request) {
+            String createdAtStart, String createdAtEnd, int pageNo, int pageSize, HttpServletRequest request) {
 
         try {
             String whereOption = "";
+            String whereOption2 = "";
             if(StringUtils.isNotEmpty(userName)) {
                 whereOption = whereOption + "AND usr.user_name LIKE '%" + userName + "%' ";
             }
@@ -388,7 +415,11 @@ public class DirectQuery {
                 whereOption = whereOption + "AND auth.order_type LIKE '%" + orderType + "%' ";
             }
             if(StringUtils.isNotEmpty(status)) {
-                whereOption = whereOption + "AND auth.status LIKE '%" + status + "%' ";
+                if(status.equals("unsubscribe")) {
+                    whereOption2 = "AND A.use_yn IS NULL ";
+                } else {
+                    whereOption = whereOption + "AND auth.status LIKE '%" + status + "%' ";
+                }
             }
             if(!Objects.isNull(createdAtStart)) {
                 whereOption = whereOption + "AND auth.created_at >= '" + createdAtStart + "' ";
@@ -408,12 +439,12 @@ public class DirectQuery {
                         "FROM user_auths auth " +
                         "LEFT JOIN if_payments payment ON auth.payment_id = payment.id AND auth.delete_yn = false AND payment.delete_yn = false " +
                         /*"AND auth.created_at = (SELECT MAX(created_at) FROM if_payments WHERE payment_id = auth.payment_id) " +*/
-                        "LEFT JOIN user_billing billing ON payment.id = billing.payment_id AND billing.delete_yn = false " +
+                        "LEFT JOIN user_billing billing ON auth.user = billing.user_id AND billing.delete_yn = false AND billing.use_yn = 'Y' " +
                         "LEFT JOIN users usr ON auth.user = usr.id " +
                         "WHERE 1 = 1 " +
-                            "AND auth.status NOT IN ('first', 'temp') " +
-                            whereOption +
+                            "AND auth.status NOT IN ('first', 'temp') " + whereOption +
                     ") A " +
+                    "WHERE 1 = 1 " + whereOption2 +
                     "ORDER BY A.id DESC LIMIT " + (pageNo - 1) * pageSize + ", " + pageSize
                 );
 

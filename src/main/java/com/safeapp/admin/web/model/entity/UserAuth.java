@@ -74,7 +74,7 @@ public class UserAuth extends BaseTimeEntity {
 
     @Builder
     public UserAuth(Long id, Long user, LocalDateTime efectiveStartAt, LocalDateTime efectiveEndAt, LocalDateTime efectiveStopAt,
-            Long price, String orderType, String status, Integer addMonth, Integer memberCnt, Long paymentId) {
+            String orderType, String status, Integer addMonth, Integer memberCnt, Long paymentId, String memo) {
 
         super();
 
@@ -88,6 +88,13 @@ public class UserAuth extends BaseTimeEntity {
         this.addMonth = addMonth;
         this.memberCnt = memberCnt;
         this.paymentId = paymentId;
+        this.memo = memo;
+    }
+
+    public void edit(UserAuth userAuth) {
+        setEfectiveStartAt(userAuth.getEfectiveStartAt());
+        setEfectiveEndAt(userAuth.getEfectiveEndAt());
+        setMemo(userAuth.getMemo());
     }
 
 }
