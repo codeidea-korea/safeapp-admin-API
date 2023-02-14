@@ -137,6 +137,7 @@ public class AdminsServiceImpl implements AdminsService {
 
         admin.setAdminType(AdminType.ADMIN);
         admin.setDeleted(YN.N);
+        admin.setDeleteYn(false);
         if(admin.getMarketingAllowed() == YN.Y) {
             admin.setMarketingAllowedAt(dateUtil.getThisTime());
         }

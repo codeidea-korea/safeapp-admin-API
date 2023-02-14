@@ -213,6 +213,7 @@ public class DirectQuery {
 
         try {
             String whereOption = "";
+            String whereOption2 = "";
             if(StringUtils.isNotEmpty(name)) {
                 whereOption = whereOption + "AND A.name LIKE '%" + name + "%' ";
             }
@@ -223,7 +224,11 @@ public class DirectQuery {
                 whereOption = whereOption + "AND A.order_type LIKE '%" + orderType + "%' ";
             }
             if(StringUtils.isNotEmpty(status)) {
-                whereOption = whereOption + "AND A.status LIKE '%" + status + "%' ";
+                if(status.equals("unsubscribe")) {
+                    whereOption2 = "AND A.use_yn IS NULL ";
+                } else {
+                    whereOption = whereOption + "AND ua.status LIKE '%" + status + "%' ";
+                }
             }
             if(StringUtils.isNotEmpty(createdAtStart)) {
                 whereOption = whereOption + "AND A.created_at >= '" + createdAtStart + "' ";
@@ -236,11 +241,13 @@ public class DirectQuery {
                 jdbcTemplate.queryForMap(
                 "SELECT COUNT(A.id) AS cnt FROM " +
                     "(" +
-                        "SELECT DISTINCT(p.id) FROM projects p " +
+                        "SELECT p.id, p.name, u.user_name, ua.order_type, ua.status, p.created_at FROM projects p " +
                         "LEFT JOIN project_groups pg ON p.id = pg.project AND pg.delete_yn = false AND pg.user_auth_type = 'TEAM_MASTER' " +
                         "LEFT JOIN user_auths ua ON pg.user = ua.user AND pg.user_auth_type = 'TEAM_MASTER' " +
+                            "AND ua.created_at = (SELECT MAX(created_at) FROM user_auths WHERE user = pg.user) " +
+                        "LEFT JOIN user_billing ub ON ua.user = ub.user_id AND ub.delete_yn = false AND ub.use_yn = 'Y' " +
                         "LEFT JOIN users u ON pg.user = u.id AND u.delete_yn = false " +
-                        "WHERE p.delete_yn = false" +
+                        "WHERE p.delete_yn = false AND ua.status NOT IN ('first', 'temp') " + whereOption +
                     ") A " +
                     "WHERE 1 = 1 " + whereOption
                 );
@@ -262,6 +269,7 @@ public class DirectQuery {
 
         try {
             String whereOption = "";
+            String whereOption2 = "";
             if(StringUtils.isNotEmpty(name)) {
                 whereOption = whereOption + "AND A.name LIKE '%" + name + "%' ";
             }
@@ -272,7 +280,11 @@ public class DirectQuery {
                 whereOption = whereOption + "AND A.order_type LIKE '%" + orderType + "%' ";
             }
             if(StringUtils.isNotEmpty(status)) {
-                whereOption = whereOption + "AND A.status LIKE '%" + status + "%' ";
+                if(status.equals("unsubscribe")) {
+                    whereOption2 = "AND A.use_yn IS NULL ";
+                } else {
+                    whereOption = whereOption + "AND ua.status LIKE '%" + status + "%' ";
+                }
             }
             if(StringUtils.isNotEmpty(createdAtStart)) {
                 whereOption = whereOption + "AND A.created_at >= '" + createdAtStart + "' ";
@@ -285,15 +297,17 @@ public class DirectQuery {
                 jdbcTemplate.queryForList(
                 "SELECT A.* FROM " +
                     "(" +
-                        "SELECT p.id, p.name, p.created_at, u.user_name, ua.order_type, ua.status, " +
-                        "(SELECT COUNT(pg2.id) FROM project_groups pg2 LEFT JOIN users u2 ON pg2.user = u2.id " +
-                        "WHERE pg2.project = p.id AND pg2.delete_yn = false AND u2.delete_yn = false) AS group_cnt " +
+                        "SELECT " +
+                            "p.id, p.name, p.created_at, u.user_name, ua.order_type, ua.status, " +
+                            "(SELECT COUNT(pg2.id) FROM project_groups pg2 LEFT JOIN users u2 ON pg2.user = u2.id " +
+                            "WHERE pg2.project = p.id AND pg2.delete_yn = false AND u2.delete_yn = false) AS group_cnt " +
                         "FROM projects p " +
-                        "LEFT JOIN project_groups pg ON p.id = pg.project AND pg.delete_yn = false " +
-                        "AND pg.user_auth_type = 'TEAM_MASTER' " +
-                        "LEFT JOIN user_auths ua ON pg.user = ua.user AND pg.user_auth_type = 'TEAM_MASTER' " +
+                        "LEFT JOIN project_groups pg ON p.id = pg.project AND pg.delete_yn = false AND pg.user_auth_type = 'TEAM_MASTER' " +
+                        "LEFT JOIN user_auths ua ON pg.user = ua.user AND ua.delete_yn = false " +
+                            "AND ua.created_at = (SELECT MAX(created_at) FROM user_auths WHERE user = pg.user) " +
+                        "LEFT JOIN user_billing ub ON ua.user = ub.user_id AND ub.delete_yn = false AND ub.use_yn = 'Y' " +
                         "LEFT JOIN users u ON pg.user = u.id AND u.delete_yn = false " +
-                        "WHERE p.delete_yn = false" +
+                        "WHERE p.delete_yn = false AND ua.status NOT IN ('first', 'temp') " + whereOption +
                     ") A " +
                     "WHERE 1 = 1 " + whereOption +
                     "ORDER BY A.id DESC LIMIT " + (pageNo - 1) * pageSize + ", " + pageSize
