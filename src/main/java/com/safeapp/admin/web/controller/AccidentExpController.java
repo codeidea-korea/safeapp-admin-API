@@ -6,9 +6,11 @@ import com.safeapp.admin.web.dto.request.RequestAccidentCaseDTO;
 import com.safeapp.admin.web.dto.response.ResponseAccidentCaseDTO;
 import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.data.YN;
+import com.safeapp.admin.web.dto.response.ResponseCheckListProjectDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.AccidentExp;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,72 +30,82 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-//@RestController
+import java.time.LocalDateTime;
+import java.util.List;
+
+@RestController
 @RequestMapping("/board/accidents")
-@AllArgsConstructor
-@Api(tags = {"AccidentExp"}, description = "사고 사례", basePath = "/board/accidents")
+@RequiredArgsConstructor
+//@AllArgsConstructor
+@Api(tags = {"AccidentExp"}, description = "리스트 관리 > 사고사례")
 public class AccidentExpController {
 
     private final AccidentExpService accidentExpService;
 
-    @PostMapping(value = "")
+    @PostMapping(value = "/add")
     @ApiOperation(value = "사고사례 등록", notes = "사고사례 등록")
-    public ResponseEntity<ResponseAccidentCaseDTO> add(
-        @RequestBody RequestAccidentCaseDTO dto,
-        HttpServletRequest request) throws Exception {
-        AccidentExp params = accidentExpService.toEntity(dto);
-        return ResponseUtil.sendResponse(accidentExpService.add(params, request));
+    public ResponseEntity<ResponseAccidentCaseDTO> add(@RequestBody RequestAccidentCaseDTO addDto,
+            HttpServletRequest request) throws Exception {
+
+        AccidentExp addedAccExp = accidentExpService.toEntity(addDto);
+        return ResponseUtil.sendResponse(accidentExpService.add(addedAccExp, request));
     }
 
-    @PutMapping(value = "/{id}")
-    @ApiOperation(value = "수정", notes = "수정")
-    public ResponseEntity modify(
-        @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
-        @RequestBody AccidentExp params,
-        HttpServletRequest request) throws Exception {
+    @GetMapping(value = "/find/{id}")
+    @ApiOperation(value = "사고사례 단독 조회", notes = "사고사례 단독 조회")
+    public ResponseEntity<ResponseAccidentCaseDTO> find(@PathVariable("id") @ApiParam(value = "사고사례 PK", required = true) long id,
+            HttpServletRequest request) throws Exception {
 
-        params.setId(id);
-        return ResponseUtil.sendResponse(accidentExpService.edit(params, request));
+        return ResponseUtil.sendResponse(accidentExpService.find(id, request));
     }
 
-    @DeleteMapping(value = "/{id}")
-    @ApiOperation(value = "삭제", notes = "삭제")
-    public ResponseEntity remove(
-        @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
-        HttpServletRequest request) throws Exception {
+    @PutMapping(value = "/edit/{id}")
+    @ApiOperation(value = "사고사례 수정", notes = "사고사례 수정")
+    public ResponseEntity edit(@PathVariable("id") @ApiParam(value = "사고사례 PK", required = true) long id,
+            @RequestBody AccidentExp oldAccExp, HttpServletRequest request) throws Exception {
+
+        oldAccExp.setId(id);
+        return ResponseUtil.sendResponse(accidentExpService.edit(oldAccExp, request));
+    }
+
+    @DeleteMapping(value = "/remove/{id}")
+    @ApiOperation(value = "사고사례 삭제", notes = "사고사례 삭제")
+    public ResponseEntity remove(@PathVariable("id") @ApiParam(value = "사고사례 PK", required = true) long id,
+            HttpServletRequest request) throws Exception {
+
         accidentExpService.remove(id, request);
         return ResponseUtil.sendResponse(null);
     }
 
-    @GetMapping(value = "/{id}")
-    @ApiOperation(value = "조회 (단건)", notes = "조회 (단건)")
-    public ResponseEntity<ResponseAccidentCaseDTO> find(
-        @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
-        HttpServletRequest request) throws Exception {
-        return ResponseUtil.sendResponse(accidentExpService.find(id, request));
+    @GetMapping(value = "/list")
+    @ApiOperation(value = "사고사례 목록 조회", notes = "사고사례 목록 조회")
+    public ResponseEntity<List<ResponseAccidentCaseDTO>> findAll(
+            @RequestParam(value = "keyword", required = false) @Parameter(description = "키워드") String keyword,
+            @RequestParam(value = "userName", required = false) @Parameter(description = "이름") String userName,
+            @RequestParam(value = "phoneNo", required = false) @Parameter(description = "휴대폰번호") String phoneNo,
+            @RequestParam(value = "createdAtStart", required = false) LocalDateTime createdAtStart,
+            @RequestParam(value = "createdAtEnd", required = false) LocalDateTime createdAtEnd,
+            @RequestParam(value = "createdAtDesc", required = false) @Parameter(description = "최신순") YN createdAtDesc,
+            @RequestParam(value = "likesDesc", required = false) @Parameter(description = "좋아요순") YN likesDesc,
+            @RequestParam(value = "viewsDesc", required = false) @Parameter(description = "조회순") YN viewsDesc,
+            @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            HttpServletRequest request) throws Exception {
+
+        /*
+        Long count =
+            accidentExpService.countAllByCondition(keyword, userName, phoneNo, visibled, createdAtStart, createdAtEnd);
+        List<ResponseCheckListProjectDTO> list =
+            accidentExpService.findAllByConditionAndOrderBy(keyword, userName, phoneNo,
+            visibled, createdAtStart, createdAtEnd, createdAtDesc, likesDesc, viewsDesc,
+            pageNo, pageSize, request);
+        Pages pages = new Pages(pageNo, pageSize);
+
+        ListResponse accExpList = new ListResponse(count, list, pages);
+        return ResponseUtil.sendResponse(accExpList);
+        */
+
+        return null;
     }
 
-    @GetMapping(value = "")
-    @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
-    public ResponseEntity<ListResponse> findAll(
-        Pages bfPage,
-        @RequestParam(value = "name", required = false) @ApiParam("이름") String name,
-        @RequestParam(value = "title", required = false) @ApiParam("제목") String title,
-        @RequestParam(value = "tags", required = false) @ApiParam("태그") String tags,
-        @RequestParam(value = "created_at_descended", required = false) YN created_at_descended,
-        @RequestParam(value = "views_descended", required = false) YN views_descended,
-        @RequestParam(value = "detail_contents", required = false) String detail_contents,
-        HttpServletRequest request) throws Exception {
-        return ResponseUtil.sendResponse(accidentExpService.findAll(
-            AccidentExp.builder()
-                .name(name)
-                .title(title)
-                .tags(tags)
-                .createdAtDescended(created_at_descended)
-                .viewsDescended(views_descended)
-                .detailContents(detail_contents)
-                .build(),
-            bfPage,
-            request));
-    }
 }

@@ -1,22 +1,22 @@
 package com.safeapp.admin.web.dto.request;
 
-import io.netty.channel.ChannelHandler;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@Schema(description = "사고사례 ")
+@Schema(description = "사고사례")
+@Data
 public class RequestAccidentCaseDTO {
+
     @Schema(description = "제목")
     String title;
 
-    @Schema(description = "유저ID")
-    Long userId;
+    @Schema(description = "등록자 PK")
+    Long adminId;
 
     @Schema(description = "태그")
     String tags;
@@ -24,21 +24,22 @@ public class RequestAccidentCaseDTO {
     @Schema(description = "이름")
     String name;
 
-    @Schema(description = "사고발생시각")
+    @Schema(description = "발생일시")
     LocalDateTime accidentAt;
 
-    @Schema(description = "사고UID")
+    @Schema(description = "일련번호")
     String accidentUid;
 
-    @Schema(description = "사고이유")
-    String accidentReason;
-
-    @Schema(description = "사고원인")
+    @Schema(description = "발생원인 분류")
     String accidentCause;
 
-    @Schema(description = "원인상세")
+    @Schema(description = "발생원인")
+    String accidentReason;
+
+    @Schema(description = "발생원인 상세")
     String causeDetail;
 
-    @Schema(description = "반응")
+    @Schema(description = "후속조치, 방지책 마련 등")
     String response;
+
 }

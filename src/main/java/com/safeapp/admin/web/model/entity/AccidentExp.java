@@ -26,18 +26,23 @@ public class AccidentExp extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "title")
     private String title;
 
+    /*
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "admin")
     private Admins admin;
+    */
+
+    @Column(name = "admin")
+    private Long admin;
     
     @Column(name = "views" )
     @ColumnDefault("0")
-    private int views;
+    private Integer views;
 
     @Column(name = "image")
     private String image;
@@ -70,23 +75,30 @@ public class AccidentExp extends BaseTimeEntity {
     private String response;
 
     @Transient
-    private YN createdAtDescended;
+    private String adminName;
 
     @Transient
-    private YN viewsDescended;
+    private YN createdAtDesc;
+
+    @Transient
+    private YN likesDesc;
+
+    @Transient
+    private YN viewsDesc;
 
     @Transient
     private String detailContents;
 
     @Builder
-    public AccidentExp(long id, String title, long adminId, Admins admin, int views, String image,
-        String tags, String name, LocalDateTime accidentAt, String accidentUid, String accidentReason,
-        String accidentCause, String causeDetail, String response, YN createdAtDescended, YN viewsDescended,
-        String detailContents) {
+    public AccidentExp(Long id, String title, Long admin, Integer views, String image, String tags, String name,
+            LocalDateTime accidentAt, String accidentUid, String accidentReason, String accidentCause, String causeDetail,
+            String response, YN createdAtDesc, YN likesDesc, YN viewsDesc, String detailContents) {
+
         super();
+
         this.id = id;
         this.title = title;
-        this.admin = admin;
+        //this.admin = admin;
         this.views = views;
         this.image = image;
         this.tags = tags;
@@ -97,8 +109,10 @@ public class AccidentExp extends BaseTimeEntity {
         this.accidentCause = accidentCause;
         this.causeDetail = causeDetail;
         this.response = response;
-        this.createdAtDescended = createdAtDescended;
-        this.viewsDescended = viewsDescended;
+        this.createdAtDesc = createdAtDesc;
+        this.likesDesc = likesDesc;
+        this.viewsDesc = viewsDesc;
         this.detailContents = detailContents;
     }
+
 }

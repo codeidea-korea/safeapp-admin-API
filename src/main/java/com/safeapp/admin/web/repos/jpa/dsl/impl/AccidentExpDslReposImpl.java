@@ -52,9 +52,6 @@ public class AccidentExpDslReposImpl extends QuerydslRepositorySupport implement
         if (!StringUtil.isNullOrEmpty(instance.getTags())) {
             query.where(qAccidentExp.tags.contains(instance.getTags()));
         }
-        if (instance.getAdmin().getId() > 0) {
-            query.where(qAccidentExp.admin.id.eq(instance.getAdmin().getId()));
-        }
         if (instance.getId() > 0) {
             query.where(qAccidentExp.id.eq(instance.getId()));
         }
@@ -62,6 +59,7 @@ public class AccidentExpDslReposImpl extends QuerydslRepositorySupport implement
     }
 
     private JPAQuery orderByFromWhere(AccidentExp instance, QAccidentExp qChecklistProject, JPAQuery query) {
+        /*
         if(instance.getCreatedAtDescended() == null && instance.getViewsDescended() == null) {
             query.orderBy(new OrderSpecifier(com.querydsl.core.types.Order.DESC,
                 new PathBuilder(QCheckListProject.class, qChecklistProject.id.getMetadata())));
@@ -77,6 +75,7 @@ public class AccidentExpDslReposImpl extends QuerydslRepositorySupport implement
                     new PathBuilder(QCheckListProject.class, qChecklistProject.views.getMetadata())));
             }
         }
+        */
 
         return query;
     }

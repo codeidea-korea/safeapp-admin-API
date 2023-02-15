@@ -7,4 +7,5 @@ import com.safeapp.admin.web.model.entity.AccidentExp;
 
 @Repository
 public interface AccidentExpRepos extends JpaRepository<AccidentExp, Long> {
+
 }

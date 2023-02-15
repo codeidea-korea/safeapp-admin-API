@@ -215,13 +215,13 @@ public class DirectQuery {
             String whereOption = "";
             String whereOption2 = "";
             if(StringUtils.isNotEmpty(name)) {
-                whereOption = whereOption + "AND A.name LIKE '%" + name + "%' ";
+                whereOption = whereOption + "AND p.name LIKE '%" + name + "%' ";
             }
             if(StringUtils.isNotEmpty(userName)) {
-                whereOption = whereOption + "AND A.user_name LIKE '%" + userName + "%' ";
+                whereOption = whereOption + "AND u.user_name LIKE '%" + userName + "%' ";
             }
             if(StringUtils.isNotEmpty(orderType)) {
-                whereOption = whereOption + "AND A.order_type LIKE '%" + orderType + "%' ";
+                whereOption = whereOption + "AND ua.order_type LIKE '%" + orderType + "%' ";
             }
             if(StringUtils.isNotEmpty(status)) {
                 if(status.equals("unsubscribe")) {
@@ -231,10 +231,10 @@ public class DirectQuery {
                 }
             }
             if(StringUtils.isNotEmpty(createdAtStart)) {
-                whereOption = whereOption + "AND A.created_at >= '" + createdAtStart + "' ";
+                whereOption = whereOption + "AND p.created_at >= '" + createdAtStart + "' ";
             }
             if(StringUtils.isNotEmpty(createdAtEnd)) {
-                whereOption = whereOption + "AND A.created_at <= '" + createdAtEnd + "' ";
+                whereOption = whereOption + "AND p.created_at <= '" + createdAtEnd + "' ";
             }
 
             Map<String, Object> resultMap =
@@ -249,7 +249,7 @@ public class DirectQuery {
                         "LEFT JOIN users u ON pg.user = u.id AND u.delete_yn = false " +
                         "WHERE p.delete_yn = false AND ua.status NOT IN ('first', 'temp') " + whereOption +
                     ") A " +
-                    "WHERE 1 = 1 " + whereOption
+                    "WHERE 1 = 1 " + whereOption2
                 );
 
             return (long)resultMap.get("cnt");
@@ -271,13 +271,13 @@ public class DirectQuery {
             String whereOption = "";
             String whereOption2 = "";
             if(StringUtils.isNotEmpty(name)) {
-                whereOption = whereOption + "AND A.name LIKE '%" + name + "%' ";
+                whereOption = whereOption + "AND p.name LIKE '%" + name + "%' ";
             }
             if(StringUtils.isNotEmpty(userName)) {
-                whereOption = whereOption + "AND A.user_name LIKE '%" + userName + "%' ";
+                whereOption = whereOption + "AND u.user_name LIKE '%" + userName + "%' ";
             }
             if(StringUtils.isNotEmpty(orderType)) {
-                whereOption = whereOption + "AND A.order_type LIKE '%" + orderType + "%' ";
+                whereOption = whereOption + "AND ua.order_type LIKE '%" + orderType + "%' ";
             }
             if(StringUtils.isNotEmpty(status)) {
                 if(status.equals("unsubscribe")) {
@@ -287,10 +287,10 @@ public class DirectQuery {
                 }
             }
             if(StringUtils.isNotEmpty(createdAtStart)) {
-                whereOption = whereOption + "AND A.created_at >= '" + createdAtStart + "' ";
+                whereOption = whereOption + "AND p.created_at >= '" + createdAtStart + "' ";
             }
             if(StringUtils.isNotEmpty(createdAtEnd)) {
-                whereOption = whereOption + "AND A.created_at <= '" + createdAtEnd + "' ";
+                whereOption = whereOption + "AND p.created_at <= '" + createdAtEnd + "' ";
             }
 
             List<Map<String, Object>> resultList =
@@ -309,7 +309,7 @@ public class DirectQuery {
                         "LEFT JOIN users u ON pg.user = u.id AND u.delete_yn = false " +
                         "WHERE p.delete_yn = false AND ua.status NOT IN ('first', 'temp') " + whereOption +
                     ") A " +
-                    "WHERE 1 = 1 " + whereOption +
+                    "WHERE 1 = 1 " + whereOption2 +
                     "ORDER BY A.id DESC LIMIT " + (pageNo - 1) * pageSize + ", " + pageSize
                 );
 
