@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,24 +29,15 @@ public class AccidentExp extends BaseTimeEntity {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
     @Column(name = "title")
     private String title;
 
-    /*
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "admin")
     private Admins admin;
-    */
-
-    @Column(name = "admin")
-    private Long admin;
-    
-    @Column(name = "views" )
-    @ColumnDefault("0")
-    private Integer views;
-
-    @Column(name = "image")
-    private String image;
 
     @Column(name = "tags")
     private String tags;
@@ -59,9 +51,6 @@ public class AccidentExp extends BaseTimeEntity {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime accidentAt;
 
-    @Column(name = "accident_uid")
-    private String accidentUid;
-
     @Column(name = "accident_reason")
     private String accidentReason;
 
@@ -74,45 +63,66 @@ public class AccidentExp extends BaseTimeEntity {
     @Column(name = "response")
     private String response;
 
+    @Column(name = "image")
+    private String image;
+
+    @Column(name = "accident_uid")
+    private String accidentUid;
+
     @Transient
-    private String adminName;
+    private String detailContents;
+    
+    @Column(name = "views" )
+    @ColumnDefault("0")
+    private Integer views;
 
     @Transient
     private YN createdAtDesc;
 
     @Transient
-    private YN likesDesc;
-
-    @Transient
     private YN viewsDesc;
 
-    @Transient
-    private String detailContents;
-
     @Builder
-    public AccidentExp(Long id, String title, Long admin, Integer views, String image, String tags, String name,
-            LocalDateTime accidentAt, String accidentUid, String accidentReason, String accidentCause, String causeDetail,
-            String response, YN createdAtDesc, YN likesDesc, YN viewsDesc, String detailContents) {
+    public AccidentExp(Long id, LocalDateTime createdAt, String title, Admins admin, String tags, String name, LocalDateTime accidentAt,
+            String accidentReason, String accidentCause, String causeDetail, String response, String image, String accidentUid,
+            String detailContents, Integer views, YN createdAtDesc, YN viewsDesc) {
 
         super();
 
         this.id = id;
+        this.createdAt = createdAt;
         this.title = title;
-        //this.admin = admin;
-        this.views = views;
-        this.image = image;
+        this.admin = admin;
         this.tags = tags;
         this.name = name;
         this.accidentAt = accidentAt;
-        this.accidentUid = accidentUid;
         this.accidentReason = accidentReason;
         this.accidentCause = accidentCause;
         this.causeDetail = causeDetail;
         this.response = response;
-        this.createdAtDesc = createdAtDesc;
-        this.likesDesc = likesDesc;
-        this.viewsDesc = viewsDesc;
+        this.image = image;
+        this.accidentUid = accidentUid;
         this.detailContents = detailContents;
+        this.views = views;
+        this.createdAtDesc = createdAtDesc;
+        this.viewsDesc = viewsDesc;
+    }
+
+    public void edit(AccidentExp newAccExp) {
+        setCreatedAt(newAccExp.getCreatedAt());
+        setTitle(newAccExp.getTitle());
+        setAdmin(newAccExp.getAdmin());
+        setTags(newAccExp.getTags());
+        setName(newAccExp.getName());
+        setAccidentAt(newAccExp.getAccidentAt());
+        setAccidentReason(newAccExp.getAccidentReason());
+        setAccidentCause(newAccExp.getAccidentCause());
+        setCauseDetail(newAccExp.getCauseDetail());
+        setResponse(newAccExp.getResponse());
+        setImage(newAccExp.getImage());
+        setCreatedAt(newAccExp.getCreatedAt());
+        setViews(newAccExp.getViews());
+        setAccidentUid(newAccExp.getAccidentUid());
     }
 
 }

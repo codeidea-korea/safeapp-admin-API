@@ -190,12 +190,14 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
         List<ResponseCheckListProjectDTO> resultList = new ArrayList<>();
         for(CheckListProject chkPrj : list) {
             List<String> contents = chkPrjRepos.findContentsByCheckListId(chkPrj.getId());
+
             ResponseCheckListProjectDTO result =
                     ResponseCheckListProjectDTO
                     .builder()
                     .checkListProject(chkPrj)
                     .contents(contents)
                     .build();
+
             resultList.add(result);
         }
 

@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import static org.hibernate.sql.InFragment.NOT_NULL;
 
-@Schema(description = "사고사례")
+@Schema(description = "사고사례 요청")
 @Data
 public class RequestAccidentExpDTO {
 
@@ -16,7 +16,7 @@ public class RequestAccidentExpDTO {
     @NotBlank(message = NOT_NULL)
     String title;
 
-    @Schema(description = "등록자 PK")
+    @Schema(description = "등록자(관리자) PK")
     @NotBlank(message = NOT_NULL)
     Long adminId;
 

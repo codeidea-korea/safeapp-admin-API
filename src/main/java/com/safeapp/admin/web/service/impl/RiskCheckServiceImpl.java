@@ -13,7 +13,6 @@ import com.safeapp.admin.web.dto.response.ResponseCheckListProjectDTO;
 import com.safeapp.admin.web.dto.response.ResponseRiskCheckDTO;
 import com.safeapp.admin.web.model.entity.Admins;
 import com.safeapp.admin.web.model.entity.CheckListProject;
-import com.safeapp.admin.web.repos.jpa.AccidentExpRepos;
 import com.safeapp.admin.web.repos.jpa.ProjectRepos;
 import com.safeapp.admin.web.repos.jpa.RiskCheckRepository;
 import com.safeapp.admin.web.repos.jpa.UserRepos;

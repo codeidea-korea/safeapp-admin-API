@@ -8,38 +8,49 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 
-@Schema(description = "사고사례")
+import static org.hibernate.sql.InFragment.NOT_NULL;
+
+@Schema(description = "사고사례 요청")
 @Data
 public class RequestAccidentCaseDTO {
 
     @Schema(description = "제목")
     String title;
 
-    @Schema(description = "등록자 PK")
+    @Schema(description = "등록일시")
+    LocalDateTime createdAt;
+
+    @Schema(description = "등록자(관리자) PK")
     Long adminId;
 
     @Schema(description = "태그")
     String tags;
 
-    @Schema(description = "이름")
+    @Schema(description = "사고명")
     String name;
 
-    @Schema(description = "발생일시")
+    @Schema(description = "사고발생일시")
     LocalDateTime accidentAt;
 
-    @Schema(description = "일련번호")
-    String accidentUid;
-
-    @Schema(description = "발생원인 분류")
-    String accidentCause;
-
-    @Schema(description = "발생원인")
+    @Schema(description = "사고경위")
     String accidentReason;
 
-    @Schema(description = "발생원인 상세")
+    @Schema(description = "사고원인")
+    String accidentCause;
+
+    @Schema(description = "구체적 사고원인")
     String causeDetail;
 
-    @Schema(description = "후속조치, 방지책 마련 등")
+    @Schema(description = "재발방지대책")
     String response;
+
+    @Schema(description = "이미지 첨부")
+    String image;
+
+    @Schema(description = "조회수")
+    Integer views;
+
+    @Schema(description = "사고일련번호")
+    String accidentUid;
 
 }
