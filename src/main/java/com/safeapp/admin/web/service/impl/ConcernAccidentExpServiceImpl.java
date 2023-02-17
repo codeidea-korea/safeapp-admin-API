@@ -141,7 +141,7 @@ public class ConcernAccidentExpServiceImpl implements ConcernAccidentExpService 
     }
 
     @Override
-    public void report(long id, String reportReason, HttpServletRequest request) {
+    public void addReport(long id, String reportReason, HttpServletRequest request) {
         Admins admin = jwtService.getAdminInfoByToken(request);
         ConcernAccidentExp conExp =
             conExpRepos.findById(id).orElseThrow(()
@@ -155,6 +155,21 @@ public class ConcernAccidentExpServiceImpl implements ConcernAccidentExpService 
             .reportReason(reportReason)
             .build();
         reportRepos.save(report);
+    }
+
+    @Override
+    public List<Reports> findReports(long id, HttpServletRequest request) throws Exception {
+        List<Reports> reports = conExpDslRepos.findReports(id);
+
+        return reports;
+    }
+
+    @Override
+    public ListResponse<ConcernAccidentExp> findAllReport(ConcernAccidentExp conExp, Pages pages, HttpServletRequest request) {
+        long count = conExpDslRepos.countAllReport(conExp);
+        List<ConcernAccidentExp> list = conExpDslRepos.findAllReport(conExp, pages);
+
+        return new ListResponse<>(count, list, pages);
     }
 
     @Override

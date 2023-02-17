@@ -4,8 +4,11 @@ import com.safeapp.admin.web.dto.request.RequestConcernAccidentDTO;
 import com.safeapp.admin.web.dto.request.RequestConcernAccidentEditDTO;
 import com.safeapp.admin.web.dto.response.ResponseAccidentCaseDTO;
 import com.safeapp.admin.web.dto.response.ResponseConcernAccidentDTO;
+import com.safeapp.admin.web.model.cmmn.ListResponse;
+import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.cmmn.service.CRUDService;
 import com.safeapp.admin.web.model.entity.ConcernAccidentExp;
+import com.safeapp.admin.web.model.entity.Reports;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +22,10 @@ public interface ConcernAccidentExpService extends CRUDService<ConcernAccidentEx
 
     ConcernAccidentExp toEditEntity(RequestConcernAccidentEditDTO editDto) throws NotFoundException;
 
-    void report(long id, String reportReason, HttpServletRequest request);
+    void addReport(long id, String reportReason, HttpServletRequest request);
+
+    List<Reports> findReports(long id, HttpServletRequest request) throws Exception;
+
+    ListResponse<ConcernAccidentExp> findAllReport(ConcernAccidentExp conExp, Pages pages, HttpServletRequest request) throws Exception;
 
 }

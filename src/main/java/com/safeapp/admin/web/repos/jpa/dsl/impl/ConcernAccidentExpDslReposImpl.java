@@ -109,4 +109,53 @@ public class ConcernAccidentExpDslReposImpl extends QuerydslRepositorySupport im
         return query.fetch();
     }
 
+    private JPAQuery selectFromWhereReport(ConcernAccidentExp conExp, QConcernAccidentExp qConExp, QReports qReport) {
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
+        JPAQuery query = jpaQueryFactory.selectFrom(qConExp).innerJoin(qReport).on(qConExp.id.eq(qReport.concernAccidentExp.id));
+
+        if(!StringUtil.isNullOrEmpty(conExp.getKeyword())) {
+            query.where(qConExp.title.contains(conExp.getKeyword()).or(qConExp.tags.contains(conExp.getKeyword())));
+        }
+        query.where(qConExp.deleteYn.eq(false)).where(qReport.deleteYn.eq(false)).groupBy(qReport.concernAccidentExp);
+
+        return query;
+    }
+
+    @Override
+    public List<Reports> findReports(long id) {
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
+        QReports qReport = QReports.reports;
+
+        JPAQuery query = jpaQueryFactory.selectFrom(qReport).where(qReport.concernAccidentExp.id.eq(id));
+        query.orderBy(new OrderSpecifier(com.querydsl.core.types.Order.DESC, new PathBuilder(QReports.class, qReport.id.getMetadata())));
+
+        return query.fetch();
+    }
+
+    @Override
+    public long countAllReport(ConcernAccidentExp conExp) {
+        QConcernAccidentExp qConExp = QConcernAccidentExp.concernAccidentExp;
+        QReports qReport = QReports.reports;
+
+        JPAQuery query = selectFromWhereReport(conExp, qConExp, qReport);
+
+        return query.fetchCount();
+    }
+
+    @Override
+    public List<ConcernAccidentExp> findAllReport(ConcernAccidentExp conExp, Pages pages) {
+        QConcernAccidentExp qConExp = QConcernAccidentExp.concernAccidentExp;
+        QReports qReport = QReports.reports;
+
+        JPAQuery query = selectFromWhereReport(conExp, qConExp, qReport);
+
+        query
+            .offset(pages.getOffset())
+            .limit(pages.getPageSize())
+            .groupBy(qReport.concernAccidentExp);
+        query = orderBy(conExp, qConExp, query);
+
+        return query.fetch();
+    }
+
 }
