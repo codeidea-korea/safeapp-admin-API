@@ -31,7 +31,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -45,10 +47,8 @@ public class CheckListProjectController {
 
     @PostMapping(value = "/add")
     @ApiOperation(value = "체크리스트 등록", notes = "체크리스트 등록")
-    public ResponseEntity<ResponseCheckListProjectDTO> add(@RequestBody RequestCheckListProjectDTO addDto,
-            HttpServletRequest request) throws Exception {
-
-        CheckListProject addedChkPrj = checkListProjectService.add(checkListProjectService.toEntity(addDto), request);
+    public ResponseEntity<ResponseCheckListProjectDTO> add(@RequestBody RequestCheckListProjectDTO addDto, HttpServletRequest request) throws Exception {
+        CheckListProject addedChkPrj = checkListProjectService.add(checkListProjectService.toAddEntity(addDto), request);
         return new ResponseEntity<>(ResponseCheckListProjectDTO.builder().checkListProject(addedChkPrj).build(), OK);
     }
 
@@ -57,19 +57,19 @@ public class CheckListProjectController {
     public ResponseEntity<ResponseCheckListProjectSelectDTO> find(@PathVariable("id") @ApiParam(value = "체크리스트 PK", required = true) long id,
             HttpServletRequest request) throws Exception {
 
-        CheckListProject oldChkPrj = checkListProjectService.find(id, request);
-        return new ResponseEntity<>(ResponseCheckListProjectSelectDTO.builder().checkListProject(oldChkPrj).build(), OK);
+        CheckListProject chkPrj = checkListProjectService.find(id, request);
+        return new ResponseEntity<>(ResponseCheckListProjectSelectDTO.builder().checkListProject(chkPrj).build(), OK);
     }
 
     @PutMapping(value = "/edit/{id}")
     @ApiOperation(value = "체크리스트 수정", notes = "체크리스트 수정")
     public ResponseEntity<ResponseCheckListProjectDTO> edit(@PathVariable("id") @ApiParam(value = "체크리스트 PK", required = true) long id,
-            @RequestBody RequestCheckListProjectModifyDTO modifyDto, HttpServletRequest request) throws Exception {
+            @RequestBody RequestCheckListProjectModifyDTO editDto, HttpServletRequest request) throws Exception {
 
-        CheckListProject chkPrj = checkListProjectService.toEntityModify(modifyDto);
-        chkPrj.setId(id);
+        CheckListProject newChkPrj = checkListProjectService.toEditEntity(editDto);
+        newChkPrj.setId(id);
 
-        CheckListProject editedChkPrj = checkListProjectService.edit(chkPrj, request);
+        CheckListProject editedChkPrj = checkListProjectService.edit(newChkPrj, request);
         return new ResponseEntity<>(ResponseCheckListProjectDTO.builder().checkListProject(editedChkPrj).build(), OK);
     }
 
@@ -88,9 +88,9 @@ public class CheckListProjectController {
             @RequestParam(value = "keyword", required = false) @Parameter(description = "키워드") String keyword,
             @RequestParam(value = "userName", required = false) @Parameter(description = "이름") String userName,
             @RequestParam(value = "phoneNo", required = false) @Parameter(description = "휴대폰번호") String phoneNo,
-            @RequestParam(value = "visibled", required = false) @Parameter(description = "공개 여부") YN visibled,
-            @RequestParam(value = "createdAtStart", required = false) LocalDateTime createdAtStart,
-            @RequestParam(value = "createdAtEnd", required = false) LocalDateTime createdAtEnd,
+            @RequestParam(value = "visibled", required = false) @Parameter(description = "공개상태") YN visibled,
+            @RequestParam(value = "createdAtStart", required = false) @Parameter(description = "등록일시 시작") String createdAtStart,
+            @RequestParam(value = "createdAtEnd", required = false) @Parameter(description = "등록일시 종료") String createdAtEnd,
             @RequestParam(value = "createdAtDesc", required = false) @Parameter(description = "최신순") YN createdAtDesc,
             @RequestParam(value = "likesDesc", required = false) @Parameter(description = "좋아요순") YN likesDesc,
             @RequestParam(value = "viewsDesc", required = false) @Parameter(description = "조회순") YN viewsDesc,
@@ -98,12 +98,18 @@ public class CheckListProjectController {
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             HttpServletRequest request) throws Exception {
 
+        if(Objects.isNull(createdAtStart)) createdAtStart = "1000-01-01 00:00:00.000";
+        if(Objects.isNull(createdAtEnd)) createdAtEnd = "9999-12-30 00:00:00.000";
+
         Long count =
-            checkListProjectService.countAllByCondition(keyword, userName, phoneNo, visibled, createdAtStart, createdAtEnd);
+            checkListProjectService.countAllByCondition(keyword, userName, phoneNo, visibled,
+            LocalDateTime.parse(createdAtStart, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")),
+            LocalDateTime.parse(createdAtEnd, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")).plusDays(1));
         List<ResponseCheckListProjectDTO> list =
-            checkListProjectService.findAllByConditionAndOrderBy(keyword, userName, phoneNo,
-            visibled, createdAtStart, createdAtEnd, createdAtDesc, likesDesc, viewsDesc,
-            pageNo, pageSize, request);
+            checkListProjectService.findAllByConditionAndOrderBy(keyword, userName, phoneNo, visibled,
+            LocalDateTime.parse(createdAtStart, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")),
+            LocalDateTime.parse(createdAtEnd, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")).plusDays(1),
+            createdAtDesc, likesDesc, viewsDesc, pageNo, pageSize, request);
         Pages pages = new Pages(pageNo, pageSize);
 
         ListResponse chkPrjList = new ListResponse(count, list, pages);

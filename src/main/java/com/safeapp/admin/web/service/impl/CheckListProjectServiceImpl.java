@@ -40,43 +40,43 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
     private final UserRepos userRepos;
 
     @Override
-    public CheckListProject toEntity(RequestCheckListProjectDTO addDto) throws NotFoundException {
-        CheckListProject checkListProject = new CheckListProject();
+    public CheckListProject toAddEntity(RequestCheckListProjectDTO addDto) throws NotFoundException {
+        CheckListProject newChkPrj = new CheckListProject();
 
-        checkListProject.setName(addDto.getName());
-        checkListProject.setVisibled(addDto.getVisibled());
-        checkListProject.setTag(addDto.getTag());
-        checkListProject.setRelatedAcidNo(addDto.getRelatedAcidNo());
-        checkListProject.setRecheckReason(addDto.getRecheckReason());
-        checkListProject.setUser(userRepos.findById(addDto.getUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + addDto.getUserId())));
+        newChkPrj.setUser(userRepos.findById(addDto.getUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + addDto.getUserId())));
+        newChkPrj.setName(addDto.getName());
+        newChkPrj.setVisibled(addDto.getVisibled());
+        newChkPrj.setTag(addDto.getTag());
+        newChkPrj.setRelatedAcidNo(addDto.getRelatedAcidNo());
+        newChkPrj.setRecheckReason(addDto.getRecheckReason());
 
+        if(addDto.getProjectId() != null) {
+            newChkPrj.setProject(prjRepos.findById(addDto.getProjectId()).orElseThrow(() -> new NotFoundException("Input Project ID: " + addDto.getProjectId())));
+        }
         if(addDto.getCheckerId() != null) {
-            checkListProject.setChecker(userRepos.findById(addDto.getCheckerId()).orElseThrow(() -> new NotFoundException("Input Checker ID: " + addDto.getCheckerId())));
-            checkListProject.setCheckAt(LocalDateTime.now());
+            newChkPrj.setChecker(userRepos.findById(addDto.getCheckerId()).orElseThrow(() -> new NotFoundException("Input Checker ID: " + addDto.getCheckerId())));
+            newChkPrj.setCheckAt(LocalDateTime.now());
         }
         if(addDto.getReviewerId() != null) {
-            checkListProject.setReviewer(userRepos.findById(addDto.getReviewerId()).orElseThrow(() -> new NotFoundException("Input Reviewer ID: " + addDto.getReviewerId())));
-            checkListProject.setReview_at(LocalDateTime.now());
+            newChkPrj.setReviewer(userRepos.findById(addDto.getReviewerId()).orElseThrow(() -> new NotFoundException("Input Reviewer ID: " + addDto.getReviewerId())));
+            newChkPrj.setReviewAt(LocalDateTime.now());
         }
         if(addDto.getApproverId() != null) {
-            checkListProject.setApprover(userRepos.findById(addDto.getApproverId()).orElseThrow(() -> new NotFoundException("Input User ID: " + addDto.getUserId())));
-            checkListProject.setApprove_at(LocalDateTime.now());
-        }
-        if(addDto.getProjectId() != null) {
-            checkListProject.setProject(prjRepos.findById(addDto.getProjectId()).orElseThrow(() -> new NotFoundException("Input Project ID: " + addDto.getProjectId())));
+            newChkPrj.setApprover(userRepos.findById(addDto.getApproverId()).orElseThrow(() -> new NotFoundException("Input User ID: " + addDto.getUserId())));
+            newChkPrj.setApproveAt(LocalDateTime.now());
         }
 
-        return checkListProject;
+        return newChkPrj;
     }
 
     @Transactional
     @Override
-    public CheckListProject add(CheckListProject chkPrj, HttpServletRequest request) throws Exception {
-        if(Objects.isNull(chkPrj)) {
+    public CheckListProject add(CheckListProject newChkPrj, HttpServletRequest request) throws Exception {
+        if(Objects.isNull(newChkPrj)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 체크리스트입니다.");
         }
 
-        CheckListProject addedChkPrj = chkPrjRepos.save(chkPrj);
+        CheckListProject addedChkPrj = chkPrjRepos.save(newChkPrj);
         if(Objects.isNull(addedChkPrj)) {
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "DB 저장 중 오류가 발생하였습니다.");
         }
@@ -86,77 +86,76 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
 
     @Override
     public CheckListProject find(long id, HttpServletRequest request) throws Exception {
-        CheckListProject oldChkPrj =
+        CheckListProject chkPrj =
             chkPrjRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 체크리스트입니다."));
 
-        return oldChkPrj;
+        return chkPrj;
     }
 
     @Override
-    public CheckListProject toEntityModify(RequestCheckListProjectModifyDTO modifyDto) throws NotFoundException {
-        CheckListProject checkListProject = new CheckListProject();
+    public CheckListProject toEditEntity(RequestCheckListProjectModifyDTO editDto) throws NotFoundException {
+        CheckListProject newChkPrj = new CheckListProject();
 
-        checkListProject.setName(modifyDto.getName());
-        checkListProject.setVisibled(modifyDto.getVisibled());
-        checkListProject.setTag(modifyDto.getTag());
-        checkListProject.setRelatedAcidNo(modifyDto.getRelatedAcidNo());
-        checkListProject.setRecheckReason(modifyDto.getRecheckReason());
-        checkListProject.setUser(userRepos.findById(modifyDto.getUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + modifyDto.getUserId())));
+        newChkPrj.setUser(userRepos.findById(editDto.getUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + editDto.getUserId())));
+        newChkPrj.setName(editDto.getName());
+        newChkPrj.setVisibled(editDto.getVisibled());
+        newChkPrj.setTag(editDto.getTag());
+        newChkPrj.setRelatedAcidNo(editDto.getRelatedAcidNo());
+        newChkPrj.setRecheckReason(editDto.getRecheckReason());
 
-        if(modifyDto.getCheckerId() != null) {
-            checkListProject.setChecker(userRepos.findById(modifyDto.getCheckerId()).orElseThrow(() -> new NotFoundException("Input Checker ID: " + modifyDto.getCheckerId())));
-            checkListProject.setCheckAt(LocalDateTime.now());
+        if(editDto.getProjectId() != null) {
+            newChkPrj.setProject(prjRepos.findById(editDto.getProjectId()).orElseThrow(() -> new NotFoundException("Input Project ID: " + editDto.getProjectId())));
         }
-        if(modifyDto.getReviewerId() != null) {
-            checkListProject.setReviewer(userRepos.findById(modifyDto.getReviewerId()).orElseThrow(() -> new NotFoundException("Input Reviewer ID: " + modifyDto.getReviewerId())));
-            checkListProject.setReview_at(LocalDateTime.now());
+        if(editDto.getCheckerId() != null) {
+            newChkPrj.setChecker(userRepos.findById(editDto.getCheckerId()).orElseThrow(() -> new NotFoundException("Input Checker ID: " + editDto.getCheckerId())));
+            newChkPrj.setCheckAt(LocalDateTime.now());
         }
-        if(modifyDto.getApproverId() != null) {
-            checkListProject.setApprover(userRepos.findById(modifyDto.getApproverId()).orElseThrow(() -> new NotFoundException("Input User ID: " + modifyDto.getUserId())));
-            checkListProject.setApprove_at(LocalDateTime.now());
+        if(editDto.getReviewerId() != null) {
+            newChkPrj.setReviewer(userRepos.findById(editDto.getReviewerId()).orElseThrow(() -> new NotFoundException("Input Reviewer ID: " + editDto.getReviewerId())));
+            newChkPrj.setReviewAt(LocalDateTime.now());
         }
-        if(modifyDto.getProjectId() != null) {
-            checkListProject.setProject(prjRepos.findById(modifyDto.getProjectId()).orElseThrow(() -> new NotFoundException("Input Project ID: " + modifyDto.getProjectId())));
+        if(editDto.getApproverId() != null) {
+            newChkPrj.setApprover(userRepos.findById(editDto.getApproverId()).orElseThrow(() -> new NotFoundException("Input User ID: " + editDto.getUserId())));
+            newChkPrj.setApproveAt(LocalDateTime.now());
         }
 
-        List<CheckListProjectDetail> chkPrjDets = new ArrayList<>();
-        if(modifyDto.getDetails().isEmpty() == false) {
-            for(RequestCheckListProjectModifyDTO.DetailModifyDTO detailModifyDto : modifyDto.getDetails()) {
-                CheckListProjectDetail chkPrjDet = new CheckListProjectDetail();
+        List<CheckListProjectDetail> newChkPrjDets = new ArrayList<>();
+        if(editDto.getDetails().isEmpty() == false) {
+            for(RequestCheckListProjectModifyDTO.DetailModifyDTO detailEditDto : editDto.getDetails()) {
+                CheckListProjectDetail newChkPrjDet = new CheckListProjectDetail();
 
-                chkPrjDet.setDepth(detailModifyDto.getDepth());
-                chkPrjDet.setIsDepth(detailModifyDto.getIsDepth());
-                chkPrjDet.setParentDepth(detailModifyDto.getParentDepth());
-                chkPrjDet.setContents(detailModifyDto.getContents());
-                chkPrjDet.setOrders(detailModifyDto.getOrders());
-                chkPrjDet.setParentOrders(detailModifyDto.getParentOrders());
-                chkPrjDet.setTypes(detailModifyDto.getTypes());
+                newChkPrjDet.setDepth(detailEditDto.getDepth());
+                newChkPrjDet.setIsDepth(detailEditDto.getIsDepth());
+                newChkPrjDet.setParentDepth(detailEditDto.getParentDepth());
+                newChkPrjDet.setContents(detailEditDto.getContents());
+                newChkPrjDet.setOrders(detailEditDto.getOrders());
+                newChkPrjDet.setParentOrders(detailEditDto.getParentOrders());
+                newChkPrjDet.setTypes(detailEditDto.getTypes());
+                newChkPrjDet.setCheckListProject(newChkPrj);
 
-                chkPrjDet.setCheckListProject(checkListProject);
+                if(detailEditDto.getId() != null) {
+                    newChkPrjDet.setId(detailEditDto.getId());
+                }
 
-                if(detailModifyDto.getId() != null) {
-                    chkPrjDet.setId(detailModifyDto.getId());
-                };
-
-                chkPrjDets.add(chkPrjDet);
+                newChkPrjDets.add(newChkPrjDet);
             }
         }
-        checkListProject.setCheckListProjectDetailList(chkPrjDets);
+        newChkPrj.setCheckListProjectDetailList(newChkPrjDets);
 
-        return checkListProject;
+        return newChkPrj;
     }
 
     @Transactional
     @Override
-    public CheckListProject edit(CheckListProject chkPrj, HttpServletRequest request) throws Exception {
-        CheckListProject oldChkPrj =
-            chkPrjRepos.findById(chkPrj.getId())
+    public CheckListProject edit(CheckListProject newChkPrj, HttpServletRequest request) throws Exception {
+        CheckListProject chkPrj =
+            chkPrjRepos.findById(newChkPrj.getId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 체크리스트입니다."));
 
-        oldChkPrj.edit(chkPrj);
+        chkPrj.edit(newChkPrj);
 
-        CheckListProject editedChkPrj = chkPrjRepos.save(oldChkPrj);
+        CheckListProject editedChkPrj = chkPrjRepos.save(chkPrj);
         return editedChkPrj;
     }
 
@@ -192,11 +191,11 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
             List<String> contents = chkPrjRepos.findContentsByCheckListId(chkPrj.getId());
 
             ResponseCheckListProjectDTO result =
-                    ResponseCheckListProjectDTO
-                    .builder()
-                    .checkListProject(chkPrj)
-                    .contents(contents)
-                    .build();
+                ResponseCheckListProjectDTO
+                .builder()
+                .checkListProject(chkPrj)
+                .contents(contents)
+                .build();
 
             resultList.add(result);
         }
@@ -205,7 +204,7 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
     }
 
     @Override
-    public CheckListProject generate(CheckListProject oldChkPrj) { return null; }
+    public CheckListProject generate(CheckListProject newChkPrj) { return null; }
 
     @Override
     public ListResponse<CheckListProject> findAll(CheckListProject chkPrj, Pages pages, HttpServletRequest request) throws Exception {

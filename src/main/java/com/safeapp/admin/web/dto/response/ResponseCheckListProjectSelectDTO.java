@@ -84,6 +84,9 @@ public class ResponseCheckListProjectSelectDTO {
     @Schema(description = "상태")
     StatusType status;
 
+    @Schema(description = "공개상태")
+    YN visibled;
+
     @Schema(description = "체크리스트 상세")
     List<ResponseCheckListProjectDetailDTO> details = new ArrayList<>();
 
@@ -100,9 +103,10 @@ public class ResponseCheckListProjectSelectDTO {
         this.tag = checkListProject.getTag();
         this.recheckReason = checkListProject.getRecheckReason();
         this.checkAt = checkListProject.getCheckAt();
-        this.reviewAt = checkListProject.getReview_at();
-        this.approveAt = checkListProject.getApprove_at();
+        this.reviewAt = checkListProject.getReviewAt();
+        this.approveAt = checkListProject.getApproveAt();
         this.status = checkListProject.getStatus();
+        this.visibled = checkListProject.getVisibled();
 
         if(checkListProject.getProject() != null) {
             this.projectId = checkListProject.getProject().getId();

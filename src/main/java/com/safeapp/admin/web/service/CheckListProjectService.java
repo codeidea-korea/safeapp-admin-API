@@ -2,7 +2,6 @@ package com.safeapp.admin.web.service;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.safeapp.admin.web.data.StatusType;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.dto.request.RequestCheckListProjectDTO;
 import com.safeapp.admin.web.dto.request.RequestCheckListProjectModifyDTO;
@@ -17,9 +16,9 @@ import java.util.List;
 
 public interface CheckListProjectService extends CRUDService<CheckListProject> {
 
-    CheckListProject toEntity(RequestCheckListProjectDTO addDto) throws NotFoundException;
+    CheckListProject toAddEntity(RequestCheckListProjectDTO addDto) throws NotFoundException;
 
-    CheckListProject toEntityModify(RequestCheckListProjectModifyDTO modifyDto) throws NotFoundException;
+    CheckListProject toEditEntity(RequestCheckListProjectModifyDTO editDto) throws NotFoundException;
 
     Long countAllByCondition(String keyword, String userName, String phoneNo, YN visibled,
             LocalDateTime createdAtStart, LocalDateTime createdAtEnd);
@@ -27,6 +26,5 @@ public interface CheckListProjectService extends CRUDService<CheckListProject> {
     List<ResponseCheckListProjectDTO> findAllByConditionAndOrderBy(String keyword, String userName, String phoneNo,
         YN visibled, LocalDateTime createdAtStart, LocalDateTime createdAtEnd, YN createdAtDesc, YN likesDesc, YN viewsDesc,
         int pageNo, int pageSize, HttpServletRequest request);
-
 
 }

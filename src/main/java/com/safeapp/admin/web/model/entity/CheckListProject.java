@@ -56,25 +56,25 @@ public class CheckListProject extends BaseTimeEntity {
     @JoinColumn(name = "checker")
     private Users checker;
 
+    @Column(name = "check_at")
+    private LocalDateTime checkAt;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "reviewer")
     private Users reviewer;
+
+    @Column(name = "review_at")
+    private LocalDateTime reviewAt;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "approver")
     private Users approver;
 
+    @Column(name = "approve_at")
+    private LocalDateTime approveAt;
+
     @Column(name = "recheck_reason")
     private String recheckReason;
-
-    @Column(name = "check_at")
-    private LocalDateTime checkAt;
-
-    @Column(name = "review_at")
-    private LocalDateTime review_at;
-
-    @Column(name = "approve_at")
-    private LocalDateTime approve_at;
 
     @Enumerated(STRING)
     @Column(name = "status")
@@ -102,19 +102,19 @@ public class CheckListProject extends BaseTimeEntity {
 
     @Builder
     public CheckListProject(Long id, Project project, Users user, String name, YN visibled, String tag, String relatedAcidNo,
-            Users checker, Users reviewer, Users approver, List<CheckListProjectDetail> details, String detailContents) {
+            Users checker, Users reviewer, Users approver, List<CheckListProjectDetail> checkListProjectDetailList, String detailContents) {
 
         super();
 
         this.id = id;
+        this.project = project;
+        this.user = user;
         this.name = name;
         this.visibled = visibled;
         this.tag = tag;
         this.relatedAcidNo = relatedAcidNo;
-        this.project = project;
-        this.user = user;
+        this.checkListProjectDetailList = checkListProjectDetailList;
         this.detailContents = detailContents;
-        this.checkListProjectDetailList = details;
 
         if(checker != null) {
             this.checker = checker;
@@ -128,17 +128,17 @@ public class CheckListProject extends BaseTimeEntity {
     }
 
     public void edit(CheckListProject checkListProject) {
-        setApprover(checkListProject.getApprover());
-        setCheckAt(checkListProject.getCheckAt());
-        setChecker(checkListProject.getChecker());
-        setName(checkListProject.getName());
         setProject(checkListProject.getProject());
-        setRecheckReason(checkListProject.getRecheckReason());
-        setRelatedAcidNo(checkListProject.getRelatedAcidNo());
-        setReviewer(checkListProject.getReviewer());
-        setTag(checkListProject.getTag());
         setUser(checkListProject.getUser());
+        setName(checkListProject.getName());
         setVisibled(checkListProject.getVisibled());
+        setTag(checkListProject.getTag());
+        setRelatedAcidNo(checkListProject.getRelatedAcidNo());
+        setChecker(checkListProject.getChecker());
+        setCheckAt(checkListProject.getCheckAt());
+        setReviewer(checkListProject.getReviewer());
+        setApprover(checkListProject.getApprover());
+        setRecheckReason(checkListProject.getRecheckReason());
 
         if(checkListProject.checkListProjectDetailList.isEmpty() == false) {
             for(CheckListProjectDetail addDetail : checkListProject.checkListProjectDetailList) {

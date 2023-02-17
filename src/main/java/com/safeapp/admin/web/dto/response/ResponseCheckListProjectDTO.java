@@ -1,5 +1,6 @@
 package com.safeapp.admin.web.dto.response;
 
+import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.entity.CheckListProject;
 import com.safeapp.admin.web.model.entity.CheckListProjectDetail;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,13 +28,16 @@ public class ResponseCheckListProjectDTO {
     String userId;
 
     @Schema(description = "등록일시")
-    LocalDateTime createdDate;
+    LocalDateTime createdAt;
 
     @Schema(description = "조회수")
     Integer views;
 
     @Schema(description = "좋아요 수")
     Integer likeCount;
+
+    @Schema(description = "공개상태")
+    YN visibled;
 
     @Schema(description = "본문")
     List<String> contents = new ArrayList<>();
@@ -43,9 +47,10 @@ public class ResponseCheckListProjectDTO {
         this.id = checkListProject.getId();
         this.name = checkListProject.getName();
         this.userId = checkListProject.getUser().getUserId();
-        this.createdDate = checkListProject.getCreatedAt();
+        this.createdAt = checkListProject.getCreatedAt();
         this.views = checkListProject.getViews();
         this.likeCount = checkListProject.getLikes();
+        this.visibled = checkListProject.getVisibled();
         this.contents = contents;
 
         if(checkListProject.getProject() != null) {
