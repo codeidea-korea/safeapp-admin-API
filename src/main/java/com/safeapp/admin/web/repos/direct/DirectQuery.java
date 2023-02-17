@@ -45,7 +45,7 @@ public class DirectQuery {
         }
     }
 
-    // 마스터 관리자의 결제기간이 유효해야함
+    // 마스터 관리자의 결제 기간이 유효해야
     public long countMyProjectList(long id) {
         try {
             Map<String, Object> myProjectMap =
@@ -77,10 +77,10 @@ public class DirectQuery {
         }
     }
     
-    // 마스터 관리자의 결제기간이 유효해야함
+    // 마스터 관리자의 결제 기간이 유효해야
     public List<Map<String, Object>> findMyProjectList(long id, Pages pages) {
         try {
-            List<Map<String, Object>> myProject =
+            List<Map<String, Object>> myProjectList =
                 jdbcTemplate.queryForList(
                     "SELECT p.id, p.name, p.updated_at, pg.user_auth_type FROM projects p " +
                     "LEFT JOIN project_groups pg ON p.id = pg.project " +
@@ -100,7 +100,7 @@ public class DirectQuery {
                     "LIMIT " + (pages.getPageNo() - 1) * pages.getPageSize() + ", " + pages.getPageSize()
                 );
 
-            return myProject;
+            return myProjectList;
 
         } catch (Exception e) {
             e.getStackTrace();
@@ -124,7 +124,7 @@ public class DirectQuery {
                 whereOption = whereOption + "AND A.phone_no LIKE '%" + user.getPhoneNo() + "%' ";
             }
 
-            Map<String, Object> result =
+            Map<String, Object> userMap =
                 jdbcTemplate.queryForMap(
                 "SELECT COUNT(A.id) AS cnt FROM " +
                     "(" +
@@ -135,7 +135,7 @@ public class DirectQuery {
                     "WHERE 1 = 1 " + whereOption
                 );
 
-            return (long)result.get("cnt");
+            return (long)userMap.get("cnt");
 
         } catch (Exception e) {
             e.getStackTrace();
@@ -159,7 +159,7 @@ public class DirectQuery {
                 whereOption = whereOption + "AND phone_no LIKE '%" + user.getPhoneNo() + "%' ";
             }
 
-            List<Map<String, Object>> resultList =
+            List<Map<String, Object>> userList =
                 jdbcTemplate.queryForList(
                 "SELECT A.* FROM " +
                     "(" +
@@ -171,7 +171,7 @@ public class DirectQuery {
                     "ORDER BY A.id DESC LIMIT " + (pages.getPageNo() - 1) * pages.getPageSize() + ", " + pages.getPageSize()
                 );
 
-            return resultList;
+            return userList;
 
         } catch (Exception e) {
             e.getStackTrace();
@@ -184,7 +184,7 @@ public class DirectQuery {
 
     public long countProjectList(long userId) {
         try {
-            Map<String, Object> myProject =
+            Map<String, Object> projectMap =
                 jdbcTemplate.queryForMap(
                 "SELECT COUNT(pg.id) AS cnt FROM project_groups pg " +
                     "LEFT JOIN user_auths ua ON pg.user = ua.user " +
@@ -197,7 +197,7 @@ public class DirectQuery {
                     "ORDER BY pg.project ASC"
                 );
 
-            return (long)myProject.get("cnt");
+            return (long)projectMap.get("cnt");
 
         } catch (Exception e) {
             e.getStackTrace();
@@ -237,7 +237,7 @@ public class DirectQuery {
                 whereOption = whereOption + "AND p.created_at <= '" + createdAtEnd + "' ";
             }
 
-            Map<String, Object> resultMap =
+            Map<String, Object> projectMap =
                 jdbcTemplate.queryForMap(
                 "SELECT COUNT(A.id) AS cnt FROM " +
                     "(" +
@@ -252,7 +252,7 @@ public class DirectQuery {
                     "WHERE 1 = 1 " + whereOption2
                 );
 
-            return (long)resultMap.get("cnt");
+            return (long)projectMap.get("cnt");
 
         } catch (Exception e) {
             e.getStackTrace();
@@ -293,7 +293,7 @@ public class DirectQuery {
                 whereOption = whereOption + "AND p.created_at <= '" + createdAtEnd + "' ";
             }
 
-            List<Map<String, Object>> resultList =
+            List<Map<String, Object>> projectList =
                 jdbcTemplate.queryForList(
                 "SELECT A.* FROM " +
                     "(" +
@@ -313,7 +313,7 @@ public class DirectQuery {
                     "ORDER BY A.id DESC LIMIT " + (pageNo - 1) * pageSize + ", " + pageSize
                 );
 
-            return resultList;
+            return projectList;
 
         } catch (Exception e) {
             e.getStackTrace();
@@ -326,7 +326,7 @@ public class DirectQuery {
 
     public Map<String, Object> findMembership(long id) {
         try {
-            Map<String, Object> oldMembership =
+            Map<String, Object> membershipMap =
                 jdbcTemplate.queryForMap(
                 "SELECT " +
                         "auth.id, payment.merchant_uid, usr.user_id, usr.user_name, usr.phone_no, auth.order_type, " +
@@ -339,7 +339,7 @@ public class DirectQuery {
                     "WHERE 1 = 1 AND auth.id = " + id
                 );
 
-            return oldMembership;
+            return membershipMap;
 
         } catch (Exception e) {
             e.getStackTrace();
@@ -391,7 +391,7 @@ public class DirectQuery {
                 whereOption = whereOption + "AND auth.created_at <= '" + createdAtEnd + "' ";
             }
 
-            Map<String, Object> resultMap =
+            Map<String, Object> membershipMap =
                 jdbcTemplate.queryForMap(
                 "SELECT COUNT(A.id) AS cnt, A.use_yn FROM " +
                     "(" +
@@ -404,7 +404,7 @@ public class DirectQuery {
                     "WHERE 1 = 1 " + whereOption2
                 );
 
-            return (long)resultMap.get("cnt");
+            return (long)membershipMap.get("cnt");
 
         } catch (Exception e) {
             e.getStackTrace();
@@ -442,7 +442,7 @@ public class DirectQuery {
                 whereOption = whereOption + "AND auth.created_at <= '" + createdAtEnd + "' ";
             }
 
-            List<Map<String, Object>> resultList =
+            List<Map<String, Object>> membershipList =
                 jdbcTemplate.queryForList(
                 "SELECT A.* FROM " +
                     "(" +
@@ -462,7 +462,7 @@ public class DirectQuery {
                     "ORDER BY A.id DESC LIMIT " + (pageNo - 1) * pageSize + ", " + pageSize
                 );
 
-            return resultList;
+            return membershipList;
 
         } catch (Exception e) {
             e.getStackTrace();

@@ -1,7 +1,6 @@
 package com.safeapp.admin.web.service;
 
 import com.safeapp.admin.web.dto.request.RequestMembershipModifyDTO;
-import com.safeapp.admin.web.dto.request.RequestUsersModifyDTO;
 import com.safeapp.admin.web.model.cmmn.service.CRUDService;
 import com.safeapp.admin.web.model.entity.Auth;
 import com.safeapp.admin.web.model.entity.UserAuth;

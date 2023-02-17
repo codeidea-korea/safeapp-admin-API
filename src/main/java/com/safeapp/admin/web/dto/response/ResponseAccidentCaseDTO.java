@@ -16,7 +16,6 @@ import static org.hibernate.sql.InFragment.NOT_NULL;
 @Schema(description = "사고사례 응답")
 @Data
 @NoArgsConstructor
-@Slf4j
 public class ResponseAccidentCaseDTO {
 
     @Schema(description = "사고사례 PK")

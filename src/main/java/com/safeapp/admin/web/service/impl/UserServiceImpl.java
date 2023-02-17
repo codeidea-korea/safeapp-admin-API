@@ -11,7 +11,7 @@ import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.UserType;
 import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.dto.request.RequestUsersModifyDTO;
+import com.safeapp.admin.web.dto.request.RequestUsersEditDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.SmsAuthHistory;
@@ -36,12 +36,14 @@ import com.querydsl.core.util.StringUtils;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
+    private final DirectSendAPIService directSendAPIService;
+
+    private final PasswordUtil passwordUtil;
+    private final DateUtil dateUtil;
+
     private final UserRepos userRepos;
     private final SmsAuthHistoryRepos smsAuthHistoryRepos;
     private final DirectQuery dirRepos;
-    private final DirectSendAPIService directSendAPIService;
-    private final PasswordUtil passwordUtil;
-    private final DateUtil dateUtil;
 
     @Override
     public boolean chkUserId(String userId) {
@@ -92,45 +94,45 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
-    public Users toEntity(RequestUsersDTO addDto) {
-        Users user = new Users();
+    public Users toAddEntity(RequestUsersDTO addDto) {
+        Users newUser = new Users();
 
-        user.setEmail(addDto.getEmail());
-        user.setPassword(addDto.getPassword());
-        user.setPhoneNo(addDto.getPhoneNo());
-        user.setUserType(addDto.getUserType());
-        user.setUserId(addDto.getUserId());
-        user.setUserName(addDto.getUserName());
-        user.setMarketingAllowed(addDto.getMarketingAllowed());
-        user.setMarketingAllowedAt(addDto.getMarketingAllowedAt());
+        newUser.setEmail(addDto.getEmail());
+        newUser.setPassword(addDto.getPassword());
+        newUser.setPhoneNo(addDto.getPhoneNo());
+        newUser.setUserType(addDto.getUserType());
+        newUser.setUserId(addDto.getUserId());
+        newUser.setUserName(addDto.getUserName());
+        newUser.setMarketingAllowed(addDto.getMarketingAllowed());
+        newUser.setMarketingAllowedAt(addDto.getMarketingAllowedAt());
 
-        return user;
+        return newUser;
     }
 
     @Transactional
     @Override
-    public Users add(Users user, HttpServletRequest request) throws Exception {
-        if(StringUtils.isNullOrEmpty(user.getUserId())) {
+    public Users add(Users newUser, HttpServletRequest request) throws Exception {
+        if(StringUtils.isNullOrEmpty(newUser.getUserId())) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "아이디를 입력해주세요.");
         }
-        if(!chkUserId(user.getUserId())) {
+        if(!chkUserId(newUser.getUserId())) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "중복된 아이디입니다.");
         }
-        if(Objects.isNull(user)) {
+        if(Objects.isNull(newUser)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다.");
         }
 
-        user.setUserType(UserType.NORMAL);
-        user.setDeleted(YN.N);
-        user.setDeleteYn(false);
-        if(user.getMarketingAllowed() == YN.Y) {
-            user.setMarketingAllowedAt(dateUtil.getThisTime());
+        newUser.setUserType(UserType.NORMAL);
+        newUser.setDeleted(YN.N);
+        newUser.setDeleteYn(false);
+        if(newUser.getMarketingAllowed() == YN.Y) {
+            newUser.setMarketingAllowedAt(dateUtil.getThisTime());
         } else {
-            user.setMarketingAllowedAt(null);
+            newUser.setMarketingAllowedAt(null);
         }
-        user.setPassword(passwordUtil.encode(user.getPassword()));
+        newUser.setPassword(passwordUtil.encode(newUser.getPassword()));
 
-        Users addedUser = userRepos.save(user);
+        Users addedUser = userRepos.save(newUser);
         if(Objects.isNull(addedUser)) {
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "DB 저장 중 오류가 발생하였습니다.");
         }
@@ -140,11 +142,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Users find(long id, HttpServletRequest request) throws Exception {
-        Users oldUser =
+        Users user =
             userRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
 
-        return oldUser;
+        return user;
     }
 
     @Override
@@ -162,7 +164,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Map<String, Object>> findMyProjectList(long id, Pages pages, HttpServletRequest request) {
+    public List<Map<String, Object>> findMyProjectList(long id, int pageNo, int pageSize, HttpServletRequest request) {
+        Pages pages = new Pages(pageNo, pageSize);
         List<Map<String, Object>> myProjectList = dirRepos.findMyProjectList(id, pages);
 
         return myProjectList;
@@ -173,8 +176,8 @@ public class UserServiceImpl implements UserService {
     public Users editPassword(String userId, String newPass1, String newPass2,
             HttpServletRequest request) throws Exception {
 
-        Users oldUser = userRepos.findByUserId(userId);
-        if(Objects.isNull(oldUser)) {
+        Users user = userRepos.findByUserId(userId);
+        if(Objects.isNull(user)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다.");
         }
         if(!newPass1.equals(newPass2)) {
@@ -182,40 +185,40 @@ public class UserServiceImpl implements UserService {
         }
 
         String newPass = passwordUtil.encode(newPass1);
-        oldUser.setPassword(newPass);
+        user.setPassword(newPass);
 
-        Users newUser = userRepos.save(oldUser);
-        return newUser;
+        Users editedUser = userRepos.save(user);
+        return editedUser;
     }
 
     @Override
-    public Users toEntityModify(RequestUsersModifyDTO modifyDto) {
-        Users user = new Users();
+    public Users toEditEntity(RequestUsersEditDTO editDto) {
+        Users newUser = new Users();
 
-        user.setUserName(modifyDto.getUserName());
-        user.setEmail(modifyDto.getEmail());
-        user.setPhoneNo(modifyDto.getPhoneNo());
-        user.setEmailAllowed(modifyDto.getEmailAllowed());
-        user.setMarketingAllowed(modifyDto.getMarketingAllowed());
-        if(modifyDto.getMarketingAllowed() == YN.Y) {
-            user.setMarketingAllowedAt(dateUtil.getThisTime());
+        newUser.setUserName(editDto.getUserName());
+        newUser.setEmail(editDto.getEmail());
+        newUser.setPhoneNo(editDto.getPhoneNo());
+        newUser.setEmailAllowed(editDto.getEmailAllowed());
+        newUser.setMarketingAllowed(editDto.getMarketingAllowed());
+        if(editDto.getMarketingAllowed() == YN.Y) {
+            newUser.setMarketingAllowedAt(dateUtil.getThisTime());
         } else {
-            user.setMarketingAllowedAt(null);
+            newUser.setMarketingAllowedAt(null);
         }
 
-        return user;
+        return newUser;
     }
 
     @Transactional
     @Override
-    public Users edit(Users user, HttpServletRequest request) throws Exception {
-        Users oldUser =
-            userRepos.findById(user.getId())
+    public Users edit(Users newUser, HttpServletRequest request) throws Exception {
+        Users user =
+            userRepos.findById(newUser.getId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
 
-        oldUser.edit(user);
+        user.edit(newUser);
 
-        Users editedUser = userRepos.save(oldUser);
+        Users editedUser = userRepos.save(user);
         return editedUser;
     }
 
@@ -244,8 +247,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Users generate(Users oldUser) {
-        return null;
-    }
+    public Users generate(Users newUser) { return null; }
 
 }

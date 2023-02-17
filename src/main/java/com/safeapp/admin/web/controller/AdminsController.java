@@ -70,8 +70,8 @@ public class AdminsController {
     public ResponseEntity<ResponseAdminsDTO> find(@PathVariable("id") @ApiParam(value = "관리자 PK", required = true) long id,
             HttpServletRequest request) throws Exception {
 
-        Admins oldAdmin = adminsService.find(id, request);
-        return new ResponseEntity<>(ResponseAdminsDTO.builder().admin(oldAdmin).build(), OK);
+        Admins admin = adminsService.find(id, request);
+        return new ResponseEntity<>(ResponseAdminsDTO.builder().admin(admin).build(), OK);
     }
 
     @PatchMapping(value = "/editPass")

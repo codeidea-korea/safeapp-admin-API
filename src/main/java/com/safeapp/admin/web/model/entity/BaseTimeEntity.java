@@ -13,18 +13,17 @@ import java.time.LocalDateTime;
 
 @Data
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
 public class BaseTimeEntity {
 
     @CreatedDate
-    @Column(name = "createdAt", columnDefinition = "datetime(6) COMMENT '생성날짜'", nullable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @LastModifiedDate
-    @Column(name = "updatedAt", columnDefinition = "datetime(6) COMMENT '수정날짜'", nullable = false)
-    private LocalDateTime updatedAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
-    @Column(name = "delete_yn", columnDefinition = "bit(1) COMMENT '삭제여부'", nullable = false)
+    @Column(name = "delete_yn")
     private Boolean deleteYn = false;
 
 }

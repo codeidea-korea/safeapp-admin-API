@@ -29,9 +29,6 @@ public class AccidentExp extends BaseTimeEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
     @Column(name = "title")
     private String title;
 
@@ -66,15 +63,30 @@ public class AccidentExp extends BaseTimeEntity {
     @Column(name = "image")
     private String image;
 
+    @Column(name = "views" )
+    @ColumnDefault("0")
+    private Integer views;
+
     @Column(name = "accident_uid")
     private String accidentUid;
 
     @Transient
     private String detailContents;
-    
-    @Column(name = "views" )
-    @ColumnDefault("0")
-    private Integer views;
+
+    @Transient
+    private String keyword;
+
+    @Transient
+    private String adminName;
+
+    @Transient
+    private String phoneNo;
+
+    @Transient
+    private String createdAtStart;
+
+    @Transient
+    private String createdAtEnd;
 
     @Transient
     private YN createdAtDesc;
@@ -83,14 +95,12 @@ public class AccidentExp extends BaseTimeEntity {
     private YN viewsDesc;
 
     @Builder
-    public AccidentExp(Long id, LocalDateTime createdAt, String title, Admins admin, String tags, String name, LocalDateTime accidentAt,
-            String accidentReason, String accidentCause, String causeDetail, String response, String image, String accidentUid,
-            String detailContents, Integer views, YN createdAtDesc, YN viewsDesc) {
-
-        super();
+    public AccidentExp(Long id, String title, Admins admin, String tags, String name, LocalDateTime accidentAt,
+            String accidentReason, String accidentCause, String causeDetail, String response, String image, Integer views,
+            String accidentUid, String detailContents, String keyword, String adminName, String phoneNo,
+            String createdAtStart, String createdAtEnd, YN createdAtDesc, YN viewsDesc) {
 
         this.id = id;
-        this.createdAt = createdAt;
         this.title = title;
         this.admin = admin;
         this.tags = tags;
@@ -101,17 +111,21 @@ public class AccidentExp extends BaseTimeEntity {
         this.causeDetail = causeDetail;
         this.response = response;
         this.image = image;
+        this.views = views;
         this.accidentUid = accidentUid;
         this.detailContents = detailContents;
-        this.views = views;
+        this.keyword = keyword;
+        this.adminName = adminName;
+        this.phoneNo = phoneNo;
+        this.createdAtStart = createdAtStart;
+        this.createdAtEnd = createdAtEnd;
         this.createdAtDesc = createdAtDesc;
         this.viewsDesc = viewsDesc;
     }
 
     public void edit(AccidentExp newAccExp) {
-        setCreatedAt(newAccExp.getCreatedAt());
+        setUpdatedAt(newAccExp.getUpdatedAt());
         setTitle(newAccExp.getTitle());
-        setAdmin(newAccExp.getAdmin());
         setTags(newAccExp.getTags());
         setName(newAccExp.getName());
         setAccidentAt(newAccExp.getAccidentAt());
@@ -120,8 +134,6 @@ public class AccidentExp extends BaseTimeEntity {
         setCauseDetail(newAccExp.getCauseDetail());
         setResponse(newAccExp.getResponse());
         setImage(newAccExp.getImage());
-        setCreatedAt(newAccExp.getCreatedAt());
-        setViews(newAccExp.getViews());
         setAccidentUid(newAccExp.getAccidentUid());
     }
 

@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.web.dto.request.RequestUsersDTO;
 import com.safeapp.admin.utils.ResponseUtil;
-import com.safeapp.admin.web.dto.request.RequestUsersModifyDTO;
+import com.safeapp.admin.web.dto.request.RequestUsersEditDTO;
 import com.safeapp.admin.web.dto.response.ResponseCheckListProjectDTO;
 import com.safeapp.admin.web.dto.response.ResponseCheckListProjectSelectDTO;
 import com.safeapp.admin.web.dto.response.ResponseUsersDTO;
@@ -16,6 +16,7 @@ import com.safeapp.admin.web.model.entity.UserAuth;
 import com.safeapp.admin.web.model.entity.Users;
 import com.safeapp.admin.web.repos.jpa.UserAuthRepos;
 import com.safeapp.admin.web.repos.mongo.LoginHistoryRepos;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class UsersController {
 
     private final UserService userService;
+
     private final LoginHistoryRepos loginHistoryRepos;
     private final UserAuthRepos userAuthRepos;
 
@@ -74,7 +76,7 @@ public class UsersController {
     @PostMapping(value = "/add")
     @ApiOperation(value = "회원 등록", notes = "회원 등록")
     public ResponseEntity<ResponseUsersDTO> add(@RequestBody RequestUsersDTO addDto, HttpServletRequest request) throws Exception {
-        Users addedUser = userService.add(userService.toEntity(addDto), request);
+        Users addedUser = userService.add(userService.toAddEntity(addDto), request);
         return new ResponseEntity<>(ResponseUsersDTO.builder().user(addedUser).build(), OK);
     }
 
@@ -85,26 +87,24 @@ public class UsersController {
 
         HashMap<String, Object> resultMap = new HashMap<>();
 
-        Users oldUser = userService.find(id, request);
-        resultMap.put("oldUser", oldUser);
+        Users user = userService.find(id, request);
+        resultMap.put("oldUser", user);
 
         LoginHistory loginHistory =
-            loginHistoryRepos.findTopByUserIdAndIsSuccessOrderByCreateDtDesc(oldUser.getUserId(), true);
+            loginHistoryRepos.findTopByUserIdAndIsSuccessOrderByCreateDtDesc(user.getUserId(), true);
         if(Objects.nonNull(loginHistory)) {
             resultMap.put("loginHistory", loginHistory);
         } else {
             resultMap.put("loginHistory", null);
         }
-        //log.error("oldUser.getId(): {}", oldUser.getId());
 
         UserAuth userAuth =
-            userAuthRepos.findTopByUserAndStatusOrderByIdDesc(oldUser.getId(), "ing");
+            userAuthRepos.findTopByUserAndStatusOrderByIdDesc(user.getId(), "ing");
         if(Objects.nonNull(userAuth)) {
             resultMap.put("userAuth", userAuth);
         } else {
             resultMap.put("userAuth", null);
         }
-        //log.error("userAuth: {}", userAuth);
 
         return ResponseUtil.sendResponse(resultMap);
     }
@@ -123,8 +123,8 @@ public class UsersController {
         resultMap.put("myAuth", myAuth);
 
         long count = userService.countMyProjectList(id, request);
+        List<Map<String, Object>> myProjectList = userService.findMyProjectList(id, pageNo, pageSize, request);
         Pages pages = new Pages(pageNo, pageSize);
-        List<Map<String, Object>> myProjectList = userService.findMyProjectList(id, pages, request);
 
         ListResponse myProjectListResponse = new ListResponse(count, myProjectList, pages);
         resultMap.put("myProjectList", myProjectListResponse);
@@ -147,12 +147,12 @@ public class UsersController {
     @PutMapping(value = "/edit/{id}")
     @ApiOperation(value = "회원 수정", notes = "회원 수정")
     public ResponseEntity<ResponseUsersDTO> edit(@PathVariable("id") @ApiParam(value = "회원 PK", required = true) long id,
-            @RequestBody RequestUsersModifyDTO modifyDto, HttpServletRequest request) throws Exception {
+            @RequestBody RequestUsersEditDTO editDto, HttpServletRequest request) throws Exception {
 
-        Users user = userService.toEntityModify(modifyDto);
-        user.setId(id);
+        Users newUser = userService.toEditEntity(editDto);
+        newUser.setId(id);
 
-        Users editedUser = userService.edit(user, request);
+        Users editedUser = userService.edit(newUser, request);
         return new ResponseEntity<>(ResponseUsersDTO.builder().user(editedUser).build(), OK);
     }
 
@@ -171,8 +171,8 @@ public class UsersController {
             @RequestParam(value = "userId", required = false, defaultValue = "") String userId,
             @RequestParam(value = "userName", required = false, defaultValue = "") String userName,
             @RequestParam(value = "phoneNo", required = false, defaultValue = "") String phoneNo,
-            @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(value = "pageNo", defaultValue = "1") @Parameter(description = "현재 페이지 번호") int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10") @Parameter(description = "1 페이지 당 목록 수") int pageSize,
             HttpServletRequest request) throws Exception {
 
         Pages pages = new Pages(pageNo, pageSize);

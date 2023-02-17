@@ -1,7 +1,7 @@
 package com.safeapp.admin.web.service;
 
-import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.dto.request.RequestAccidentCaseDTO;
+import com.safeapp.admin.web.dto.request.RequestAccidentCaseEditDTO;
 import com.safeapp.admin.web.dto.response.ResponseAccidentCaseDTO;
 import com.safeapp.admin.web.dto.response.ResponseRiskCheckDTO;
 import com.safeapp.admin.web.model.cmmn.service.CRUDService;
@@ -16,13 +16,6 @@ public interface AccidentExpService extends CRUDService<AccidentExp> {
 
     AccidentExp toAddEntity(RequestAccidentCaseDTO addDto) throws NotFoundException;
 
-    AccidentExp toEditEntity(RequestAccidentCaseDTO editDto) throws NotFoundException;
-
-    Long countAllByCondition(String keyword, String adminName, String phoneNo,
-        LocalDateTime createdAtStart, LocalDateTime createdAtEnd);
-
-    List<ResponseAccidentCaseDTO> findAllByConditionAndOrderBy(String keyword, String adminName, String phoneNo,
-        LocalDateTime createdAtStart, LocalDateTime createdAtEnd, YN createdAtDesc, YN viewsDesc,
-        int PageNo, int pageSize, HttpServletRequest request);
+    AccidentExp toEditEntity(RequestAccidentCaseEditDTO editDto) throws NotFoundException;
 
 }

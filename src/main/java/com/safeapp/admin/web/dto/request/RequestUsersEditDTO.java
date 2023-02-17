@@ -3,14 +3,12 @@ package com.safeapp.admin.web.dto.request;
 import com.safeapp.admin.web.data.YN;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Schema(description = "회원 수정 요청")
 @Data
-public class RequestUsersModifyDTO {
+public class RequestUsersEditDTO {
 
     @Schema(description = "이름", example = "회원 1")
     String userName;

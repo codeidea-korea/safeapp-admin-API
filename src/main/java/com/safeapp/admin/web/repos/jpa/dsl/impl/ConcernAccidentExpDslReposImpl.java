@@ -1,5 +1,7 @@
 package com.safeapp.admin.web.repos.jpa.dsl.impl;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -7,13 +9,11 @@ import javax.persistence.PersistenceContext;
 
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.cmmn.Pages;
-import com.safeapp.admin.web.model.entity.ConcernAccidentExp;
+import com.safeapp.admin.web.model.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
-import com.safeapp.admin.web.model.entity.QCheckListProject;
-import com.safeapp.admin.web.model.entity.QConcernAccidentExp;
 import com.safeapp.admin.web.repos.jpa.dsl.ConcernAccidentExpDslRepos;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -33,50 +33,55 @@ public class ConcernAccidentExpDslReposImpl extends QuerydslRepositorySupport im
         super(ConcernAccidentExp.class);
     }
 
-    private JPAQuery selectFromWhere(ConcernAccidentExp instance, QConcernAccidentExp qConcernAccidentExp) {
+    private JPAQuery selectFromWhere(ConcernAccidentExp conExp, QConcernAccidentExp qConExp) {
         JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
-        JPAQuery query = jpaQueryFactory.selectFrom(qConcernAccidentExp);
+        JPAQuery query = jpaQueryFactory.selectFrom(qConExp);
 
-        if (!StringUtil.isNullOrEmpty(instance.getName())) {
-            query.where(qConcernAccidentExp.name.like(instance.getName()));
+        if(!StringUtil.isNullOrEmpty(conExp.getKeyword())) {
+            query.where(qConExp.title.contains(conExp.getKeyword()).or(qConExp.tags.contains(conExp.getKeyword())));
         }
-        if (!StringUtil.isNullOrEmpty(instance.getTitle())) {
-            query.where(qConcernAccidentExp.title.like(instance.getTitle()));
+        if(!StringUtil.isNullOrEmpty(conExp.getAdminName())) {
+            query.where(qConExp.admin.adminName.contains(conExp.getAdminName()));
         }
-        if (!StringUtil.isNullOrEmpty(instance.getDetailContents())) {
-            query.where(qConcernAccidentExp.accidentReason.contains(instance.getDetailContents())
-                .or(qConcernAccidentExp.accidentCause.contains(instance.getDetailContents()))
-                .or(qConcernAccidentExp.causeDetail.contains(instance.getDetailContents()))
-                .or(qConcernAccidentExp.response.contains(instance.getDetailContents()))
-                .or(qConcernAccidentExp.accidentUserName.contains(instance.getDetailContents()))
-                .or(qConcernAccidentExp.accidentType.contains(instance.getDetailContents())));
+        if(!StringUtil.isNullOrEmpty(conExp.getPhoneNo())) {
+            query.where(qConExp.admin.phoneNo.contains(conExp.getPhoneNo()));
         }
-        if (!StringUtil.isNullOrEmpty(instance.getTags())) {
-            query.where(qConcernAccidentExp.tags.contains(instance.getTags()));
+        if(!StringUtil.isNullOrEmpty(conExp.getCreatedAtStart())) {
+            query.where(qConExp.createdAt.after(LocalDateTime.parse(conExp.getCreatedAtStart(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))));
+        } else {
+            query.where(qConExp.createdAt.after(LocalDateTime.parse("1000-01-01 00:00:00.000", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))));
         }
-        if (instance.getUserId() > 0) {
-            query.where(qConcernAccidentExp.userId.eq(instance.getUserId()));
+        if(!StringUtil.isNullOrEmpty(conExp.getCreatedAtEnd())) {
+            query.where(qConExp.createdAt.before(LocalDateTime.parse(conExp.getCreatedAtEnd(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")).plusDays(1)));
+        } else {
+            query.where(qConExp.createdAt.before(LocalDateTime.parse("9999-12-31 23:59:59.999", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))));
         }
-        if (instance.getId() > 0) {
-            query.where(qConcernAccidentExp.id.eq(instance.getId()));
-        }
+        query.where(qConExp.deleteYn.eq(false));
+
         return query;
     }
 
-    private JPAQuery orderByFromWhere(ConcernAccidentExp instance, QConcernAccidentExp qChecklistProject, JPAQuery query) {
-        if(instance.getCreatedAtDescended() == null && instance.getViewsDescended() == null) {
-            query.orderBy(new OrderSpecifier(com.querydsl.core.types.Order.DESC,
-                new PathBuilder(QCheckListProject.class, qChecklistProject.id.getMetadata())));
+    private JPAQuery orderBy(ConcernAccidentExp conExp, QConcernAccidentExp qConExp, JPAQuery query) {
+        if(conExp.getCreatedAtDesc() == null && conExp.getViewsDesc() == null) {
+            query.orderBy
+            (
+                new OrderSpecifier(com.querydsl.core.types.Order.DESC,
+                new PathBuilder(QConcernAccidentExp.class, qConExp.id.getMetadata()))
+            );
         } else {
-            if (instance.getCreatedAtDescended() != null) {
-                query.orderBy(new OrderSpecifier(
-                    (instance.getCreatedAtDescended() == YN.Y ? com.querydsl.core.types.Order.DESC : com.querydsl.core.types.Order.ASC),
-                    new PathBuilder(QCheckListProject.class, qChecklistProject.createdAt.getMetadata())));
+            if(conExp.getCreatedAtDesc() != null) {
+                query.orderBy
+                (
+                    new OrderSpecifier((conExp.getCreatedAtDesc() == YN.Y ? com.querydsl.core.types.Order.DESC : com.querydsl.core.types.Order.ASC),
+                    new PathBuilder(QConcernAccidentExp.class, qConExp.createdAt.getMetadata()))
+                );
             }
-            if (instance.getViewsDescended() != null) {
-                query.orderBy(new OrderSpecifier(
-                    (instance.getViewsDescended() == YN.Y ? com.querydsl.core.types.Order.DESC : com.querydsl.core.types.Order.ASC),
-                    new PathBuilder(QCheckListProject.class, qChecklistProject.views.getMetadata())));
+            if(conExp.getViewsDesc() != null) {
+                query.orderBy
+                (
+                    new OrderSpecifier((conExp.getViewsDesc() == YN.Y ? com.querydsl.core.types.Order.DESC : com.querydsl.core.types.Order.ASC),
+                    new PathBuilder(QConcernAccidentExp.class, qConExp.views.getMetadata()))
+                );
             }
         }
 
@@ -84,22 +89,24 @@ public class ConcernAccidentExpDslReposImpl extends QuerydslRepositorySupport im
     }
 
     @Override
-    public List<ConcernAccidentExp> findAll(ConcernAccidentExp instance, Pages bfPage) {
-        QConcernAccidentExp qConcernAccidentExp = QConcernAccidentExp.concernAccidentExp;
-        JPAQuery query = selectFromWhere(instance, qConcernAccidentExp);
+    public long countAll(ConcernAccidentExp conExp) {
+        QConcernAccidentExp qFile = QConcernAccidentExp.concernAccidentExp;
+        JPAQuery query = selectFromWhere(conExp, qFile);
+
+        return query.fetchCount();
+    }
+
+    @Override
+    public List<ConcernAccidentExp> findAll(ConcernAccidentExp conExp, Pages pages) {
+        QConcernAccidentExp qConExp = QConcernAccidentExp.concernAccidentExp;
+        JPAQuery query = selectFromWhere(conExp, qConExp);
 
         query
-            .offset(bfPage.getOffset())
-            .limit(bfPage.getPageSize());
-        query = orderByFromWhere(instance, qConcernAccidentExp, query);
+            .offset(pages.getOffset())
+            .limit(pages.getPageSize());
+        query = orderBy(conExp, qConExp, query);
 
         return query.fetch();
     }
 
-    @Override
-    public long countAll(ConcernAccidentExp instance) {
-        QConcernAccidentExp qFile = QConcernAccidentExp.concernAccidentExp;
-        JPAQuery query = selectFromWhere(instance, qFile);
-        return query.fetchCount();
-    }
 }

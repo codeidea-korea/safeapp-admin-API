@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.dto.request.RequestAccidentCaseDTO;
+import com.safeapp.admin.web.dto.request.RequestAccidentCaseEditDTO;
 import com.safeapp.admin.web.dto.response.ResponseAccidentCaseDTO;
 import com.safeapp.admin.web.dto.response.ResponseRiskCheckDTO;
 import com.safeapp.admin.web.model.entity.Admins;
@@ -19,6 +20,7 @@ import com.safeapp.admin.web.repos.jpa.AdminRepos;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.AccidentExp;
+import com.safeapp.admin.web.repos.jpa.dsl.AccidentExpDslRepos;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.javassist.NotFoundException;
@@ -35,46 +37,47 @@ import com.safeapp.admin.web.service.AccidentExpService;
 public class AccidentExpServiceImpl implements AccidentExpService {
 
     private final AccidentExpRepository accExpRepos;
+    private final AccidentExpDslRepos accExpDslRepos;
     private final AdminRepos adminRepos;
 
     @Override
     public AccidentExp toAddEntity(RequestAccidentCaseDTO addDto) {
-        AccidentExp accidentExp = new AccidentExp();
+        AccidentExp newAccExp = new AccidentExp();
 
-        accidentExp.setCreatedAt(LocalDateTime.now());
-        accidentExp.setTitle(addDto.getTitle());
-        accidentExp.setAdmin(adminRepos.findById(addDto.getAdminId()).orElse(null));
-        accidentExp.setTags(addDto.getTags());
-        accidentExp.setName(addDto.getName());
-        accidentExp.setAccidentAt(addDto.getAccidentAt());
-        accidentExp.setAccidentReason(addDto.getAccidentReason());
-        accidentExp.setAccidentCause(addDto.getAccidentCause());
-        accidentExp.setCauseDetail(addDto.getCauseDetail());
-        accidentExp.setResponse(addDto.getResponse());
-        accidentExp.setImage(addDto.getImage());
-        accidentExp.setViews(0);
-        accidentExp.setAccidentUid(addDto.getAccidentUid());
+        newAccExp.setCreatedAt(LocalDateTime.now());
+        newAccExp.setTitle(addDto.getTitle());
+        newAccExp.setAdmin(adminRepos.findById(addDto.getAdminId()).orElse(null));
+        newAccExp.setTags(addDto.getTags());
+        newAccExp.setName(addDto.getName());
+        newAccExp.setAccidentAt(addDto.getAccidentAt());
+        newAccExp.setAccidentReason(addDto.getAccidentReason());
+        newAccExp.setAccidentCause(addDto.getAccidentCause());
+        newAccExp.setCauseDetail(addDto.getCauseDetail());
+        newAccExp.setResponse(addDto.getResponse());
+        newAccExp.setImage(addDto.getImage());
+        newAccExp.setViews(0);
+        newAccExp.setAccidentUid(addDto.getAccidentUid());
 
-        return accidentExp;
+        return newAccExp;
     }
 
-    @Transactional
     @Override
+    @Transactional
     public AccidentExp add(AccidentExp newAccExp, HttpServletRequest request) throws Exception {
         if(Objects.isNull(newAccExp)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 사고사례입니다.");
         }
 
-        AccidentExp accExp = accExpRepos.save(newAccExp);
-        if(Objects.isNull(accExp)) {
+        AccidentExp addedAccExp = accExpRepos.save(newAccExp);
+        if(Objects.isNull(addedAccExp)) {
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "DB 저장 중 오류가 발생하였습니다.");
         }
 
-        return accExp;
+        return addedAccExp;
     }
 
     @Override
-    public AccidentExp find(long id, HttpServletRequest httpServletRequest) throws Exception {
+    public AccidentExp find(long id, HttpServletRequest request) throws Exception {
         AccidentExp accExp =
             accExpRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 사고사례입니다."));
@@ -83,12 +86,11 @@ public class AccidentExpServiceImpl implements AccidentExpService {
     }
 
     @Override
-    public AccidentExp toEditEntity(RequestAccidentCaseDTO editDto) {
+    public AccidentExp toEditEntity(RequestAccidentCaseEditDTO editDto) {
         AccidentExp newAccExp = new AccidentExp();
 
-        newAccExp.setCreatedAt(editDto.getCreatedAt());
+        newAccExp.setUpdatedAt(LocalDateTime.now());
         newAccExp.setTitle(editDto.getTitle());
-        newAccExp.setAdmin(adminRepos.findById(editDto.getAdminId()).orElse(null));
         newAccExp.setTags(editDto.getTags());
         newAccExp.setName(editDto.getName());
         newAccExp.setAccidentAt(editDto.getAccidentAt());
@@ -97,23 +99,21 @@ public class AccidentExpServiceImpl implements AccidentExpService {
         newAccExp.setCauseDetail(editDto.getCauseDetail());
         newAccExp.setResponse(editDto.getResponse());
         newAccExp.setImage(editDto.getImage());
-        newAccExp.setViews(editDto.getViews());
         newAccExp.setAccidentUid(editDto.getAccidentUid());
 
         return newAccExp;
     }
 
     @Override
-    public AccidentExp edit(AccidentExp newAccExp, HttpServletRequest httpServletRequest) throws Exception {
+    public AccidentExp edit(AccidentExp newAccExp, HttpServletRequest request) throws Exception {
         AccidentExp accExp =
             accExpRepos.findById(newAccExp.getId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 사고사례입니다."));
 
         accExp.edit(newAccExp);
 
-        accExp = accExpRepos.save(newAccExp);
-        log.error("accExp: {}", accExp);
-        return accExp;
+        AccidentExp editedAccExp = accExpRepos.save(accExp);
+        return editedAccExp;
     }
 
     @Override
@@ -127,42 +127,14 @@ public class AccidentExpServiceImpl implements AccidentExpService {
     }
 
     @Override
-    public Long countAllByCondition(String keyword, String adminName, String phoneNo,
-        LocalDateTime createdAtStart, LocalDateTime createdAtEnd) {
+    public ListResponse<AccidentExp> findAll(AccidentExp accExp, Pages pages, HttpServletRequest request) throws Exception {
+        long count = accExpDslRepos.countAll(accExp);
+        List<AccidentExp> list = accExpDslRepos.findAll(accExp, pages);
 
-        return accExpRepos.countAllByCondition(keyword, adminName, phoneNo, createdAtStart, createdAtEnd);
-    }
-
-    @Override
-    public List<ResponseAccidentCaseDTO> findAllByConditionAndOrderBy(String keyword, String adminName, String phoneNo,
-            LocalDateTime createdAtStart, LocalDateTime createdAtEnd, YN createdAtDesc, YN viewsDesc,
-            int pageNo, int pageSize, HttpServletRequest request) {
-
-        List<AccidentExp> list =
-            accExpRepos.findAllByConditionAndOrderBy(keyword, adminName, phoneNo,
-            createdAtStart, createdAtEnd, createdAtDesc, viewsDesc, pageNo, pageSize);
-
-        List<ResponseAccidentCaseDTO> resultList = new ArrayList<>();
-        for(AccidentExp accExp : list) {
-            ResponseAccidentCaseDTO result =
-                ResponseAccidentCaseDTO
-                .builder()
-                .accExp(accExp)
-                .build();
-
-            resultList.add(result);
-        }
-
-        return resultList;
+        return new ListResponse<>(count, list, pages);
     }
 
     @Override
     public AccidentExp generate(AccidentExp newAccExp) { return null; }
-
-    @Override
-    public ListResponse<AccidentExp> findAll(AccidentExp accExp, Pages pages, HttpServletRequest request) throws Exception {
-
-        return null;
-    }
 
 }

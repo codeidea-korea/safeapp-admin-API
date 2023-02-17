@@ -3,6 +3,7 @@ package com.safeapp.admin.web.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.web.dto.request.RequestAccidentCaseDTO;
+import com.safeapp.admin.web.dto.request.RequestAccidentCaseEditDTO;
 import com.safeapp.admin.web.dto.response.ResponseAccidentCaseDTO;
 import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.data.YN;
@@ -33,7 +34,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -47,9 +50,7 @@ public class AccidentExpController {
 
     @PostMapping(value = "/add")
     @ApiOperation(value = "사고사례 등록", notes = "사고사례 등록")
-    public ResponseEntity<ResponseAccidentCaseDTO> add(@RequestBody RequestAccidentCaseDTO addDto,
-            HttpServletRequest request) throws Exception {
-
+    public ResponseEntity<ResponseAccidentCaseDTO> add(@RequestBody RequestAccidentCaseDTO addDto, HttpServletRequest request) throws Exception {
         AccidentExp addedAccExp = accidentExpService.add(accidentExpService.toAddEntity(addDto), request);
         return new ResponseEntity<>(ResponseAccidentCaseDTO.builder().accExp(addedAccExp).build(), OK);
     }
@@ -59,14 +60,14 @@ public class AccidentExpController {
     public ResponseEntity<ResponseAccidentCaseDTO> find(@PathVariable("id") @ApiParam(value = "사고사례 PK", required = true) long id,
             HttpServletRequest request) throws Exception {
 
-        AccidentExp foundAccExp = accidentExpService.find(id, request);
-        return new ResponseEntity<>(ResponseAccidentCaseDTO.builder().accExp(foundAccExp).build(), OK);
+        AccidentExp accExp = accidentExpService.find(id, request);
+        return new ResponseEntity<>(ResponseAccidentCaseDTO.builder().accExp(accExp).build(), OK);
     }
 
     @PutMapping(value = "/edit/{id}")
     @ApiOperation(value = "사고사례 수정", notes = "사고사례 수정")
     public ResponseEntity<ResponseAccidentCaseDTO> edit(@PathVariable("id") @ApiParam(value = "사고사례 PK", required = true) long id,
-            @RequestBody RequestAccidentCaseDTO editDto, HttpServletRequest request) throws Exception {
+            @RequestBody RequestAccidentCaseEditDTO editDto, HttpServletRequest request) throws Exception {
 
         AccidentExp newAccExp = accidentExpService.toEditEntity(editDto);
         newAccExp.setId(id);
@@ -90,24 +91,27 @@ public class AccidentExpController {
             @RequestParam(value = "keyword", required = false) @Parameter(description = "키워드") String keyword,
             @RequestParam(value = "adminName", required = false) @Parameter(description = "이름") String adminName,
             @RequestParam(value = "phoneNo", required = false) @Parameter(description = "휴대폰번호") String phoneNo,
-            @RequestParam(value = "createdAtStart", required = false) LocalDateTime createdAtStart,
-            @RequestParam(value = "createdAtEnd", required = false) LocalDateTime createdAtEnd,
+            @RequestParam(value = "createdAtStart", required = false) @Parameter(description = "등록일시 시작") String createdAtStart,
+            @RequestParam(value = "createdAtEnd", required = false) @Parameter(description = "등록일시 종료") String createdAtEnd,
             @RequestParam(value = "createdAtDesc", required = false) @Parameter(description = "최신순") YN createdAtDesc,
             @RequestParam(value = "viewsDesc", required = false) @Parameter(description = "조회순") YN viewsDesc,
-            @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(value = "pageNo", defaultValue = "1") @Parameter(description = "현재 페이지 번호") int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10") @Parameter(description = "1 페이지 당 목록 수") int pageSize,
             HttpServletRequest request) throws Exception {
 
-        Long count =
-            accidentExpService.countAllByCondition(keyword, adminName, phoneNo, createdAtStart, createdAtEnd);
-        List<ResponseAccidentCaseDTO> list =
-            accidentExpService.findAllByConditionAndOrderBy(keyword, adminName, phoneNo,
-            createdAtStart, createdAtEnd, createdAtDesc, viewsDesc,
-            pageNo, pageSize, request);
         Pages pages = new Pages(pageNo, pageSize);
-
-        ListResponse accExpList = new ListResponse(count, list, pages);
-        return ResponseUtil.sendResponse(accExpList);
+        return
+            ResponseUtil.sendResponse(accidentExpService.findAll(
+                AccidentExp.builder()
+                .keyword(keyword)
+                .adminName(adminName)
+                .phoneNo(phoneNo)
+                .createdAtStart(createdAtStart)
+                .createdAtEnd(createdAtEnd)
+                .createdAtDesc(createdAtDesc)
+                .viewsDesc(viewsDesc)
+                .build(), pages, request)
+            );
     }
 
 }
