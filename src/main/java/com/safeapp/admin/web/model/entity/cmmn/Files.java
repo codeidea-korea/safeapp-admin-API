@@ -63,4 +63,5 @@ public class Files {
         this.type = type;
         this.fileGroupNo = fileGroupNo;
     }
+
 }

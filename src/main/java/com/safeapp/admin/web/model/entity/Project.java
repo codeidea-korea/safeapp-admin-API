@@ -81,17 +81,17 @@ public class Project extends BaseTimeEntity {
         this.status = status;
     }
 
-    public void edit(Project oldProject) {
-        this.name = oldProject.getName();
-        this.startAt = oldProject.getStartAt();
-        this.endAt = oldProject.getEndAt();
-        this.maxUserCount = oldProject.getMaxUserCount();
-        this.address = oldProject.getAddress();
-        this.addressDetail = oldProject.getAddressDetail();
-        this.contents = oldProject.getContents();
-        this.image = oldProject.getImage();
-        this.status = oldProject.getStatus();
+    public void edit(Project newProject) {
         this.updatedAt = LocalDateTime.now();
+        this.name = newProject.getName();
+        this.startAt = newProject.getStartAt();
+        this.endAt = newProject.getEndAt();
+        this.maxUserCount = newProject.getMaxUserCount();
+        this.address = newProject.getAddress();
+        this.addressDetail = newProject.getAddressDetail();
+        this.contents = newProject.getContents();
+        this.image = newProject.getImage();
+        this.status = newProject.getStatus();
     }
 
 }

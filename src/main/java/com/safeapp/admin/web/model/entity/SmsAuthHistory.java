@@ -20,10 +20,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity(name = "sms_auth_histories")
-@AllArgsConstructor
 @Data
 @NoArgsConstructor
-public class SmsAuthHistory extends BaseTimeEntity{
+public class SmsAuthHistory extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -41,14 +41,14 @@ public class SmsAuthHistory extends BaseTimeEntity{
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime efectedEndedAt;
 
-
     @Builder
-    public SmsAuthHistory(long id, String phoneNo, String authCode, LocalDateTime efectedEndedAt,
-        LocalDateTime createdAt) {
+    public SmsAuthHistory(long id, String phoneNo, String authCode, LocalDateTime efectedEndedAt, LocalDateTime createdAt) {
         super();
+
         this.id = id;
         this.phoneNo = phoneNo;
         this.authCode = authCode;
         this.efectedEndedAt = efectedEndedAt;
     }
+
 }

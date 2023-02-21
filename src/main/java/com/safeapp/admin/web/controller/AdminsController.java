@@ -2,7 +2,7 @@ package com.safeapp.admin.web.controller;
 
 import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.dto.request.RequestAdminsDTO;
-import com.safeapp.admin.web.dto.request.RequestAdminsModifyDTO;
+import com.safeapp.admin.web.dto.request.RequestAdminsEditDTO;
 import com.safeapp.admin.web.dto.response.ResponseAdminsDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
@@ -61,7 +61,7 @@ public class AdminsController {
     @PostMapping(value = "/add")
     @ApiOperation(value = "관리자 등록", notes = "관리자 등록")
     public ResponseEntity<ResponseAdminsDTO> add(@RequestBody RequestAdminsDTO addDto, HttpServletRequest request) throws Exception {
-        Admins addedAdmins = adminsService.add(adminsService.toEntity(addDto), request);
+        Admins addedAdmins = adminsService.add(adminsService.toAddEntity(addDto), request);
         return new ResponseEntity<>(ResponseAdminsDTO.builder().admin(addedAdmins).build(), OK);
     }
 
@@ -89,12 +89,12 @@ public class AdminsController {
     @PutMapping(value = "/edit/{id}")
     @ApiOperation(value = "관리자 수정", notes = "관리자 수정")
     public ResponseEntity<ResponseAdminsDTO> edit(@PathVariable("id") @ApiParam(value = "관리자 PK", required = true) long id,
-            @RequestBody RequestAdminsModifyDTO modifyDto, HttpServletRequest request) throws Exception {
+            @RequestBody RequestAdminsEditDTO editDto, HttpServletRequest request) throws Exception {
 
-        Admins admin = adminsService.toEntityModify(modifyDto);
-        admin.setId(id);
+        Admins newAdmin = adminsService.toEditEntity(editDto);
+        newAdmin.setId(id);
 
-        Admins editedAdmin = adminsService.edit(admin, request);
+        Admins editedAdmin = adminsService.edit(newAdmin, request);
         return new ResponseEntity<>(ResponseAdminsDTO.builder().admin(editedAdmin).build(), OK);
     }
 

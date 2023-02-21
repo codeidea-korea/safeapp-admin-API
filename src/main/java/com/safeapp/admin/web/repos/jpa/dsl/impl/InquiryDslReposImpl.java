@@ -1,6 +1,7 @@
 package com.safeapp.admin.web.repos.jpa.dsl.impl;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -31,46 +32,36 @@ public class InquiryDslReposImpl extends QuerydslRepositorySupport implements In
         super(Inquiry.class);
     }
 
-    private JPAQuery selectFromWhere(Inquiry instance, QInquiry qInquiry) {
+    private JPAQuery selectFromWhere(Inquiry inquiry, QInquiry qInquiry) {
         JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
         JPAQuery query = jpaQueryFactory.selectFrom(qInquiry);
 
-        if (!StringUtil.isNullOrEmpty(instance.getTitle())) {
-            query.where(qInquiry.title.like(instance.getTitle()));
+        if(!Objects.isNull(inquiry.getIsAnswer())) {
+            query.where(qInquiry.isAnswer.eq(inquiry.getIsAnswer()));
         }
-        if (!StringUtil.isNullOrEmpty(instance.getServiceName())) {
-            query.where(qInquiry.serviceName.like(instance.getServiceName()));
-        }
-        if (!StringUtil.isNullOrEmpty(instance.getContents())) {
-            query.where(qInquiry.contents.contains(instance.getContents()));
-        }
-        if (instance.getIsAnswer() != null) {
-            query.where(qInquiry.isAnswer.eq(instance.getIsAnswer()));
-        }
-        if (instance.getId() > 0) {
-            query.where(qInquiry.id.eq(instance.getId()));
-        }
+
         return query;
     }
 
     @Override
-    public List<Inquiry> findAll(Inquiry instance, Pages bfPage) {
+    public long countAll(Inquiry inquiry) {
         QInquiry qInquiry = QInquiry.inquiry;
-        JPAQuery query = selectFromWhere(instance, qInquiry);
+        JPAQuery query = selectFromWhere(inquiry, qInquiry);
+
+        return query.fetchCount();
+    }
+
+    @Override
+    public List<Inquiry> findAll(Inquiry inquiry, Pages pages) {
+        QInquiry qInquiry = QInquiry.inquiry;
+        JPAQuery query = selectFromWhere(inquiry, qInquiry);
 
         query
-            .offset(bfPage.getOffset())
-            .limit(bfPage.getPageSize())
-            .orderBy(new OrderSpecifier(com.querydsl.core.types.Order.DESC,
-                new PathBuilder(QInquiry.class, qInquiry.id.getMetadata())));
+            .offset(pages.getOffset())
+            .limit(pages.getPageSize())
+            .orderBy(new OrderSpecifier(com.querydsl.core.types.Order.DESC, new PathBuilder(QInquiry.class, qInquiry.id.getMetadata())));
 
         return query.fetch();
     }
 
-    @Override
-    public long countAll(Inquiry instance) {
-        QInquiry qFile = QInquiry.inquiry;
-        JPAQuery query = selectFromWhere(instance, qFile);
-        return query.fetchCount();
-    }
 }

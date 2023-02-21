@@ -116,10 +116,10 @@ public class ConcernAccidentExpController {
 
     @GetMapping(value = "/report/find/{id}")
     @ApiOperation(value = "아차사고 신고 단독 조회", notes = "아차사고 신고 단독 조회")
-    public ResponseEntity<List<Reports>> findReports(@PathVariable("id") @ApiParam(value = "아차사고 PK", required = true) long id,
+    public ResponseEntity<List<Reports>> findReport(@PathVariable("id") @ApiParam(value = "아차사고 PK", required = true) long id,
             HttpServletRequest request) throws Exception {
 
-        List<Reports> reports = concernAccidentExpService.findReports(id, request);
+        List<Reports> reports = concernAccidentExpService.findReport(id, request);
         return new ResponseEntity<>(reports, OK);
     }
 
@@ -135,7 +135,7 @@ public class ConcernAccidentExpController {
 
         Pages pages = new Pages(pageNo, pageSize);
         return
-            ResponseUtil.sendResponse(concernAccidentExpService.findAllReport(
+            ResponseUtil.sendResponse(concernAccidentExpService.findAllReports(
                 ConcernAccidentExp.builder()
                 .keyword(keyword)
                 .createdAtDesc(createdAtDesc)

@@ -13,7 +13,7 @@ import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.dto.request.RequestAdminsDTO;
-import com.safeapp.admin.web.dto.request.RequestAdminsModifyDTO;
+import com.safeapp.admin.web.dto.request.RequestAdminsEditDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.docs.LoginHistory;
@@ -36,14 +36,14 @@ import com.querydsl.core.util.StringUtils;
 
 @Service
 @AllArgsConstructor
-@Slf4j
 public class AdminsServiceImpl implements AdminsService {
 
     private final AdminRepos adminRepos;
     private final AdminsDslRepos adminsDslRepos;
     private final SmsAuthHistoryRepos smsAuthHistoryRepos;
-    private final LoginHistoryRepos loginHistoryRepos;
+
     private final DirectSendAPIService directSendAPIService;
+
     private final PasswordUtil passwordUtil;
     private final DateUtil dateUtil;
 
@@ -106,44 +106,45 @@ public class AdminsServiceImpl implements AdminsService {
         return false;
     }
 
-    public Admins toEntity(RequestAdminsDTO addDto) {
-        Admins admin = new Admins();
+    @Override
+    public Admins toAddEntity(RequestAdminsDTO addDto) {
+        Admins newAdmin = new Admins();
 
-        admin.setAdminId(addDto.getAdminId());
-        admin.setEmail(addDto.getEmail());
-        admin.setPassword(addDto.getPassword());
-        admin.setAdminName(addDto.getAdminName());
-        admin.setPhoneNo(addDto.getPhoneNo());
-        admin.setMemo(addDto.getMemo());
-        admin.setMarketingAllowed(addDto.getMarketingAllowed());
-        admin.setMarketingAllowedAt(addDto.getMarketingAllowedAt());
-        admin.setAdminType(addDto.getAdminType());
+        newAdmin.setAdminId(addDto.getAdminId());
+        newAdmin.setEmail(addDto.getEmail());
+        newAdmin.setPassword(addDto.getPassword());
+        newAdmin.setAdminName(addDto.getAdminName());
+        newAdmin.setPhoneNo(addDto.getPhoneNo());
+        newAdmin.setMemo(addDto.getMemo());
+        newAdmin.setMarketingAllowed(addDto.getMarketingAllowed());
+        newAdmin.setMarketingAllowedAt(addDto.getMarketingAllowedAt());
+        newAdmin.setAdminType(addDto.getAdminType());
 
-        return admin;
+        return newAdmin;
     }
 
     @Transactional
     @Override
-    public Admins add(Admins admin, HttpServletRequest httpServletRequest) throws Exception {
-        if(StringUtils.isNullOrEmpty(admin.getAdminId())) {
+    public Admins add(Admins newAdmin, HttpServletRequest request) throws Exception {
+        if(StringUtils.isNullOrEmpty(newAdmin.getAdminId())) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "아이디를 입력해주세요.");
         }
-        if(!chkAdminId(admin.getAdminId())) {
+        if(!chkAdminId(newAdmin.getAdminId())) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "중복된 아이디입니다.");
         }
-        if(Objects.isNull(admin)) {
+        if(Objects.isNull(newAdmin)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다.");
         }
 
-        admin.setAdminType(AdminType.ADMIN);
-        admin.setDeleted(YN.N);
-        admin.setDeleteYn(false);
-        if(admin.getMarketingAllowed() == YN.Y) {
-            admin.setMarketingAllowedAt(dateUtil.getThisTime());
+        newAdmin.setAdminType(AdminType.ADMIN);
+        newAdmin.setDeleted(YN.N);
+        newAdmin.setDeleteYn(false);
+        if(newAdmin.getMarketingAllowed() == YN.Y) {
+            newAdmin.setMarketingAllowedAt(dateUtil.getThisTime());
         }
-        admin.setPassword(passwordUtil.encode(admin.getPassword()));
+        newAdmin.setPassword(passwordUtil.encode(newAdmin.getPassword()));
 
-        Admins addedAdmin = adminRepos.save(admin);
+        Admins addedAdmin = adminRepos.save(newAdmin);
         if(Objects.isNull(addedAdmin)) {
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "DB 저장 중 오류가 발생하였습니다.");
         }
@@ -153,11 +154,11 @@ public class AdminsServiceImpl implements AdminsService {
 
     @Override
     public Admins find(long id, HttpServletRequest httpServletRequest) throws Exception {
-        Admins oldAdmin =
+        Admins admin =
             adminRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다."));
 
-        return oldAdmin;
+        return admin;
     }
 
     @Transactional
@@ -165,8 +166,8 @@ public class AdminsServiceImpl implements AdminsService {
     public Admins editPassword(String email, String newPass1, String newPass2,
             HttpServletRequest request) throws Exception {
 
-        Admins oldAdmin = adminRepos.findByEmail(email);
-        if(Objects.isNull(oldAdmin)) {
+        Admins admin = adminRepos.findByEmail(email);
+        if(Objects.isNull(admin)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다.");
         }
         if(!newPass1.equals(newPass2)) {
@@ -174,33 +175,34 @@ public class AdminsServiceImpl implements AdminsService {
         }
 
         String newPass = passwordUtil.encode(newPass1);
-        oldAdmin.setPassword(newPass);
+        admin.setPassword(newPass);
 
-        Admins newAdmin = adminRepos.save(oldAdmin);
+        Admins newAdmin = adminRepos.save(admin);
         return newAdmin;
     }
 
-    public Admins toEntityModify(RequestAdminsModifyDTO modifyDTO) {
-        Admins admin = new Admins();
+    @Override
+    public Admins toEditEntity(RequestAdminsEditDTO editDTO) {
+        Admins newAdmin = new Admins();
 
-        admin.setAdminId(modifyDTO.getAdminId());
-        admin.setAdminName(modifyDTO.getAdminName());
-        admin.setPhoneNo(modifyDTO.getPhoneNo());
-        admin.setMemo(modifyDTO.getMemo());
+        newAdmin.setAdminId(editDTO.getAdminId());
+        newAdmin.setAdminName(editDTO.getAdminName());
+        newAdmin.setPhoneNo(editDTO.getPhoneNo());
+        newAdmin.setMemo(editDTO.getMemo());
 
-        return admin;
+        return newAdmin;
     }
 
     @Transactional
     @Override
-    public Admins edit(Admins admin, HttpServletRequest request) throws Exception {
-        Admins oldAdmin =
-            adminRepos.findById(admin.getId())
+    public Admins edit(Admins newAdmin, HttpServletRequest request) throws Exception {
+        Admins admin =
+            adminRepos.findById(newAdmin.getId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 관리자입니다."));
 
-        oldAdmin.edit(admin);
+        admin.edit(newAdmin);
 
-        Admins editedAdmin = adminRepos.save(oldAdmin);
+        Admins editedAdmin = adminRepos.save(admin);
         return editedAdmin;
     }
 
@@ -225,6 +227,6 @@ public class AdminsServiceImpl implements AdminsService {
     }
 
     @Override
-    public Admins generate(Admins oldAdmin) { return null; }
+    public Admins generate(Admins newAdmin) { return null; }
 
 }

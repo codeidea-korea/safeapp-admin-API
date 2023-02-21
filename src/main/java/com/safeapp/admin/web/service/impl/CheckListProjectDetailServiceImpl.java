@@ -25,16 +25,16 @@ public class CheckListProjectDetailServiceImpl implements CheckListProjectDetail
     private final CheckListProjectDetailRepository chkPrjDetRepos;
 
     @Override
-    public CheckListProjectDetail toEntity(RequestCheckListProjectDetailDTO addDto) {
+    public CheckListProjectDetail toEntity(RequestCheckListProjectDetailDTO dto) {
         CheckListProjectDetail detail = new CheckListProjectDetail();
 
-        detail.setTypes(addDto.getTypes());
-        detail.setDepth(addDto.getDepth());
-        detail.setIsDepth(addDto.getIsDepth());
-        detail.setParentDepth(addDto.getParentDepth());
-        detail.setParentOrders(addDto.getParentOrders());
-        detail.setContents(addDto.getContents());
-        detail.setOrders(addDto.getOrders());
+        detail.setTypes(dto.getTypes());
+        detail.setDepth(dto.getDepth());
+        detail.setIsDepth(dto.getIsDepth());
+        detail.setParentDepth(dto.getParentDepth());
+        detail.setParentOrders(dto.getParentOrders());
+        detail.setContents(dto.getContents());
+        detail.setOrders(dto.getOrders());
 
         return detail;
     }
@@ -56,42 +56,42 @@ public class CheckListProjectDetailServiceImpl implements CheckListProjectDetail
 
     @Override
     public CheckListProjectDetail find(long id, HttpServletRequest request) throws Exception {
-        CheckListProjectDetail oldChkPrjDet =
+        CheckListProjectDetail chkPrjDet =
             chkPrjDetRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 체크리스트 상세입니다."));
 
-        return oldChkPrjDet;
+        return chkPrjDet;
     }
 
     @Override
-    public CheckListProjectDetail generate(CheckListProjectDetail oldChkPrjDet) {
+    public CheckListProjectDetail generate(CheckListProjectDetail newChkPrjDet) {
         return
             CheckListProjectDetail.builder()
-            .contents(oldChkPrjDet.getContents())
-            .depth(oldChkPrjDet.getDepth())
-            .id(oldChkPrjDet.getId())
-            .isDepth(oldChkPrjDet.getIsDepth())
-            .orders(oldChkPrjDet.getOrders())
-            .parentDepth(oldChkPrjDet.getParentDepth())
-            .types(oldChkPrjDet.getTypes())
+            .contents(newChkPrjDet.getContents())
+            .depth(newChkPrjDet.getDepth())
+            .id(newChkPrjDet.getId())
+            .isDepth(newChkPrjDet.getIsDepth())
+            .orders(newChkPrjDet.getOrders())
+            .parentDepth(newChkPrjDet.getParentDepth())
+            .types(newChkPrjDet.getTypes())
             .build();
     }
 
     @Override
-    public CheckListProjectDetail edit(CheckListProjectDetail oldChkPrjDet, HttpServletRequest request) throws Exception {
+    public CheckListProjectDetail edit(CheckListProjectDetail newChkPrjDet, HttpServletRequest request) throws Exception {
         CheckListProjectDetail editedChkPrjDet =
-            chkPrjDetRepos.findById(oldChkPrjDet.getId())
+            chkPrjDetRepos.findById(newChkPrjDet.getId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 체크리스트 상세입니다."));
         if(Objects.isNull(editedChkPrjDet)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 체크리스트 상세입니다.");
         }
 
-        editedChkPrjDet = chkPrjDetRepos.save(generate(oldChkPrjDet));
+        editedChkPrjDet = chkPrjDetRepos.save(generate(newChkPrjDet));
         return editedChkPrjDet;
     }
 
     @Override
-    public void remove(long id, HttpServletRequest httpServletRequest) {
+    public void remove(long id, HttpServletRequest request) {
         CheckListProjectDetail chkPrjDet =
             chkPrjDetRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 체크리스트 상세입니다."));

@@ -67,4 +67,5 @@ public class RequestRiskCheckDetailDTO {
 
     @Schema(description = "부모 깊이")
     int parentDepth;
+
 }

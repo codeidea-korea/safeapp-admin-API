@@ -91,10 +91,10 @@ public class UserAuth extends BaseTimeEntity {
         this.memo = memo;
     }
 
-    public void edit(UserAuth userAuth) {
-        setEfectiveStartAt(userAuth.getEfectiveStartAt());
-        setEfectiveEndAt(userAuth.getEfectiveEndAt());
-        setMemo(userAuth.getMemo());
+    public void edit(UserAuth newUserAuth) {
+        setEfectiveStartAt(newUserAuth.getEfectiveStartAt());
+        setEfectiveEndAt(newUserAuth.getEfectiveEndAt());
+        setMemo(newUserAuth.getMemo());
     }
 
 }

@@ -22,16 +22,16 @@ public class ResponseAccidentCaseDTO {
     @NotBlank(message = NOT_NULL)
     Long id;
 
+    @Schema(description = "등록자(관리자) 이름")
+    @NotBlank(message = NOT_NULL)
+    String adminName;
+
     @Schema(description = "등록일시")
     LocalDateTime createdAt;
 
     @Schema(description = "제목")
     @NotBlank(message = NOT_NULL)
     String title;
-
-    @Schema(description = "등록자(관리자) 이름")
-    @NotBlank(message = NOT_NULL)
-    String adminName;
 
     @Schema(description = "태그")
     String tags;
@@ -67,9 +67,9 @@ public class ResponseAccidentCaseDTO {
     @Builder
     public ResponseAccidentCaseDTO(AccidentExp accExp) {
         this.id = accExp.getId();
+        this.adminName = accExp.getAdmin().getAdminName();
         this.createdAt = accExp.getCreatedAt();
         this.title = accExp.getTitle();
-        this.adminName = accExp.getAdmin().getAdminName();
         this.tags = accExp.getTags();
         this.name = accExp.getName();
         this.accidentAt = accExp.getAccidentAt();

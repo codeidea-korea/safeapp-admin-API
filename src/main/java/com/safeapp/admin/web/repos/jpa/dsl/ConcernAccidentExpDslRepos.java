@@ -9,10 +9,10 @@ import java.util.List;
 
 public interface ConcernAccidentExpDslRepos extends IFDslRepos<ConcernAccidentExp> {
 
-    List<Reports> findReports(long id);
+    List<Reports> findReport(long id);
 
-    long countAllReport(ConcernAccidentExp conExp);
+    long countAllReports(ConcernAccidentExp conExp);
 
-    List<ConcernAccidentExp> findAllReport(ConcernAccidentExp conExp, Pages pages);
+    List<ConcernAccidentExp> findAllReports(ConcernAccidentExp conExp, Pages pages);
 
 }

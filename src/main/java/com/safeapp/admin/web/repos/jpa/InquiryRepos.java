@@ -7,4 +7,5 @@ import com.safeapp.admin.web.model.entity.Inquiry;
 
 @Repository
 public interface InquiryRepos extends JpaRepository<Inquiry, Long> {
+
 }

@@ -18,16 +18,16 @@ public class ResponseConcernAccidentDTO {
     @Schema(description = "아차사고 PK")
     Long id;
 
+    @Schema(description = "등록자(관리자) 이름")
+    @NotBlank(message = NOT_NULL)
+    String adminName;
+
     @Schema(description = "등록일시")
     LocalDateTime createdAt;
 
     @Schema(description = "제목")
     @NotBlank(message = NOT_NULL)
     String title;
-
-    @Schema(description = "등록자(관리자) 이름")
-    @NotBlank(message = NOT_NULL)
-    String adminName;
 
     @Schema(description = "태그")
     String tags;
@@ -62,9 +62,9 @@ public class ResponseConcernAccidentDTO {
     @Builder
     public ResponseConcernAccidentDTO(ConcernAccidentExp conExp) {
         this.id = conExp.getId();
+        this.adminName = conExp.getAdmin().getAdminName();
         this.createdAt = conExp.getCreatedAt();
         this.title = conExp.getTitle();
-        this.adminName = conExp.getAdmin().getAdminName();
         this.tags = conExp.getTags();
         this.name = conExp.getName();
         this.accidentUserName = conExp.getAccidentUserName();

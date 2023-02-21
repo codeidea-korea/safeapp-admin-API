@@ -44,8 +44,8 @@ public class OAuthServiceImpl implements OAuthService {
 
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-
         AdminDetails details = new AdminDetails();
+
         details.setAdminType(AdminType.ADMIN);
         details.setEnabled(false);
         details.setExpired(true);
@@ -68,7 +68,6 @@ public class OAuthServiceImpl implements OAuthService {
         }
 
         details.setExpired(false);
-
         return details;
     }
 

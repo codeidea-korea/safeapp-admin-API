@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Schema(description = "관리자 수정 요청")
 @Data
-public class RequestAdminsModifyDTO {
+public class RequestAdminsEditDTO {
 
     @Schema(description = "아이디", example = "admin1")
     String adminId;

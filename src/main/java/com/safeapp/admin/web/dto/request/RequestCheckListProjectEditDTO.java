@@ -15,7 +15,7 @@ import static org.hibernate.sql.InFragment.NOT_NULL;
 
 @Schema(description = "체크리스트 수정 요청")
 @Data
-public class RequestCheckListProjectModifyDTO {
+public class RequestCheckListProjectEditDTO {
 
     @Schema(description = "프로젝트 PK")
     @NotBlank(message = NOT_NULL)
@@ -55,10 +55,10 @@ public class RequestCheckListProjectModifyDTO {
     @Schema(description = "재검토 사유")
     String recheckReason;
 
-    List<DetailModifyDTO> details = new ArrayList<>();
+    List<DetailEditDTO> details = new ArrayList<>();
 
     @Data
-    public static class DetailModifyDTO {
+    public static class DetailEditDTO {
         @Schema(description = "체크리스트 상세 PK")
         Long id;
 

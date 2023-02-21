@@ -1,6 +1,9 @@
 package com.safeapp.admin.web.service;
 
+import com.safeapp.admin.web.dto.request.RequestNoticeDTO;
+import com.safeapp.admin.web.dto.request.RequestNoticeEditDTO;
 import com.safeapp.admin.web.model.cmmn.service.CRUDService;
+import com.safeapp.admin.web.model.entity.AccidentExp;
 import com.safeapp.admin.web.model.entity.Notice;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,8 +13,8 @@ import java.util.List;
 
 public interface NoticeService extends CRUDService<Notice> {
 
-    void addFiles(Long id, List<MultipartFile> images, HttpServletRequest request) throws NotFoundException;
+    Notice toAddEntity(RequestNoticeDTO addDto) throws NotFoundException;
 
-    Notice generate(Notice newNotice);
+    Notice toEditEntity(RequestNoticeEditDTO editDto) throws NotFoundException;
 
 }

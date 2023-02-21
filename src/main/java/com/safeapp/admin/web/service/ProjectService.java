@@ -13,7 +13,7 @@ import java.util.Map;
 
 public interface ProjectService extends CRUDService<Project> {
 
-    InviteHistory addAllGroup(InviteHistory ivtHst, HttpServletRequest request) throws Exception;
+    InviteHistory addAllGroup(InviteHistory newIvtHst, HttpServletRequest request) throws Exception;
 
     void editAllGroup(List<RequestProjectGroupEditDTO> prjGrEditList, HttpServletRequest request) throws Exception;
 

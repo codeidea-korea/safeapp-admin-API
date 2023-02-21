@@ -12,13 +12,17 @@ import lombok.ToString;
 
 @RedisHash("cacheId")
 @Getter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class RedisCacheEntity {
+
 	@Id
 	private Long cacheId;
+
 	private String key;
+
 	private Object value;
+
 }

@@ -15,40 +15,46 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 
-@Data
 @Document
+@Data
 public class InviteHistory {
+
     @Id
-    @ApiModelProperty(value = "몽고 식별자")
+    @ApiModelProperty(value = "mongo PK")
     private String id;
-    private long groupId;
-    private String groupName;
-    private String contents;
-    private String userMail;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createdAt;
 
+    private long groupId;
+
+    private String groupName;
+
+    private String userMail;
+
+    private String contents;
+
+    private String urlData;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime efectiveEndAt;
 
-    private String urlData;
-
     @Builder
-    public InviteHistory(String id, long groupId, String groupName, String contents, String userMail,
-        LocalDateTime createdAt, LocalDateTime efectiveEndAt, String urlData) {
+    public InviteHistory(String id, LocalDateTime createdAt, long groupId, String groupName, String userMail, String contents,
+            String urlData, LocalDateTime efectiveEndAt) {
 
         this.id = id;
+        this.createdAt = createdAt;
         this.groupId = groupId;
         this.groupName = groupName;
-        this.contents = contents;
         this.userMail = userMail;
-        this.createdAt = createdAt;
-        this.efectiveEndAt = efectiveEndAt;
+        this.contents = contents;
         this.urlData = urlData;
+        this.efectiveEndAt = efectiveEndAt;
     }
+
 }

@@ -6,8 +6,8 @@ import com.safeapp.admin.web.model.entity.CheckListProjectDetail;
 
 public interface CheckListProjectDetailService extends CRUDService<CheckListProjectDetail> {
 
-    CheckListProjectDetail toEntity(RequestCheckListProjectDetailDTO addDto);
+    CheckListProjectDetail toEntity(RequestCheckListProjectDetailDTO dto);
 
-    CheckListProjectDetail generate(CheckListProjectDetail oldChkPrjDet);
+    CheckListProjectDetail generate(CheckListProjectDetail newChkPrjDet);
 
 }

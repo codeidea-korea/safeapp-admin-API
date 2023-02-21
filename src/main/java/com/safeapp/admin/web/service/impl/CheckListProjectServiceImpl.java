@@ -8,23 +8,18 @@ import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.web.dto.request.RequestCheckListProjectDTO;
-import com.safeapp.admin.web.dto.request.RequestCheckListProjectModifyDTO;
+import com.safeapp.admin.web.dto.request.RequestCheckListProjectEditDTO;
 import com.safeapp.admin.web.dto.response.ResponseCheckListProjectDTO;
 import com.safeapp.admin.web.model.entity.CheckListProject;
 import com.safeapp.admin.web.model.entity.CheckListProjectDetail;
-import com.safeapp.admin.web.model.entity.CheckListTemplate;
-import com.safeapp.admin.web.model.entity.ProjectGroup;
 import com.safeapp.admin.web.repos.jpa.CheckListProjectRepository;
 import com.safeapp.admin.web.repos.jpa.ProjectRepos;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.repos.jpa.UserRepos;
-import com.safeapp.admin.web.repos.jpa.dsl.CheckListProjectDslRepos;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.javassist.NotFoundException;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,7 +89,7 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
     }
 
     @Override
-    public CheckListProject toEditEntity(RequestCheckListProjectModifyDTO editDto) throws NotFoundException {
+    public CheckListProject toEditEntity(RequestCheckListProjectEditDTO editDto) throws NotFoundException {
         CheckListProject newChkPrj = new CheckListProject();
 
         newChkPrj.setUser(userRepos.findById(editDto.getUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + editDto.getUserId())));
@@ -122,7 +117,7 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
 
         List<CheckListProjectDetail> newChkPrjDets = new ArrayList<>();
         if(editDto.getDetails().isEmpty() == false) {
-            for(RequestCheckListProjectModifyDTO.DetailModifyDTO detailEditDto : editDto.getDetails()) {
+            for(RequestCheckListProjectEditDTO.DetailEditDTO detailEditDto : editDto.getDetails()) {
                 CheckListProjectDetail newChkPrjDet = new CheckListProjectDetail();
 
                 newChkPrjDet.setDepth(detailEditDto.getDepth());

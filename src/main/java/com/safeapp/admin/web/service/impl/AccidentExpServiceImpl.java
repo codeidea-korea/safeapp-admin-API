@@ -44,9 +44,9 @@ public class AccidentExpServiceImpl implements AccidentExpService {
     public AccidentExp toAddEntity(RequestAccidentCaseDTO addDto) {
         AccidentExp newAccExp = new AccidentExp();
 
+        newAccExp.setAdmin(adminRepos.findById(addDto.getAdminId()).orElse(null));
         newAccExp.setCreatedAt(LocalDateTime.now());
         newAccExp.setTitle(addDto.getTitle());
-        newAccExp.setAdmin(adminRepos.findById(addDto.getAdminId()).orElse(null));
         newAccExp.setTags(addDto.getTags());
         newAccExp.setName(addDto.getName());
         newAccExp.setAccidentAt(addDto.getAccidentAt());

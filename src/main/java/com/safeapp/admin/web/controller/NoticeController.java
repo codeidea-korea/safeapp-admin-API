@@ -3,9 +3,16 @@ package com.safeapp.admin.web.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.utils.ResponseUtil;
+import com.safeapp.admin.web.data.NoticeType;
+import com.safeapp.admin.web.dto.request.RequestNoticeDTO;
+import com.safeapp.admin.web.dto.request.RequestNoticeEditDTO;
+import com.safeapp.admin.web.dto.response.ResponseAccidentCaseDTO;
+import com.safeapp.admin.web.dto.response.ResponseNoticeDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
+import com.safeapp.admin.web.model.entity.AccidentExp;
 import com.safeapp.admin.web.model.entity.Notice;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +32,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+import java.util.List;
+
+import static org.springframework.http.HttpStatus.OK;
+
 @RestController
 @RequestMapping("/board/notice")
 @AllArgsConstructor
@@ -35,50 +46,56 @@ public class NoticeController {
 
     @PostMapping(value = "/add")
     @ApiOperation(value = "공지사항 등록", notes = "공지사항 등록")
-    public ResponseEntity add(@RequestBody Notice newNotice, HttpServletRequest request) throws Exception {
-
-        return ResponseUtil.sendResponse(noticeService.add(newNotice, request));
+    public ResponseEntity<ResponseNoticeDTO> add(@RequestBody RequestNoticeDTO addDto, HttpServletRequest request) throws Exception {
+        Notice addedNotice = noticeService.add(noticeService.toAddEntity(addDto), request);
+        return new ResponseEntity<>(ResponseNoticeDTO.builder().notice(addedNotice).build(), OK);
     }
 
-    @PutMapping(value = "/notices/{id}")
-    @ApiOperation(value = "수정", notes = "수정")
-    public ResponseEntity modify(
-        @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
-        @RequestBody Notice params,
-        HttpServletRequest request) throws Exception {
+    @GetMapping(value = "/find/{id}")
+    @ApiOperation(value = "공지사항 단독 조회", notes = "공지사항 단독 조회")
+    public ResponseEntity<ResponseNoticeDTO> find(@PathVariable("id") @ApiParam(value = "공지사항 PK", required = true) long id,
+            HttpServletRequest request) throws Exception {
 
-        params.setId(id);
-        return ResponseUtil.sendResponse(noticeService.edit(params, request));
+        Notice notice = noticeService.find(id, request);
+        return new ResponseEntity<>(ResponseNoticeDTO.builder().notice(notice).build(), OK);
     }
 
-    @DeleteMapping(value = "/notices/{id}")
-    @ApiOperation(value = "삭제", notes = "삭제")
-    public ResponseEntity remove(
-        @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
-        HttpServletRequest request) throws Exception {
+    @PutMapping(value = "/edit/{id}")
+    @ApiOperation(value = "공지사항 수정", notes = "공지사항 수정")
+    public ResponseEntity<ResponseNoticeDTO> edit(@PathVariable("id") @ApiParam(value = "공지사항 PK", required = true) long id,
+            @RequestBody RequestNoticeEditDTO editDto, HttpServletRequest request) throws Exception {
+
+        Notice newNotice = noticeService.toEditEntity(editDto);
+        newNotice.setId(id);
+
+        Notice editedNotice = noticeService.edit(newNotice, request);
+        return new ResponseEntity<>(ResponseNoticeDTO.builder().notice(editedNotice).build(), OK);
+    }
+
+    @DeleteMapping(value = "/remove/{id}")
+    @ApiOperation(value = "공지사항 삭제", notes = "공지사항 삭제")
+    public ResponseEntity remove(@PathVariable("id") @ApiParam(value = "공지사항 PK", required = true) long id,
+            HttpServletRequest request) throws Exception {
+
         noticeService.remove(id, request);
         return ResponseUtil.sendResponse(null);
     }
 
-    @GetMapping(value = "/notices/{id}")
-    @ApiOperation(value = "조회 (단건)", notes = "조회 (단건)")
-    public ResponseEntity find(
-        @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
-        HttpServletRequest request) throws Exception {
-        return ResponseUtil.sendResponse(noticeService.find(id, request));
+    @GetMapping(value = "/list")
+    @ApiOperation(value = "공지사항 목록 조회", notes = "공지사항 목록 조회")
+    public ResponseEntity<List<ResponseNoticeDTO>> findAll(
+            @RequestParam(value = "type", required = false) @Parameter(description = "유형") NoticeType type,
+            @RequestParam(value = "pageNo", defaultValue = "1") @Parameter(description = "현재 페이지 번호") int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10") @Parameter(description = "1 페이지 당 목록 수") int pageSize,
+            HttpServletRequest request) throws Exception {
+
+        Pages pages = new Pages(pageNo, pageSize);
+        return
+            ResponseUtil.sendResponse(noticeService.findAll(
+                Notice.builder()
+                .type(type)
+                .build(), pages, request)
+            );
     }
 
-    @GetMapping(value = "/notices")
-    @ApiOperation(value = "목록 조회 (다건)", notes = "목록 조회 (다건)")
-    public ResponseEntity<ListResponse> findAll(
-        Pages bfPage,
-        @RequestParam(value = "title", required = false, defaultValue = "아이언맨") String title,
-        HttpServletRequest request) throws Exception {
-        return ResponseUtil.sendResponse(noticeService.findAll(
-            Notice.builder()
-            .title(title)
-                .build(),
-            bfPage,
-            request));
-    }
 }

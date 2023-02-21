@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 public class PaymentUserKeyUtil {
     
     public class UserKey {
+
         public long userSeq; 
         public String userMail;
         
@@ -16,6 +17,7 @@ public class PaymentUserKeyUtil {
             this.userSeq = userSeq;
             this.userMail = userMail;
         }
+
     }
     
     public String encode(long userSeq, String userMail) {
@@ -34,4 +36,5 @@ public class PaymentUserKeyUtil {
         
         return new UserKey(Long.parseLong(keys[0]), keys[1]);
     }
+
 }

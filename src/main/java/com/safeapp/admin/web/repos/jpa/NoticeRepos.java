@@ -7,4 +7,5 @@ import com.safeapp.admin.web.model.entity.Notice;
 
 @Repository
 public interface NoticeRepos extends JpaRepository<Notice, Long> {
+
 }

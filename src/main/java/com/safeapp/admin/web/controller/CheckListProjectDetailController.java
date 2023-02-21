@@ -47,16 +47,16 @@ public class CheckListProjectDetailController {
     public ResponseEntity<ResponseCheckListProjectDetailDTO> find(@PathVariable("id") @ApiParam(value = "체크리스트 상세 PK", required = true) long id,
             HttpServletRequest request) throws Exception {
 
-        CheckListProjectDetail oldChkPrjDet = checkListProjectDetailService.find(id, request);
-        return new ResponseEntity<>(ResponseCheckListProjectDetailDTO.builder().detail(oldChkPrjDet).build(), OK);
+        CheckListProjectDetail chkPrjDet = checkListProjectDetailService.find(id, request);
+        return new ResponseEntity<>(ResponseCheckListProjectDetailDTO.builder().detail(chkPrjDet).build(), OK);
     }
 
     @PutMapping(value = "/edit/{id}")
     @ApiOperation(value = "체크리스트 상세 수정", notes = "체크리스트 상세 수정")
     public ResponseEntity<ResponseCheckListProjectDetailDTO> edit(@PathVariable("id") @ApiParam(value = "체크리스트 상세 PK", required = true) long id,
-            @RequestBody RequestCheckListProjectDetailDTO modifyDto, HttpServletRequest request) throws Exception {
+            @RequestBody RequestCheckListProjectDetailDTO editDto, HttpServletRequest request) throws Exception {
 
-        CheckListProjectDetail chkPrjDet = checkListProjectDetailService.toEntity(modifyDto);
+        CheckListProjectDetail chkPrjDet = checkListProjectDetailService.toEntity(editDto);
         chkPrjDet.setId(id);
 
         CheckListProjectDetail editedChkPrjDet =  checkListProjectDetailService.edit(chkPrjDet, request);

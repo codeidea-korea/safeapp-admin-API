@@ -9,5 +9,7 @@ import com.safeapp.admin.web.model.entity.SmsAuthHistory;
 
 @Repository
 public interface SmsAuthHistoryRepos extends JpaRepository<SmsAuthHistory, Long> {
+
     SmsAuthHistory findFirstByPhoneNoAndEfectedEndedAtAfterOrderByIdDesc(String phoneNo, LocalDateTime now);
+
 }

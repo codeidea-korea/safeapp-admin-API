@@ -11,7 +11,7 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
     private String credentials;
 
     public AuthenticationToken(String time, String id, String credentials,
-                               Collection<? extends GrantedAuthority> authorities) {
+            Collection<? extends GrantedAuthority> authorities) {
 
         super(authorities);
 

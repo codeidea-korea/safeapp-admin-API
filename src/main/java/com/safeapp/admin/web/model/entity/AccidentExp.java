@@ -29,12 +29,12 @@ public class AccidentExp extends BaseTimeEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "title")
-    private String title;
-
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "admin")
     private Admins admin;
+
+    @Column(name = "title")
+    private String title;
 
     @Column(name = "tags")
     private String tags;
@@ -95,14 +95,14 @@ public class AccidentExp extends BaseTimeEntity {
     private YN viewsDesc;
 
     @Builder
-    public AccidentExp(Long id, String title, Admins admin, String tags, String name, LocalDateTime accidentAt,
+    public AccidentExp(Long id, Admins admin, String title, String tags, String name, LocalDateTime accidentAt,
             String accidentReason, String accidentCause, String causeDetail, String response, String image, Integer views,
             String accidentUid, String detailContents, String keyword, String adminName, String phoneNo,
             String createdAtStart, String createdAtEnd, YN createdAtDesc, YN viewsDesc) {
 
         this.id = id;
-        this.title = title;
         this.admin = admin;
+        this.title = title;
         this.tags = tags;
         this.name = name;
         this.accidentAt = accidentAt;

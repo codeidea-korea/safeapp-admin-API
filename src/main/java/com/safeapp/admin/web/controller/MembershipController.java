@@ -3,24 +3,16 @@ package com.safeapp.admin.web.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.utils.ResponseUtil;
-import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.dto.request.RequestMembershipModifyDTO;
-import com.safeapp.admin.web.dto.response.ResponseCheckListProjectDTO;
+import com.safeapp.admin.web.dto.request.RequestMembershipEditDTO;
 import com.safeapp.admin.web.dto.response.ResponseMembershipDTO;
-import com.safeapp.admin.web.dto.response.ResponseUsersDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
-import com.safeapp.admin.web.model.entity.Auth;
 import com.safeapp.admin.web.model.entity.UserAuth;
-import com.safeapp.admin.web.model.entity.Users;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,8 +25,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,16 +41,16 @@ public class MembershipController {
     /*
     @PostMapping(value = "/add")
     @ApiOperation(value = "멤버쉽 결제 등록", notes = "멤버쉽 결제 등록")
-    public UserAuth add(@RequestBody UserAuth userAuth, HttpServletRequest request) throws Exception {
+    public UserAuth add(@RequestBody UserAuth newUserAuth, HttpServletRequest request) throws Exception {
 
-        return membershipService.add(userAuth, request);
+        return membershipService.add(newUserAuth, request);
     }
 
-    @DeleteMapping(value = "")
+    @DeleteMapping(value = "/remove/{id}")
     @ApiOperation(value = "멤버쉽 결제 삭제", notes = "멤버쉽 결제 삭제")
-    public void remove(
-        @PathVariable("id") @ApiParam(value = "일련번호", required = true) long id,
-        HttpServletRequest request) throws Exception {
+    public void remove(@PathVariable("id") @ApiParam(value = "멤버쉽 결제 PK", required = true) long id,
+            HttpServletRequest request) throws Exception {
+
         authService.remove(id, request);
     }
     */
@@ -76,12 +66,12 @@ public class MembershipController {
     @PutMapping(value = "/edit/{id}")
     @ApiOperation(value = "멤버쉽 결제 수정", notes = "멤버쉽 결제 수정")
     public ResponseEntity<ResponseMembershipDTO> edit(@PathVariable("id") @ApiParam(value = "멤버쉽 결제 PK", required = true) long id,
-            @RequestBody RequestMembershipModifyDTO modifyDto, HttpServletRequest request) throws Exception {
+            @RequestBody RequestMembershipEditDTO editDto, HttpServletRequest request) throws Exception {
 
-        UserAuth oldUserAuth = membershipService.toEntityModify(modifyDto);
-        oldUserAuth.setId(id);
+        UserAuth newUserAuth = membershipService.toEditEntity(editDto);
+        newUserAuth.setId(id);
 
-        UserAuth editedUserAuth = membershipService.edit(oldUserAuth, request);
+        UserAuth editedUserAuth = membershipService.edit(newUserAuth, request);
         return new ResponseEntity<>(ResponseMembershipDTO.builder().userAuth(editedUserAuth).build(), OK);
     }
 

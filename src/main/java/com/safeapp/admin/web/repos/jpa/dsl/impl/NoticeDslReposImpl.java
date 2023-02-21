@@ -1,6 +1,7 @@
 package com.safeapp.admin.web.repos.jpa.dsl.impl;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -31,46 +32,36 @@ public class NoticeDslReposImpl extends QuerydslRepositorySupport implements Not
         super(Notice.class);
     }
 
-    private JPAQuery selectFromWhere(Notice instance, QNotice qNotice) {
+    private JPAQuery selectFromWhere(Notice notice, QNotice qNotice) {
         JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
         JPAQuery query = jpaQueryFactory.selectFrom(qNotice);
 
-        if (!StringUtil.isNullOrEmpty(instance.getTitle())) {
-            query.where(qNotice.title.like(instance.getTitle()));
+        if(!Objects.isNull(notice.getType())) {
+            query.where(qNotice.type.eq(notice.getType()));
         }
-        if (!StringUtil.isNullOrEmpty(instance.getContents())) {
-            query.where(qNotice.contents.contains(instance.getContents()));
-        }
-        if (instance.getType() != null) {
-            query.where(qNotice.type.eq(instance.getType()));
-        }
-        if (instance.getUserId() > 0) {
-            query.where(qNotice.userId.eq(instance.getUserId()));
-        }
-        if (instance.getId() > 0) {
-            query.where(qNotice.id.eq(instance.getId()));
-        }
+
         return query;
     }
 
     @Override
-    public List<Notice> findAll(Notice instance, Pages bfPage) {
+    public long countAll(Notice notice) {
         QNotice qNotice = QNotice.notice;
-        JPAQuery query = selectFromWhere(instance, qNotice);
+        JPAQuery query = selectFromWhere(notice, qNotice);
+
+        return query.fetchCount();
+    }
+
+    @Override
+    public List<Notice> findAll(Notice notice, Pages pages) {
+        QNotice qNotice = QNotice.notice;
+        JPAQuery query = selectFromWhere(notice, qNotice);
 
         query
-            .offset(bfPage.getOffset())
-            .limit(bfPage.getPageSize())
-            .orderBy(new OrderSpecifier(com.querydsl.core.types.Order.DESC,
-                new PathBuilder(QNotice.class, qNotice.id.getMetadata())));
+            .offset(pages.getOffset())
+            .limit(pages.getPageSize())
+            .orderBy(new OrderSpecifier(com.querydsl.core.types.Order.DESC, new PathBuilder(QNotice.class, qNotice.id.getMetadata())));
 
         return query.fetch();
     }
 
-    @Override
-    public long countAll(Notice instance) {
-        QNotice qFile = QNotice.notice;
-        JPAQuery query = selectFromWhere(instance, qFile);
-        return query.fetchCount();
-    }
 }

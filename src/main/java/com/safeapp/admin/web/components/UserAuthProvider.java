@@ -28,8 +28,8 @@ public class UserAuthProvider implements AuthenticationProvider {
         String password = (String)authentication.getCredentials();
 
         UserDetails userDetails = oAuthService.loadUserByUsername(id);
-        if (Objects.isNull(userDetails)) {
-            throw new BadCredentialsException("username is not found. username = " + id);
+        if(Objects.isNull(userDetails)) {
+            throw new BadCredentialsException("Username is not found. Username = " + id);
         }
 
         return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
@@ -37,6 +37,8 @@ public class UserAuthProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> authentication) {
+
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
+
 }

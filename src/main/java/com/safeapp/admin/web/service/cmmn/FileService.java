@@ -10,4 +10,5 @@ public interface FileService {
     Files uploadAllowedFile(MultipartFile file, HttpServletRequest httpServletRequest);
 
     Files findById(long id, HttpServletRequest httpServletRequest);
+
 }

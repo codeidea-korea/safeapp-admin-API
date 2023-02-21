@@ -17,7 +17,7 @@ import java.util.List;
 
 public interface RiskCheckService extends CRUDService<RiskCheck> {
 
-    RiskCheck toEntity(RequestRiskCheckDTO addDto) throws NotFoundException;
+    RiskCheck toEntity(RequestRiskCheckDTO dto) throws NotFoundException;
 
     Long countAllByCondition(String keyword, String userName, String phoneNo, YN visibled,
         LocalDateTime createdAtStart, LocalDateTime createdAtEnd);

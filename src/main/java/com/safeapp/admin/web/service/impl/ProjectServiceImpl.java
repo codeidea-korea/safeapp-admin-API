@@ -8,9 +8,7 @@ import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.utils.DateUtil;
-import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.dto.request.RequestProjectGroupEditDTO;
-import com.safeapp.admin.web.dto.response.ResponseCheckListProjectDTO;
 import com.safeapp.admin.web.dto.response.ResponseProjectGroupDTO;
 import com.safeapp.admin.web.model.docs.InviteHistory;
 import com.safeapp.admin.web.model.entity.*;
@@ -20,19 +18,15 @@ import com.safeapp.admin.web.repos.direct.DirectQuery;
 import com.safeapp.admin.web.repos.jpa.ProjectGroupRepos;
 import com.safeapp.admin.web.repos.jpa.UserRepos;
 import com.safeapp.admin.web.repos.mongo.InviteHistoryRepos;
-import com.safeapp.admin.web.service.UserService;
 import com.safeapp.admin.web.service.cmmn.DirectSendAPIService;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpServerErrorException;
 
 import com.safeapp.admin.web.repos.jpa.ProjectRepos;
-import com.safeapp.admin.web.repos.jpa.dsl.ProjectDslRepos;
 import com.safeapp.admin.web.service.ProjectService;
 
 @Service
@@ -41,33 +35,34 @@ import com.safeapp.admin.web.service.ProjectService;
 public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepos prjRepos;
-    private final ProjectDslRepos prjDslRepos;
     private final ProjectGroupRepos prjGrRepos;
     private final UserRepos userRepos;
     private final InviteHistoryRepos ivtHstRepos;
+
     private final DirectQuery dirRepos;
     private final DateUtil dateUtil;
+
     private final DirectSendAPIService directSendAPIService;
 
     @Transactional
     @Override
-    public Project add(Project project, HttpServletRequest request) throws Exception {
-        if(Objects.isNull(project)) {
+    public Project add(Project newProject, HttpServletRequest request) throws Exception {
+        if(Objects.isNull(newProject)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 프로젝트입니다.");
         }
 
-        project.setDeleteYn(false);
+        newProject.setDeleteYn(false);
 
-        Project addedProject = prjRepos.save(project);
+        Project addedProject = prjRepos.save(newProject);
         if(Objects.isNull(addedProject)) {
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "DB 저장 중 오류가 발생하였습니다.");
         }
 
         Users user =
-            userRepos.findById(project.getUserId())
+            userRepos.findById(newProject.getUserId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
 
-        ProjectGroup prjGr =
+        ProjectGroup newPrjGr =
                 ProjectGroup
                 .builder()
                 .userAuthType("TEAM_MASTER")
@@ -75,57 +70,57 @@ public class ProjectServiceImpl implements ProjectService {
                 .user(user)
                 .name(addedProject.getName())
                 .build();
-        prjGrRepos.save(prjGr);
+        prjGrRepos.save(newPrjGr);
 
         return addedProject;
     }
 
     @Override
     public Project find(long id, HttpServletRequest request) throws Exception {
-        Project oldProject =
+        Project project =
             prjRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 프로젝트입니다."));
-        if(oldProject.getDeleteYn() == true) {
+        if(project.getDeleteYn() == true) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 프로젝트입니다.");
         }
 
-        return oldProject;
+        return project;
     }
 
     @Override
-    public Project edit(Project project, HttpServletRequest request) throws Exception {
-        Project oldProject =
-            prjRepos.findById(project.getId())
+    public Project edit(Project newProject, HttpServletRequest request) throws Exception {
+        Project project =
+            prjRepos.findById(newProject.getId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 프로젝트입니다."));
 
-        oldProject.edit(project);
+        project.edit(newProject);
 
-        Project editedProject = prjRepos.save(oldProject);
+        Project editedProject = prjRepos.save(project);
         return editedProject;
     }
 
-    public InviteHistory generate(InviteHistory ivtHst) {
+    public InviteHistory generate(InviteHistory newIvtHst) {
         return
             InviteHistory.builder()
-            .id(ivtHst.getId())
-            .contents(ivtHst.getContents())
-            .groupId(ivtHst.getGroupId())
-            .groupName(ivtHst.getGroupName())
-            .urlData(ivtHst.getUrlData())
-            .userMail(ivtHst.getUserMail())
-            .efectiveEndAt(ivtHst.getEfectiveEndAt())
-            .createdAt(ivtHst.getCreatedAt() == null ? dateUtil.getThisTime() : ivtHst.getCreatedAt())
+            .id(newIvtHst.getId())
+            .createdAt(newIvtHst.getCreatedAt() == null ? dateUtil.getThisTime() : newIvtHst.getCreatedAt())
+            .groupId(newIvtHst.getGroupId())
+            .groupName(newIvtHst.getGroupName())
+            .userMail(newIvtHst.getUserMail())
+            .contents(newIvtHst.getContents())
+            .urlData(newIvtHst.getUrlData())
+            .efectiveEndAt(newIvtHst.getEfectiveEndAt())
             .build();
     }
 
     @Transactional
     @Override
-    public InviteHistory addAllGroup(InviteHistory ivtHst, HttpServletRequest request) throws Exception {
-        if(Objects.isNull(ivtHst)) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "정보가 없습니다.");
+    public InviteHistory addAllGroup(InviteHistory newIvtHst, HttpServletRequest request) throws Exception {
+        if(Objects.isNull(newIvtHst)) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 초대입니다.");
         }
 
-        InviteHistory addedIvtHst = ivtHstRepos.save(generate(ivtHst));
+        InviteHistory addedIvtHst = ivtHstRepos.save(generate(newIvtHst));
         if(Objects.isNull(addedIvtHst)) {
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "DB 저장 중 오류가 발생하였습니다.");
         }
@@ -136,7 +131,7 @@ public class ProjectServiceImpl implements ProjectService {
         bodyMap.put("subject", "인증번호입니다.");
         bodyMap.put("body", URLEncoder.encode("안녕하세요, 컨스퀘어에 초대합니다. <a href=\"https://safeapp.codeidea.io/login?code=" + addedIvtHst.getUrlData() + "\">가입하기</a>", "UTF-8"));
 
-        directSendAPIService.sendMail(ivtHst.getUserMail(), bodyMap);
+        directSendAPIService.sendMail(newIvtHst.getUserMail(), bodyMap);
 
         return addedIvtHst;
     }
@@ -144,29 +139,29 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void editAllGroup(List<RequestProjectGroupEditDTO> prjGrEditList, HttpServletRequest request) {
         for(int i = 0; i < prjGrEditList.size(); i++) {
-            ProjectGroup oldPrjGr =
+            ProjectGroup prjGr =
                 prjGrRepos.findById(prjGrEditList.get(i).getId())
                 .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 프로젝트 그룹원입니다."));
-            oldPrjGr.setId(prjGrEditList.get(i).getId());
-            oldPrjGr.setUserAuthType(prjGrEditList.get(i).getUserAuthType());
+            prjGr.setId(prjGrEditList.get(i).getId());
+            prjGr.setUserAuthType(prjGrEditList.get(i).getUserAuthType());
 
             if(prjGrEditList.get(i).getDeleteYn() == false) {
-                prjGrRepos.save(oldPrjGr);
+                prjGrRepos.save(prjGr);
             } else {
-                oldPrjGr.setDeleteYn(true);
-                prjGrRepos.save(oldPrjGr);
+                prjGr.setDeleteYn(true);
+                prjGrRepos.save(prjGr);
             }
         }
     }
 
     @Override
     public void removeGroup(long id, HttpServletRequest request) {
-        ProjectGroup projectGroup =
+        ProjectGroup prjGr =
             prjGrRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 프로젝트 그룹원입니다."));
 
-        projectGroup.setDeleteYn(true);
-        prjGrRepos.save(projectGroup);
+        prjGr.setDeleteYn(true);
+        prjGrRepos.save(prjGr);
     }
 
     @Override
@@ -204,10 +199,8 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ListResponse<Project> findAll(Project project, Pages pages, HttpServletRequest request) throws Exception {
-        long count = prjDslRepos.countAll(project);
-        List<Project> list = prjDslRepos.findAll(project, pages);
 
-        return new ListResponse<>(count, list, pages);
+        return null;
     }
 
 }

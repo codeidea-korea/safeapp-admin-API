@@ -38,9 +38,9 @@ public class ProjectController {
 
     @PostMapping(value = "/add")
     @ApiOperation(value = "프로젝트 등록", notes = "프로젝트 등록")
-    public ResponseEntity add(@RequestBody Project project, HttpServletRequest request) throws Exception {
+    public ResponseEntity add(@RequestBody Project newProject, HttpServletRequest request) throws Exception {
 
-        return ResponseUtil.sendResponse(projectService.add(project, request));
+        return ResponseUtil.sendResponse(projectService.add(newProject, request));
     }
 
     @GetMapping(value = "/find/{id}")
@@ -54,9 +54,9 @@ public class ProjectController {
     @PutMapping(value = "/edit/{id}")
     @ApiOperation(value = "프로젝트 수정", notes = "프로젝트 수정")
     public ResponseEntity edit(@PathVariable("id") @ApiParam(value = "프로젝트 PK", required = true) long id,
-            @RequestBody Project project, HttpServletRequest request) throws Exception {
-        project.setId(id);
-        return ResponseUtil.sendResponse(projectService.edit(project, request));
+            @RequestBody Project newProject, HttpServletRequest request) throws Exception {
+        newProject.setId(id);
+        return ResponseUtil.sendResponse(projectService.edit(newProject, request));
     }
 
     @PostMapping(value = "/group/addList")
@@ -68,7 +68,7 @@ public class ProjectController {
             HttpServletRequest request) throws Exception {
 
         for(String email : emails) {
-            InviteHistory ivtHst =
+            InviteHistory newIvtHst =
                 InviteHistory.builder()
                 .groupId(id)
                 .groupName(id + "")
@@ -77,7 +77,7 @@ public class ProjectController {
                 .urlData(Base64.getEncoder().encodeToString((id + "-" + email + "-type:mail").getBytes()))
                 .build();
 
-            projectService.addAllGroup(ivtHst, request);
+            projectService.addAllGroup(newIvtHst, request);
         }
 
         return ResponseUtil.sendResponse(true);
@@ -137,12 +137,12 @@ public class ProjectController {
         long count =
             projectService.countProjectList(name, userName, orderType, status, createdAtStart,
             createdAtEnd, request);
-        List<Map<String, Object>> projectList =
+        List<Map<String, Object>> list =
             projectService.findProjectList(name, userName, orderType, status, createdAtStart,
             createdAtEnd, pageNo, pageSize, request);
         Pages pages = new Pages(pageNo, pageSize);
 
-        ListResponse projectListResponse = new ListResponse(count, projectList, pages);
+        ListResponse projectListResponse = new ListResponse(count, list, pages);
         return ResponseUtil.sendResponse(projectListResponse);
     }
 

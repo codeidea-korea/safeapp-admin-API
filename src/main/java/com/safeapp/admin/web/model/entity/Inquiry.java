@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import javax.persistence.*;
 
+import com.safeapp.admin.web.data.InquiryNounType;
+import com.safeapp.admin.web.data.InquiryServiceType;
 import com.safeapp.admin.web.data.YN;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -16,18 +18,30 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import static javax.persistence.EnumType.STRING;
+
 @Entity(name = "inquiries")
-@AllArgsConstructor
 @Data
 @NoArgsConstructor
-public class Inquiry {
+@AllArgsConstructor
+public class Inquiry extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
-    @Column(name = "service_name")
-    private String serviceName;
+    @ManyToOne
+    @JoinColumn(name = "inquiry_user")
+    private Users inquiryUser;
+
+    @Enumerated(STRING)
+    @Column(name = "inquiry_type")
+    private InquiryNounType inquiryType;
+
+    @Enumerated(STRING)
+    @Column(name = "service_type")
+    private InquiryServiceType serviceType;
 
     @Column(name = "title")
     private String title;
@@ -35,36 +49,51 @@ public class Inquiry {
     @Column(name = "contents")
     private String contents;
 
-    @Column(name = "answer")
-    private String answer;
 
-    @Column(name = "created_at")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime createdAt;
 
     @Column(name = "is_answer")
     private YN isAnswer;
 
-    @Column(name = "attachment")
-    private String attachment;
-
     @ManyToOne
-    @JoinColumn(name = "answer_user", columnDefinition = "bigint COMMENT '응답유저'")
-    private Users answerUser;
+    @JoinColumn(name = "answer_admin")
+    private Admins answerAdmin;
+
+    @Column(name = "answer_at")
+    private LocalDateTime answerAt;
+
+    @Column(name = "answer")
+    private String answer;
 
     @Builder
-    public Inquiry(long id, String serviceName, String title, String contents, String answer, LocalDateTime createdAt,
-        YN isAnswer, String attachment, long answerUserId) {
+    public Inquiry(Long id, InquiryNounType inquiryType, InquiryServiceType serviceType, String title, String contents,
+            YN isAnswer, String answer) {
+
         super();
+
         this.id = id;
-        this.serviceName = serviceName;
+        this.inquiryType = inquiryType;
+        this.serviceType = serviceType;
         this.title = title;
         this.contents = contents;
-        this.answer = answer;
-        this.createdAt = createdAt;
+
         this.isAnswer = isAnswer;
-        this.attachment = attachment;
+        this.answer = answer;
+    }
+
+    /*
+    public void edit(Inquiry newInquiry) {
+        this.inquiryType = newInquiry.getInquiryType();
+        this.serviceType = newInquiry.getServiceType();
+        this.title = newInquiry.getTitle();
+        this.contents = newInquiry.getContents();
+        setUpdatedAt(newInquiry.getUpdatedAt());
+    }
+    */
+
+    public void answer(Inquiry newInquiry) {
+        this.isAnswer = newInquiry.getIsAnswer();
+        this.answerAdmin = newInquiry.getAnswerAdmin();
+        this.answerAt = newInquiry.getAnswerAt();
+        this.answer = newInquiry.getAnswer();
     }
 }

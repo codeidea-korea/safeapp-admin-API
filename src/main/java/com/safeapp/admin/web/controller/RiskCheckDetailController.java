@@ -49,10 +49,10 @@ public class RiskCheckDetailController {
 
     @PutMapping(value = "/edit/{id}")
     @ApiOperation(value = "위험성 평가표 상세 수정", notes = "위험성 평가표 상세 수정")
-    public ResponseEntity<ResponseRiskCheckDetailDTO> modify(@PathVariable("id") @ApiParam(value = "위험성 평가표 상세 PK", required = true) long id,
-            @RequestBody RequestRiskCheckDetailDTO modifyDto, HttpServletRequest request) throws Exception {
+    public ResponseEntity<ResponseRiskCheckDetailDTO> edit(@PathVariable("id") @ApiParam(value = "위험성 평가표 상세 PK", required = true) long id,
+            @RequestBody RequestRiskCheckDetailDTO editDto, HttpServletRequest request) throws Exception {
 
-        RiskCheckDetail riskChkDet = riskCheckDetailService.toEntity(modifyDto);
+        RiskCheckDetail riskChkDet = riskCheckDetailService.toEntity(editDto);
         riskChkDet.setId(id);
 
         RiskCheckDetail editedRiskChkDet = riskCheckDetailService.edit(riskChkDet, request);

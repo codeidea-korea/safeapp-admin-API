@@ -50,9 +50,9 @@ public class ConcernAccidentExpServiceImpl implements ConcernAccidentExpService 
     public ConcernAccidentExp toAddEntity(RequestConcernAccidentDTO addDto) {
         ConcernAccidentExp newConExp = new ConcernAccidentExp();
 
+        newConExp.setAdmin(adminRepos.findById(addDto.getAdminId()).orElse(null));
         newConExp.setCreatedAt(LocalDateTime.now());
         newConExp.setTitle(addDto.getTitle());
-        newConExp.setAdmin(adminRepos.findById(addDto.getAdminId()).orElse(null));
         newConExp.setTags(addDto.getTags());
         newConExp.setName(addDto.getName());
         newConExp.setAccidentUserName(addDto.getAccidentUserName());
@@ -123,7 +123,7 @@ public class ConcernAccidentExpServiceImpl implements ConcernAccidentExpService 
     }
 
     @Override
-    public void remove(long id, HttpServletRequest httpServletRequest) {
+    public void remove(long id, HttpServletRequest request) {
         ConcernAccidentExp conExp =
             conExpRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 아차사고입니다."));
@@ -158,16 +158,16 @@ public class ConcernAccidentExpServiceImpl implements ConcernAccidentExpService 
     }
 
     @Override
-    public List<Reports> findReports(long id, HttpServletRequest request) throws Exception {
-        List<Reports> reports = conExpDslRepos.findReports(id);
+    public List<Reports> findReport(long id, HttpServletRequest request) throws Exception {
+        List<Reports> reports = conExpDslRepos.findReport(id);
 
         return reports;
     }
 
     @Override
-    public ListResponse<ConcernAccidentExp> findAllReport(ConcernAccidentExp conExp, Pages pages, HttpServletRequest request) {
-        long count = conExpDslRepos.countAllReport(conExp);
-        List<ConcernAccidentExp> list = conExpDslRepos.findAllReport(conExp, pages);
+    public ListResponse<ConcernAccidentExp> findAllReports(ConcernAccidentExp conExp, Pages pages, HttpServletRequest request) {
+        long count = conExpDslRepos.countAllReports(conExp);
+        List<ConcernAccidentExp> list = conExpDslRepos.findAllReports(conExp, pages);
 
         return new ListResponse<>(count, list, pages);
     }

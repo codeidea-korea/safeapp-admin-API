@@ -7,8 +7,8 @@ import org.apache.ibatis.javassist.NotFoundException;
 
 public interface RiskCheckDetailService extends CRUDService<RiskCheckDetail> {
 
-    RiskCheckDetail generate(RiskCheckDetail oldRiskChkDet);
+    RiskCheckDetail generate(RiskCheckDetail newRiskChkDet);
 
-    RiskCheckDetail toEntity(RequestRiskCheckDetailDTO addDto) throws NotFoundException;
+    RiskCheckDetail toEntity(RequestRiskCheckDetailDTO dto) throws NotFoundException;
 
 }

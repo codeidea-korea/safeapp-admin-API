@@ -21,7 +21,6 @@ import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
-import com.safeapp.admin.web.model.docs.LikeHistory;
 import com.safeapp.admin.web.model.entity.RiskCheck;
 import lombok.AllArgsConstructor;
 import org.apache.ibatis.javassist.NotFoundException;
@@ -30,9 +29,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpServerErrorException;
-
-import com.safeapp.admin.web.repos.jpa.dsl.RiskCheckDslRepos;
-import com.safeapp.admin.web.repos.mongo.LikeHistoryRepos;
 import com.safeapp.admin.web.service.RiskCheckService;
 import com.safeapp.admin.web.service.cmmn.JwtService;
 
@@ -45,60 +41,60 @@ public class RiskCheckServiceImpl implements RiskCheckService {
     private final UserRepos userRepos;
 
     @Override
-    public RiskCheck toEntity(RequestRiskCheckDTO addDto) throws NotFoundException{
-        RiskCheck riskCheck = new RiskCheck();
+    public RiskCheck toEntity(RequestRiskCheckDTO dto) throws NotFoundException{
+        RiskCheck newRiskChk = new RiskCheck();
 
-        riskCheck.setUser(userRepos.findById(addDto.getUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + addDto.getUserId())));
-        riskCheck.setName(addDto.getName());
-        riskCheck.setVisibled(addDto.getVisibled());
-        riskCheck.setTag(addDto.getTag());
-        riskCheck.setWorkStartAt(addDto.getWorkStartAt());
-        riskCheck.setWorkEndAt(addDto.getWorkEndAt());
-        riskCheck.setInstructWork(addDto.getInstructWork());
-        riskCheck.setInstructDetail(addDto.getInstructDetail());
-        riskCheck.setEtcRiskMemo(addDto.getEtcRiskMemo());
-        riskCheck.setRecheckReason(addDto.getRecheckReason());
-        riskCheck.setRelatedAcidNo(addDto.getRelatedAcidNo());
+        newRiskChk.setUser(userRepos.findById(dto.getUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + dto.getUserId())));
+        newRiskChk.setName(dto.getName());
+        newRiskChk.setVisibled(dto.getVisibled());
+        newRiskChk.setTag(dto.getTag());
+        newRiskChk.setWorkStartAt(dto.getWorkStartAt());
+        newRiskChk.setWorkEndAt(dto.getWorkEndAt());
+        newRiskChk.setInstructWork(dto.getInstructWork());
+        newRiskChk.setInstructDetail(dto.getInstructDetail());
+        newRiskChk.setEtcRiskMemo(dto.getEtcRiskMemo());
+        newRiskChk.setRecheckReason(dto.getRecheckReason());
+        newRiskChk.setRelatedAcidNo(dto.getRelatedAcidNo());
 
-        if(addDto.getProjectId() != null) {
-            riskCheck.setProject(prjRepos.findById(addDto.getProjectId()).orElseThrow(() -> new NotFoundException("Input Project ID: " + addDto.getProjectId())));
+        if(dto.getProjectId() != null) {
+            newRiskChk.setProject(prjRepos.findById(dto.getProjectId()).orElseThrow(() -> new NotFoundException("Input Project ID: " + dto.getProjectId())));
         }
-        if(addDto.getCheckerId() != null) {
-            riskCheck.setChecker(userRepos.findById(addDto.getCheckerId()).orElseThrow(() -> new NotFoundException("Input Checker ID: " + addDto.getCheckerId())));
+        if(dto.getCheckerId() != null) {
+            newRiskChk.setChecker(userRepos.findById(dto.getCheckerId()).orElseThrow(() -> new NotFoundException("Input Checker ID: " + dto.getCheckerId())));
         }
-        if(addDto.getApproverId() != null) {
-            riskCheck.setApprover(userRepos.findById(addDto.getApproverId()).orElseThrow(() -> new NotFoundException("Input User ID: " + addDto.getApproverId())));
+        if(dto.getApproverId() != null) {
+            newRiskChk.setApprover(userRepos.findById(dto.getApproverId()).orElseThrow(() -> new NotFoundException("Input User ID: " + dto.getApproverId())));
         }
-        if(addDto.getReviewer1Id() != null) {
-            riskCheck.setReviewer1(userRepos.findById(addDto.getReviewer1Id()).orElseThrow(() -> new NotFoundException("Input User ID: " + addDto.getReviewer1Id())));
+        if(dto.getReviewer1Id() != null) {
+            newRiskChk.setReviewer1(userRepos.findById(dto.getReviewer1Id()).orElseThrow(() -> new NotFoundException("Input User ID: " + dto.getReviewer1Id())));
         }
-        if(addDto.getReviewer2Id() != null) {
-            riskCheck.setReviewer2(userRepos.findById(addDto.getReviewer2Id()).orElseThrow(() -> new NotFoundException("Input User ID: " + addDto.getReviewer2Id())));
+        if(dto.getReviewer2Id() != null) {
+            newRiskChk.setReviewer2(userRepos.findById(dto.getReviewer2Id()).orElseThrow(() -> new NotFoundException("Input User ID: " + dto.getReviewer2Id())));
         }
-        if(addDto.getReviewer3Id() != null) {
-            riskCheck.setReviewer3(userRepos.findById(addDto.getReviewer1Id()).orElseThrow(() -> new NotFoundException("Input User ID: " + addDto.getReviewer3Id())));
+        if(dto.getReviewer3Id() != null) {
+            newRiskChk.setReviewer3(userRepos.findById(dto.getReviewer1Id()).orElseThrow(() -> new NotFoundException("Input User ID: " + dto.getReviewer3Id())));
         }
-        if(addDto.getCheckUserId() != null) {
-            riskCheck.setCheckUser(userRepos.findById(addDto.getCheckUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + addDto.getCheckUserId())));
+        if(dto.getCheckUserId() != null) {
+            newRiskChk.setCheckUser(userRepos.findById(dto.getCheckUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + dto.getCheckUserId())));
         }
-        if(addDto.getDueUserId() != null) {
-            riskCheck.setDueUser(userRepos.findById(addDto.getDueUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + addDto.getDueUserId())));
+        if(dto.getDueUserId() != null) {
+            newRiskChk.setDueUser(userRepos.findById(dto.getDueUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + dto.getDueUserId())));
         }
 
-        return riskCheck;
+        return newRiskChk;
     }
 
     @Transactional
     @Override
-    public RiskCheck add(RiskCheck riskChk, HttpServletRequest request) throws Exception {
-        if(Objects.isNull(riskChk)) {
+    public RiskCheck add(RiskCheck newRiskChk, HttpServletRequest request) throws Exception {
+        if(Objects.isNull(newRiskChk)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 위험성 평가표입니다.");
         }
 
-        riskChk.setViews(0);
-        riskChk.setLikes(0);
+        newRiskChk.setViews(0);
+        newRiskChk.setLikes(0);
 
-        RiskCheck addedRiskChk = riskChkRepos.save(riskChk);
+        RiskCheck addedRiskChk = riskChkRepos.save(newRiskChk);
         if(Objects.isNull(addedRiskChk)) {
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "DB 저장 중 오류가 발생하였습니다.");
         }
@@ -107,39 +103,40 @@ public class RiskCheckServiceImpl implements RiskCheckService {
     }
 
     @Override
-    public RiskCheck find(long id, HttpServletRequest httpServletRequest) throws Exception {
-        RiskCheck oldRiskChk = riskChkRepos.findById(id)
+    public RiskCheck find(long id, HttpServletRequest request) throws Exception {
+        RiskCheck riskChk = riskChkRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 위험성 평가표입니다."));
 
-        if(oldRiskChk.getViews() != null) {
-            oldRiskChk.setViews(oldRiskChk.getViews() + 1);
+        if(riskChk.getViews() != null) {
+            riskChk.setViews(riskChk.getViews() + 1);
         } else {
-            oldRiskChk.setViews(1);
+            riskChk.setViews(1);
         }
 
-        oldRiskChk = riskChkRepos.save(oldRiskChk);
+        riskChk = riskChkRepos.save(riskChk);
 
-        return oldRiskChk;
+        return riskChk;
     }
 
     @Transactional
     @Override
-    public RiskCheck edit(RiskCheck riskChk, HttpServletRequest httpServletRequest) throws Exception {
-        RiskCheck oldRiskChk = riskChkRepos.findById(riskChk.getId())
+    public RiskCheck edit(RiskCheck newRiskChk, HttpServletRequest request) throws Exception {
+        RiskCheck riskChk = riskChkRepos.findById(newRiskChk.getId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 위험성 평가표입니다."));
-        if(Objects.isNull(oldRiskChk)) {
+        if(Objects.isNull(riskChk)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 위험성 평가표입니다.");
         }
 
-        oldRiskChk.edit(riskChk);
+        riskChk.edit(newRiskChk);
 
-        RiskCheck editedRiskChk = riskChkRepos.save(oldRiskChk);
+        RiskCheck editedRiskChk = riskChkRepos.save(riskChk);
         return editedRiskChk;
     }
 
     @Override
     public void remove(long id, HttpServletRequest httpServletRequest) {
-        RiskCheck riskChk = riskChkRepos.findById(id)
+        RiskCheck riskChk =
+            riskChkRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 위험성 평가표입니다."));
 
         riskChk.setDeleteYn(true);
@@ -180,7 +177,7 @@ public class RiskCheckServiceImpl implements RiskCheckService {
     }
 
     @Override
-    public RiskCheck generate(RiskCheck oldRiskChk) { return null; }
+    public RiskCheck generate(RiskCheck newRiskChk) { return null; }
 
     @Override
     public ListResponse<RiskCheck> findAll(RiskCheck riskChk, Pages pages, HttpServletRequest request) throws Exception {

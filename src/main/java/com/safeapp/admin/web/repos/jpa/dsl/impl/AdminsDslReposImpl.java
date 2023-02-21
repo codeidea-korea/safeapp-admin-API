@@ -53,8 +53,8 @@ public class AdminsDslReposImpl extends QuerydslRepositorySupport implements Adm
 
     @Override
     public long countAll(Admins admins) {
-        QAdmins qFile = QAdmins.admins;
-        JPAQuery query = selectFromWhere(admins, qFile);
+        QAdmins qAdmins = QAdmins.admins;
+        JPAQuery query = selectFromWhere(admins, qAdmins);
 
         return query.fetchCount();
     }

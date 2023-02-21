@@ -7,21 +7,14 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.safeapp.admin.utils.DateUtil;
-import com.safeapp.admin.utils.PasswordUtil;
-import com.safeapp.admin.web.data.YN;
-import com.safeapp.admin.web.dto.request.RequestMembershipModifyDTO;
+import com.safeapp.admin.web.dto.request.RequestMembershipEditDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
-import com.safeapp.admin.web.model.entity.Auth;
 import com.safeapp.admin.web.model.entity.UserAuth;
-import com.safeapp.admin.web.model.entity.Users;
 import com.safeapp.admin.web.repos.direct.DirectQuery;
-import com.safeapp.admin.web.repos.jpa.AuthRepos;
 import com.safeapp.admin.web.repos.jpa.UserAuthRepos;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,12 +32,12 @@ public class MembershipServiceImpl implements MembershipService {
 
     @Transactional
     @Override
-    public UserAuth add(UserAuth userAuth, HttpServletRequest request) throws Exception {
-        if(Objects.isNull(userAuth)) {
+    public UserAuth add(UserAuth newUserAuth, HttpServletRequest request) throws Exception {
+        if(Objects.isNull(newUserAuth)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 멤버쉽 결제입니다.");
         }
 
-        UserAuth addedMembership = userAuthRepos.save(generate(userAuth));
+        UserAuth addedMembership = userAuthRepos.save(generate(newUserAuth));
         if(Objects.isNull(addedMembership)) {
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "DB 저장 중 오류가 발생하였습니다.");
         }
@@ -54,40 +47,40 @@ public class MembershipServiceImpl implements MembershipService {
 
     @Override
     public UserAuth find(long id, HttpServletRequest request) throws Exception {
-        UserAuth oldUserAuth =
-                userAuthRepos.findById(id)
+        UserAuth userAuth =
+            userAuthRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 멤버쉽 결제입니다."));
-
-        return oldUserAuth;
-    }
-
-    @Override
-    public Map<String, Object> findMembership(long id, HttpServletRequest request) {
-        Map<String, Object> oldMemberShip = dirRepos.findMembership(id);
-
-        return oldMemberShip;
-    }
-
-    @Override
-    public UserAuth toEntityModify(RequestMembershipModifyDTO modifyDto) {
-        UserAuth userAuth = new UserAuth();
-
-        userAuth.setEfectiveStartAt(LocalDateTime.parse(modifyDto.getEfectiveStartAt()));
-        userAuth.setEfectiveEndAt(LocalDateTime.parse(modifyDto.getEfectiveEndAt()));
-        userAuth.setMemo(modifyDto.getMemo());
 
         return userAuth;
     }
 
     @Override
-    public UserAuth edit(UserAuth userAuth, HttpServletRequest request) throws Exception {
-        UserAuth oldUserAuth =
-            userAuthRepos.findById(userAuth.getId())
+    public Map<String, Object> findMembership(long id, HttpServletRequest request) {
+        Map<String, Object> membership = dirRepos.findMembership(id);
+
+        return membership;
+    }
+
+    @Override
+    public UserAuth toEditEntity(RequestMembershipEditDTO editDto) {
+        UserAuth newUserAuth = new UserAuth();
+
+        newUserAuth.setEfectiveStartAt(LocalDateTime.parse(editDto.getEfectiveStartAt()));
+        newUserAuth.setEfectiveEndAt(LocalDateTime.parse(editDto.getEfectiveEndAt()));
+        newUserAuth.setMemo(editDto.getMemo());
+
+        return newUserAuth;
+    }
+
+    @Override
+    public UserAuth edit(UserAuth newUserAuth, HttpServletRequest request) throws Exception {
+        UserAuth userAuth =
+            userAuthRepos.findById(newUserAuth.getId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 멤버쉽 결제입니다."));
 
-        oldUserAuth.edit(userAuth);
+        userAuth.edit(newUserAuth);
 
-        UserAuth editedUserAuth = userAuthRepos.save(oldUserAuth);
+        UserAuth editedUserAuth = userAuthRepos.save(userAuth);
         return editedUserAuth;
     }
 
@@ -98,7 +91,7 @@ public class MembershipServiceImpl implements MembershipService {
     }
 
     @Override
-    public void remove(long id, HttpServletRequest httpServletRequest) {
+    public void remove(long id, HttpServletRequest request) {
         UserAuth userAuth =
             userAuthRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 멤버쉽 결제입니다."));
@@ -122,13 +115,13 @@ public class MembershipServiceImpl implements MembershipService {
     }
 
     @Override
-    public UserAuth generate(UserAuth oldUserAuth) {
+    public UserAuth generate(UserAuth newUserAuth) {
         return
             UserAuth.builder()
-            .id(oldUserAuth.getId())
-            .efectiveStartAt(oldUserAuth.getEfectiveStartAt())
-            .efectiveEndAt(oldUserAuth.getEfectiveEndAt())
-            .memo(oldUserAuth.getMemo())
+            .id(newUserAuth.getId())
+            .efectiveStartAt(newUserAuth.getEfectiveStartAt())
+            .efectiveEndAt(newUserAuth.getEfectiveEndAt())
+            .memo(newUserAuth.getMemo())
             .build();
     }
 

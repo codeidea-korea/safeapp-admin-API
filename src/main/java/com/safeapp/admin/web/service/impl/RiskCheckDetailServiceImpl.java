@@ -34,28 +34,28 @@ public class RiskCheckDetailServiceImpl implements RiskCheckDetailService {
     private final RiskCheckRepository riskCheckRepository;
 
     @Override
-    public RiskCheckDetail toEntity(RequestRiskCheckDetailDTO addDto) throws NotFoundException {
+    public RiskCheckDetail toEntity(RequestRiskCheckDetailDTO dto) throws NotFoundException {
 
         RiskCheckDetail detail = new RiskCheckDetail();
 
-        detail.setRiskCheck(riskCheckRepository.findById(addDto.getRiskCheckId()).orElseThrow(() -> new NotFoundException("Input RiskCheck ID: " + addDto.getRiskCheckId())));
-        detail.setContents(addDto.getContents());
-        detail.setAddress(addDto.getAddress());
-        detail.setAddressDetail(addDto.getAddressDetail());
-        detail.setTools(addDto.getTools());
-        detail.setRiskFactorType(addDto.getRiskFactorType());
-        detail.setRelateLaw(addDto.getRelatedLaw());
-        detail.setRelateGuide(addDto.getRelatedGuide());
-        detail.setRiskType(addDto.getRiskType());
-        detail.setReduceResponse(addDto.getReduceResponse());
-        detail.setCheckMemo(addDto.getCheckMemo());
-        detail.setDueUser(userRepos.findById(addDto.getDueUserId()).orElseThrow(() -> new NotFoundException("Input Checker ID: " + addDto.getDueUserId())));
-        detail.setCheckUser(userRepos.findById(addDto.getCheckerUserId()).orElseThrow(() -> new NotFoundException("Input Checker ID: " + addDto.getDueUserId())));
-        detail.setStatus(addDto.getStatus());
-        detail.setParentOrders(addDto.getParentOrders());
-        detail.setOrders(addDto.getOrders());
-        detail.setDepth(addDto.getDepth());
-        detail.setParentDepth(addDto.getParentDepth());
+        detail.setRiskCheck(riskCheckRepository.findById(dto.getRiskCheckId()).orElseThrow(() -> new NotFoundException("Input RiskCheck ID: " + dto.getRiskCheckId())));
+        detail.setContents(dto.getContents());
+        detail.setAddress(dto.getAddress());
+        detail.setAddressDetail(dto.getAddressDetail());
+        detail.setTools(dto.getTools());
+        detail.setRiskFactorType(dto.getRiskFactorType());
+        detail.setRelateLaw(dto.getRelatedLaw());
+        detail.setRelateGuide(dto.getRelatedGuide());
+        detail.setRiskType(dto.getRiskType());
+        detail.setReduceResponse(dto.getReduceResponse());
+        detail.setCheckMemo(dto.getCheckMemo());
+        detail.setDueUser(userRepos.findById(dto.getDueUserId()).orElseThrow(() -> new NotFoundException("Input Checker ID: " + dto.getDueUserId())));
+        detail.setCheckUser(userRepos.findById(dto.getCheckerUserId()).orElseThrow(() -> new NotFoundException("Input Checker ID: " + dto.getDueUserId())));
+        detail.setStatus(dto.getStatus());
+        detail.setParentOrders(dto.getParentOrders());
+        detail.setOrders(dto.getOrders());
+        detail.setDepth(dto.getDepth());
+        detail.setParentDepth(dto.getParentDepth());
 
         return detail;
     }
@@ -77,22 +77,23 @@ public class RiskCheckDetailServiceImpl implements RiskCheckDetailService {
 
     @Override
     public RiskCheckDetail find(long id, HttpServletRequest httpServletRequest) throws Exception {
-        RiskCheckDetail oldRiskChkDet =
+        RiskCheckDetail riskChkDet =
             riskChkDetRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 위험성 평가표 상세입니다."));
 
-        return oldRiskChkDet;
+        return riskChkDet;
     }
 
     @Override
-    public RiskCheckDetail edit(RiskCheckDetail oldRiskChkDet, HttpServletRequest request) throws Exception {
-        RiskCheckDetail editedRiskChkDet = riskChkDetRepos.findById(oldRiskChkDet.getId())
+    public RiskCheckDetail edit(RiskCheckDetail newRiskChkDet, HttpServletRequest request) throws Exception {
+        RiskCheckDetail editedRiskChkDet =
+            riskChkDetRepos.findById(newRiskChkDet.getId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 위험성 평가표 상세입니다."));
         if(Objects.isNull(editedRiskChkDet)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 위험성 평가표 상세입니다.");
         }
 
-        editedRiskChkDet = riskChkDetRepos.save(oldRiskChkDet);
+        editedRiskChkDet = riskChkDetRepos.save(newRiskChkDet);
         return editedRiskChkDet;
     }
 
@@ -107,7 +108,7 @@ public class RiskCheckDetailServiceImpl implements RiskCheckDetailService {
     }
 
     @Override
-    public RiskCheckDetail generate(RiskCheckDetail oldRiskChkDet) {
+    public RiskCheckDetail generate(RiskCheckDetail newRiskChkDet) {
 
         return null;
     }

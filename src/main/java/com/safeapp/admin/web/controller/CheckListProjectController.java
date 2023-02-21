@@ -3,7 +3,7 @@ package com.safeapp.admin.web.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.web.dto.request.RequestCheckListProjectDTO;
-import com.safeapp.admin.web.dto.request.RequestCheckListProjectModifyDTO;
+import com.safeapp.admin.web.dto.request.RequestCheckListProjectEditDTO;
 import com.safeapp.admin.web.dto.response.ResponseCheckListProjectDTO;
 import com.safeapp.admin.web.dto.response.ResponseCheckListProjectSelectDTO;
 import com.safeapp.admin.utils.ResponseUtil;
@@ -64,7 +64,7 @@ public class CheckListProjectController {
     @PutMapping(value = "/edit/{id}")
     @ApiOperation(value = "체크리스트 수정", notes = "체크리스트 수정")
     public ResponseEntity<ResponseCheckListProjectDTO> edit(@PathVariable("id") @ApiParam(value = "체크리스트 PK", required = true) long id,
-            @RequestBody RequestCheckListProjectModifyDTO editDto, HttpServletRequest request) throws Exception {
+                                                            @RequestBody RequestCheckListProjectEditDTO editDto, HttpServletRequest request) throws Exception {
 
         CheckListProject newChkPrj = checkListProjectService.toEditEntity(editDto);
         newChkPrj.setId(id);

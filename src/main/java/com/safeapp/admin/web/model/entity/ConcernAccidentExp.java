@@ -27,12 +27,12 @@ public class ConcernAccidentExp extends BaseTimeEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "title")
-    private String title;
-
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "admin")
     private Admins admin;
+
+    @Column(name = "title")
+    private String title;
 
     @Column(name = "tags")
     private String tags;
@@ -96,8 +96,8 @@ public class ConcernAccidentExp extends BaseTimeEntity {
             String createdAtStart, String createdAtEnd, YN createdAtDesc, YN viewsDesc) {
 
         this.id = id;
-        this.title = title;
         this.admin = admin;
+        this.title = title;
         this.tags = tags;
         this.name = name;
         this.accidentUserName = accidentUserName;

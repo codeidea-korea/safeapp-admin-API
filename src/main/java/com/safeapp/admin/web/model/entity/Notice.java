@@ -1,7 +1,5 @@
 package com.safeapp.admin.web.model.entity;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.*;
 
 import com.safeapp.admin.web.data.NoticeType;
@@ -22,7 +20,14 @@ public class Notice extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "admin")
+    private Admins admin;
+
+    @Column(name = "priority")
+    private Boolean priority;
 
     @Enumerated(STRING)
     @Column(name = "type")
@@ -34,25 +39,22 @@ public class Notice extends BaseTimeEntity {
     @Column(name = "contents")
     private String contents;
 
-    @Column(name = "user_id")
-    private long userId;
-
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "user", insertable = false, updatable = false)
-    private Users user;
-
-    @Column(name = "priority")
-    private Boolean priority;
-
     @Builder
-    public Notice(long id, NoticeType type, String title, String contents, long userId) {
+    public Notice(Long id, NoticeType type, String title, String contents) {
         super();
 
         this.id = id;
         this.type = type;
         this.title = title;
         this.contents = contents;
-        this.userId = userId;
+    }
+
+    public void edit(Notice newNotice) {
+        setType(newNotice.getType());
+        setPriority(newNotice.getPriority());
+        setTitle(newNotice.getTitle());
+        setContents(newNotice.getContents());
+        setUpdatedAt(newNotice.getUpdatedAt());
     }
 
 }

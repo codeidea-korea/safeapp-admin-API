@@ -24,8 +24,9 @@ public class JdbcTemplateConfig {
     @Bean
     public BasicDataSource source() {
         BasicDataSource source = new BasicDataSource();
-        source.setUrl(url);
+
         source.setDriverClassName(driver);
+        source.setUrl(url);
         source.setUsername(username);
         source.setPassword(password);
 
@@ -36,4 +37,5 @@ public class JdbcTemplateConfig {
     public JdbcTemplate dataSource(BasicDataSource source) {
         return new JdbcTemplate(source);
     }
+
 }

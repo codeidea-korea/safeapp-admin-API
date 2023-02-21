@@ -122,7 +122,7 @@ public class ConcernAccidentExpDslReposImpl extends QuerydslRepositorySupport im
     }
 
     @Override
-    public List<Reports> findReports(long id) {
+    public List<Reports> findReport(long id) {
         JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
         QReports qReport = QReports.reports;
 
@@ -133,7 +133,7 @@ public class ConcernAccidentExpDslReposImpl extends QuerydslRepositorySupport im
     }
 
     @Override
-    public long countAllReport(ConcernAccidentExp conExp) {
+    public long countAllReports(ConcernAccidentExp conExp) {
         QConcernAccidentExp qConExp = QConcernAccidentExp.concernAccidentExp;
         QReports qReport = QReports.reports;
 
@@ -143,7 +143,7 @@ public class ConcernAccidentExpDslReposImpl extends QuerydslRepositorySupport im
     }
 
     @Override
-    public List<ConcernAccidentExp> findAllReport(ConcernAccidentExp conExp, Pages pages) {
+    public List<ConcernAccidentExp> findAllReports(ConcernAccidentExp conExp, Pages pages) {
         QConcernAccidentExp qConExp = QConcernAccidentExp.concernAccidentExp;
         QReports qReport = QReports.reports;
 

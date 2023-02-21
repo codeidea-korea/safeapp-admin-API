@@ -127,28 +127,28 @@ public class CheckListProject extends BaseTimeEntity {
         }
     }
 
-    public void edit(CheckListProject checkListProject) {
-        setProject(checkListProject.getProject());
-        setUser(checkListProject.getUser());
-        setName(checkListProject.getName());
-        setVisibled(checkListProject.getVisibled());
-        setTag(checkListProject.getTag());
-        setRelatedAcidNo(checkListProject.getRelatedAcidNo());
-        setChecker(checkListProject.getChecker());
-        setCheckAt(checkListProject.getCheckAt());
-        setReviewer(checkListProject.getReviewer());
-        setApprover(checkListProject.getApprover());
-        setRecheckReason(checkListProject.getRecheckReason());
+    public void edit(CheckListProject newChkPrj) {
+        setProject(newChkPrj.getProject());
+        setUser(newChkPrj.getUser());
+        setName(newChkPrj.getName());
+        setVisibled(newChkPrj.getVisibled());
+        setTag(newChkPrj.getTag());
+        setRelatedAcidNo(newChkPrj.getRelatedAcidNo());
+        setChecker(newChkPrj.getChecker());
+        setCheckAt(newChkPrj.getCheckAt());
+        setReviewer(newChkPrj.getReviewer());
+        setApprover(newChkPrj.getApprover());
+        setRecheckReason(newChkPrj.getRecheckReason());
 
-        if(checkListProject.checkListProjectDetailList.isEmpty() == false) {
-            for(CheckListProjectDetail addDetail : checkListProject.checkListProjectDetailList) {
+        if(newChkPrj.checkListProjectDetailList.isEmpty() == false) {
+            for(CheckListProjectDetail addDetail : newChkPrj.checkListProjectDetailList) {
                 boolean isInDB = checkListProjectDetailList.equals(addDetail);
                 if(isInDB == false) {
                     checkListProjectDetailList.add(addDetail);
                 }
             }
             for(CheckListProjectDetail removeDetail : checkListProjectDetailList) {
-                boolean isInDB = checkListProject.checkListProjectDetailList.equals(removeDetail);
+                boolean isInDB = newChkPrj.checkListProjectDetailList.equals(removeDetail);
                 if(isInDB == false) {
                     checkListProjectDetailList.remove(removeDetail);
                 }
