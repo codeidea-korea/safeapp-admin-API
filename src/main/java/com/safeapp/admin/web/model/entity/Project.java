@@ -62,6 +62,9 @@ public class Project extends BaseTimeEntity {
     @Transient
     private Long userId;
 
+    @Transient
+    private LocalDateTime updatedAt;
+
     @Builder
     public Project(Long id, String name, LocalDateTime startAt, LocalDateTime endAt, Long maxUserCount, String address,
             String addressDetail, String contents, String image, ProjectType status) {
@@ -88,6 +91,7 @@ public class Project extends BaseTimeEntity {
         this.contents = oldProject.getContents();
         this.image = oldProject.getImage();
         this.status = oldProject.getStatus();
+        this.updatedAt = LocalDateTime.now();
     }
 
 }

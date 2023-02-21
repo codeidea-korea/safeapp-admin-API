@@ -6,6 +6,7 @@ import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.Notice;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,24 +25,19 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-//@RestController
-@RequestMapping("/board")
-@Api(tags = {"Notice"}, description = "공지", basePath = "/board")
+@RestController
+@RequestMapping("/board/notice")
+@AllArgsConstructor
+@Api(tags = {"Notice"}, description = "컨텐츠 관리 > 공지사항 관리")
 public class NoticeController {
 
     private final NoticeService noticeService;
 
-    @Autowired
-    public NoticeController(NoticeService noticeService) {
-        this.noticeService = noticeService;
-    }
+    @PostMapping(value = "/add")
+    @ApiOperation(value = "공지사항 등록", notes = "공지사항 등록")
+    public ResponseEntity add(@RequestBody Notice newNotice, HttpServletRequest request) throws Exception {
 
-    @PostMapping(value = "/notice")
-    @ApiOperation(value = "등록", notes = "등록")
-    public ResponseEntity add(
-        @RequestBody Notice params,
-        HttpServletRequest request) throws Exception {
-        return ResponseUtil.sendResponse(noticeService.add(params, request));
+        return ResponseUtil.sendResponse(noticeService.add(newNotice, request));
     }
 
     @PutMapping(value = "/notices/{id}")

@@ -94,8 +94,8 @@ public class CheckListProjectController {
             @RequestParam(value = "createdAtDesc", required = false) @Parameter(description = "최신순") YN createdAtDesc,
             @RequestParam(value = "likesDesc", required = false) @Parameter(description = "좋아요순") YN likesDesc,
             @RequestParam(value = "viewsDesc", required = false) @Parameter(description = "조회순") YN viewsDesc,
-            @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(value = "pageNo", defaultValue = "1") @Parameter(description = "현재 페이지 번호") int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10") @Parameter(description = "1 페이지 당 목록 수") int pageSize,
             HttpServletRequest request) throws Exception {
 
         if(Objects.isNull(createdAtStart)) createdAtStart = "1000-01-01 00:00:00.000";

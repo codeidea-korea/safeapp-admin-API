@@ -31,7 +31,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -89,28 +91,31 @@ public class RiskCheckController {
             @RequestParam(value = "userName", required = false) @Parameter(description = "이름") String userName,
             @RequestParam(value = "phoneNo", required = false) @Parameter(description = "휴대폰번호") String phoneNo,
             @RequestParam(value = "visibled", required = false) @Parameter(description = "공개 여부") YN visibled,
-            @RequestParam(value = "createdAtStart", required = false) LocalDateTime createdAtStart,
-            @RequestParam(value = "createdAtEnd", required = false) LocalDateTime createdAtEnd,
+            @RequestParam(value = "createdAtStart", required = false) @Parameter(description = "등록일시 시작") String createdAtStart,
+            @RequestParam(value = "createdAtEnd", required = false) @Parameter(description = "등록일시 종료") String createdAtEnd,
             @RequestParam(value = "createdAtDesc", required = false) @Parameter(description = "최신순") YN createdAtDesc,
             @RequestParam(value = "likesDesc", required = false) @Parameter(description = "좋아요순") YN likesDesc,
             @RequestParam(value = "viewsDesc", required = false) @Parameter(description = "조회순") YN viewsDesc,
-            @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(value = "pageNo", defaultValue = "1") @Parameter(description = "현재 페이지 번호") int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10") @Parameter(description = "1 페이지 당 목록 수") int pageSize,
             HttpServletRequest request) throws Exception {
 
-        /*
+        if(Objects.isNull(createdAtStart)) createdAtStart = "1000-01-01 00:00:00.000";
+        if(Objects.isNull(createdAtEnd)) createdAtEnd = "9999-12-30 00:00:00.000";
+
         Long count =
-            riskCheckService.countAllByCondition(keyword, userName, phoneNo, visibled, createdAtStart, createdAtEnd);
-        List<ResponseCheckListProjectDTO> list =
-            riskCheckService.findAllByConditionAndOrderBy(keyword, userName, phoneNo,
-            visibled, createdAtStart, createdAtEnd, createdAtDesc, likesDesc, viewsDesc,
-            pageNo, pageSize, request);
+            riskCheckService.countAllByCondition(keyword, userName, phoneNo, visibled,
+            LocalDateTime.parse(createdAtStart, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")),
+            LocalDateTime.parse(createdAtEnd, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")).plusDays(1));
+        List<ResponseRiskCheckDTO> list =
+            riskCheckService.findAllByConditionAndOrderBy(keyword, userName, phoneNo, visibled,
+            LocalDateTime.parse(createdAtStart, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")),
+            LocalDateTime.parse(createdAtEnd, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")).plusDays(1),
+            createdAtDesc, likesDesc, viewsDesc, pageNo, pageSize, request);
         Pages pages = new Pages(pageNo, pageSize);
 
         ListResponse riskChkList = new ListResponse(count, list, pages);
-        */
-
-        return ResponseUtil.sendResponse(null);
+        return ResponseUtil.sendResponse(riskChkList);
     }
 
 }
