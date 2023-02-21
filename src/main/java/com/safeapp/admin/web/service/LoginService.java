@@ -21,4 +21,8 @@ public interface LoginService {
 
     Admins findMe(HttpServletRequest request);
 
+    Admins findEmail(String adminName, String phoneNo, HttpServletRequest request) throws Exception;
+
+    Admins editPass(String email, String adminName, String phoneNo, HttpServletRequest request) throws Exception;
+    
 }

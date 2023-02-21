@@ -15,24 +15,24 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 
-@Data
 @Document
+@Data
 public class LoginHistory {
 
     @Id
-    @ApiModelProperty(value = "몽고 식별자")
+    @ApiModelProperty(value = "mongo PK")
     private String docId;
 
-    @ApiModelProperty("입력 아이디")
+    @ApiModelProperty("회원 ID")
     private String userId;
 
-    @ApiModelProperty("입력 비밀번호")
+    @ApiModelProperty("회원 비밀번호")
     private String password;
 
-    @ApiModelProperty("성공 여부")
+    @ApiModelProperty("로그인 성공 여부")
     private boolean isSuccess;
 
-    @ApiModelProperty("요청일시")
+    @ApiModelProperty("로그인일시")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)

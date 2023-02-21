@@ -26,7 +26,7 @@ public class RequestAdminsDTO {
     @Schema(description = "이름", example = "관리자 1")
     String adminName;
 
-    @Schema(description = "휴대폰번호", example = "010-1111-1111")
+    @Schema(description = "휴대폰번호", example = "01011111111")
     String phoneNo;
 
     @Schema(description = "메모", example = "메모 1")

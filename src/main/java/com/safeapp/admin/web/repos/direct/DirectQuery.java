@@ -63,7 +63,7 @@ public class DirectQuery {
                                 "AND pg.user_auth_type = 'TEAM_MASTER' " +
                                 "AND ua.status = 'ing' " +
                         ") " +
-                        "AND pg.user = 13 "
+                        "AND pg.user = " + id
                 );
 
             return (long)myProjectMap.get("cnt");

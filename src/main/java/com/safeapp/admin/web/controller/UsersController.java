@@ -123,11 +123,11 @@ public class UsersController {
         resultMap.put("myAuth", myAuth);
 
         long count = userService.countMyProjectList(id, request);
-        List<Map<String, Object>> myProjectList = userService.findMyProjectList(id, pageNo, pageSize, request);
+        List<Map<String, Object>> list = userService.findMyProjectList(id, pageNo, pageSize, request);
         Pages pages = new Pages(pageNo, pageSize);
 
-        ListResponse myProjectListResponse = new ListResponse(count, myProjectList, pages);
-        resultMap.put("myProjectList", myProjectListResponse);
+        ListResponse myProjectList = new ListResponse(count, list, pages);
+        resultMap.put("myProjectList", myProjectList);
 
         return ResponseUtil.sendResponse(resultMap);
     }

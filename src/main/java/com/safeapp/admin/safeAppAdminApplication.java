@@ -17,6 +17,7 @@ public class safeAppAdminApplication extends SpringBootServletInitializer {
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+
         return builder.sources(safeAppAdminApplication.class);
     }
 

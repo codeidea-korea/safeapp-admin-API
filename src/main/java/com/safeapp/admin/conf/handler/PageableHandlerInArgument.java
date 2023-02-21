@@ -17,12 +17,13 @@ public class PageableHandlerInArgument implements HandlerMethodArgumentResolver 
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
+
         return Pages.class.isAssignableFrom(parameter.getParameterType());
     }
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-        NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+            NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
 
         String offsetString = webRequest.getParameter("pageNo");
         String limitString = webRequest.getParameter("pageSize");
@@ -30,19 +31,22 @@ public class PageableHandlerInArgument implements HandlerMethodArgumentResolver 
         int offset = 1;
         int limit = 10;
 
-        if (!StringUtils.isEmpty(offsetString) && StringUtils.isNumeric(offsetString)) {
+        if(!StringUtils.isEmpty(offsetString) && StringUtils.isNumeric(offsetString)) {
             int tmpOffset = Integer.valueOf(offsetString);
-            if (MIN_OFFSET_VALUE <= tmpOffset && tmpOffset <= MAX_OFFSET_VALUE) {
+            if(MIN_OFFSET_VALUE <= tmpOffset && tmpOffset <= MAX_OFFSET_VALUE) {
+
                 offset = tmpOffset;
             }
         }
-        if (!StringUtils.isEmpty(limitString) && StringUtils.isNumeric(limitString)) {
+        if(!StringUtils.isEmpty(limitString) && StringUtils.isNumeric(limitString)) {
             int tmpLimit = Integer.valueOf(limitString);
-            if (MIN_SIZE_VALUE <= tmpLimit && tmpLimit <= MAX_SIZE_VALUE) {
+            if(MIN_SIZE_VALUE <= tmpLimit && tmpLimit <= MAX_SIZE_VALUE) {
+
                 limit = tmpLimit;
             }
         }
 
         return new Pages(offset, limit);
     }
+
 }

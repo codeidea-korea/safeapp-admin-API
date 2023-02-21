@@ -105,6 +105,7 @@ public class UserServiceImpl implements UserService {
         newUser.setUserName(addDto.getUserName());
         newUser.setMarketingAllowed(addDto.getMarketingAllowed());
         newUser.setMarketingAllowedAt(addDto.getMarketingAllowedAt());
+        newUser.setMaxProjectGroupCount(0);
 
         return newUser;
     }

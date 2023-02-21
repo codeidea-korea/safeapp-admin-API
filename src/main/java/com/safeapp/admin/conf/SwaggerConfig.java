@@ -29,9 +29,6 @@ import springfox.documentation.spring.web.plugins.Docket;
 @Configuration
 public class SwaggerConfig {
 
-    @Value("${api.info.token.url}")
-    private String accessTokenUri;
-
     @Value("${api.info.title}")
     private String apiTitle;
 
@@ -41,8 +38,12 @@ public class SwaggerConfig {
     @Value("${api.info.dev.version}")
     private String apiVersion;
 
+    @Value("${api.info.token.url}")
+    private String accessTokenUri;
+
     private ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
+        return
+            new ApiInfoBuilder()
             .title(apiTitle)
             .description(apiDescription)
             .version(apiVersion)
@@ -51,12 +52,12 @@ public class SwaggerConfig {
 
     @Bean
     public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
+        return
+            new Docket(DocumentationType.SWAGGER_2)
             .select()
             .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
             .paths(PathSelectors.any())
             .build()
-            //				.tags(new Tag("테스트 명칭", "/api/v1/hanwoo"))
             .apiInfo(apiInfo())
             .securityContexts(Collections.singletonList(securityContext()))
             .securitySchemes(Arrays.asList(securitySchema()))
@@ -66,33 +67,34 @@ public class SwaggerConfig {
     @SuppressWarnings("unused")
     private Set<String> getConsumeContentTypes() {
         Set<String> consumes = new HashSet<>();
+
         consumes.add("application/json;charset=UTF-8");
         consumes.add("application/x-www-form-urlencoded");
+
         return consumes;
     }
 
     @SuppressWarnings("unused")
     private Set<String> getProduceContentTypes() {
         Set<String> produces = new HashSet<>();
+
         produces.add("application/json;charset=UTF-8");
+
         return produces;
     }
 
     private SecurityContext securityContext() {
-        return SecurityContext.builder()
+        return
+            SecurityContext.builder()
             .securityReferences(defaultAuth())
             .build();
     }
 
     private List<SecurityReference> defaultAuth() {
-        /*
-        final AuthorizationScope[] authorizationScopes = new AuthorizationScope[] {
-            new AuthorizationScope("read", "read all"),
-            new AuthorizationScope("write", "write all")
-        };
-        */
         final AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
+
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
+
         authorizationScopes[0] = authorizationScope;
         
         return Collections.singletonList(new SecurityReference("Authorization", authorizationScopes));
@@ -105,8 +107,10 @@ public class SwaggerConfig {
         authorizationScopeList.add(new AuthorizationScope("write", "access all"));
 
         final List<GrantType> grantTypes = new ArrayList<>(1);
+
         grantTypes.add(new ResourceOwnerPasswordCredentialsGrant(accessTokenUri));
 
         return new OAuth("oauth2", authorizationScopeList, grantTypes);
     }
+
 }

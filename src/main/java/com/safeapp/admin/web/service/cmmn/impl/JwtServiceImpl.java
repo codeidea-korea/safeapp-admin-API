@@ -31,16 +31,18 @@ import io.jsonwebtoken.ExpiredJwtException;
 @Slf4j
 public class JwtServiceImpl implements JwtService {
 
-    private final JwtUtil jwtUtil;
     private final AdminRepos adminRepos;
     private final UserRepos userRepos;
+
+    private final JwtUtil jwtUtil;
     private final DateUtil dateUtil;
 
     @Autowired
     public JwtServiceImpl(JwtUtil jwtUtil, AdminRepos adminRepos, UserRepos userRepos, DateUtil dateUtil) {
-        this.jwtUtil = jwtUtil;
         this.adminRepos = adminRepos;
         this.userRepos = userRepos;
+
+        this.jwtUtil = jwtUtil;
         this.dateUtil = dateUtil;
     }
 
@@ -66,7 +68,7 @@ public class JwtServiceImpl implements JwtService {
     
     private String removeBearer(String token) {
         if(StringUtils.isNullOrEmpty(token) || (!token.toLowerCase().contains("bearer "))) {
-            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "반드시 토큰을 넣어주셔야 합니다. 123");
+            throw new HttpServerErrorException(HttpStatus.UNAUTHORIZED, "반드시 토큰을 넣어주셔야 합니다.");
         }
         
         return token.replace("Bearer ", "").replace("Bearer ", "");

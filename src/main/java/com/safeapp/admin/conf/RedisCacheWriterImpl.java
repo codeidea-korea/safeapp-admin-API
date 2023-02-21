@@ -24,30 +24,36 @@ public class RedisCacheWriterImpl implements org.springframework.data.redis.cach
 
 	@Override
 	public void put(String name, byte[] key, byte[] value, Duration ttl) {
-		if (Objects.isNull(ttl)) {
+		if(Objects.isNull(ttl)) {
+
 			return;
 		}
+
 		redisCacheService.setValue(key.toString(), value.toString(), ttl.getSeconds());
 	}
 
 	@Override
 	public byte[] get(String name, byte[] key) {
 		String value = redisCacheService.getValue(key.toString());
+
 		return value.getBytes(StandardCharsets.UTF_8);
 	}
 
 	@Override
 	public byte[] putIfAbsent(String name, byte[] key, byte[] value, Duration ttl) {
 		redisCacheService.setValue(key.toString(), value.toString(), ttl.getSeconds());
+
 		return this.get(name, key);
 	}
 
 	@Override
 	public void remove(String name, byte[] key) {
+
 	}
 
 	@Override
 	public void clean(String name, byte[] pattern) {
+
 	}
 
     @Override
@@ -67,4 +73,5 @@ public class RedisCacheWriterImpl implements org.springframework.data.redis.cach
         // TODO Auto-generated method stub
         return null;
     }
+
 }

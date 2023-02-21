@@ -21,6 +21,7 @@ public class ResponseHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
         Map<String, Object> exceptionResponse = new HashMap<>();
+
         exceptionResponse.put("result", false);
         exceptionResponse.put("details", request.getDescription(false));
         exceptionResponse.put("msg", ex.getMessage());
@@ -33,6 +34,7 @@ public class ResponseHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(HttpServerErrorException.class)
     public final ResponseEntity<Object> handleHttpServerErrorException(HttpServerErrorException ex) {
         Map<String, Object> exceptionResponse = new HashMap<>();
+
         exceptionResponse.put("result", false);
         exceptionResponse.put("code", ex.getStatusCode());
         exceptionResponse.put("msg", ex.getMessage());

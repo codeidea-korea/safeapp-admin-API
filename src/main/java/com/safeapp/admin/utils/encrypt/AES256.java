@@ -7,6 +7,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class AES256 {
+
     public static String alg = "AES/CBC/PKCS5Padding";
     private final String key;
     private final String iv;
@@ -36,4 +37,5 @@ public class AES256 {
         byte[] decrypted = cipher.doFinal(decodedBytes);
         return new String(decrypted, "UTF-8");
     }
+
 }

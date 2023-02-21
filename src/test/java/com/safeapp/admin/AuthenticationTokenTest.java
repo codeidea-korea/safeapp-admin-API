@@ -1,12 +1,11 @@
 package com.safeapp.admin;
 
 import com.safeapp.admin.web.model.entity.Admins;
-import com.safeapp.admin.web.model.entity.Users;
 import org.junit.jupiter.api.Assertions;
 
 import com.safeapp.admin.utils.JwtUtil;
 
-public class BFAuthenticationTokenTest {
+public class AuthenticationTokenTest {
     
     public static void main(String[] args) {
         JwtUtil jwtUtil = new JwtUtil();

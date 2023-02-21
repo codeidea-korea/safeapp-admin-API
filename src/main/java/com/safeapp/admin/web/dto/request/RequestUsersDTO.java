@@ -19,7 +19,7 @@ public class RequestUsersDTO {
     @Schema(description = "비밀번호", example = "user1_")
     String password;
 
-    @Schema(description = "휴대폰번호", example = "010-1111-1111")
+    @Schema(description = "휴대폰번호", example = "01011111111")
     String phoneNo;
 
     @Schema(description = "유형", example = "1")

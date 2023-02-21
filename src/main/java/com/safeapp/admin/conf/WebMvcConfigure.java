@@ -10,14 +10,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebMvcConfigure implements WebMvcConfigurer {
+
 	@Bean
-	public PageableHandlerInArgument bfPageableResolver() {
+	public PageableHandlerInArgument pageableResolverCustom() {
 		return new PageableHandlerInArgument();
 	}
 
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-		resolvers.add(bfPageableResolver());
+
+		resolvers.add(pageableResolverCustom());
 	}
 
 }
