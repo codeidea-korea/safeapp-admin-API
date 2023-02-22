@@ -165,6 +165,19 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public long countDocList(long id, HttpServletRequest request) {
+
+        return dirRepos.countDocList(id);
+    }
+
+    @Override
+    public List<Map<String, Object>> findDocList(long id, int pageNo, int pageSize, HttpServletRequest request) {
+
+        return null;
+        //return dirRepos.findDocList(id, pageNo, pageSize);
+    }
+
+    @Override
     public List<ResponseProjectGroupDTO> findAllGroupByCondition(long id, int pageNo, int pageSize, HttpServletRequest request) {
 
         return prjGrRepos.findAllById(id, pageNo, pageSize, request);
@@ -181,17 +194,16 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public long countProjectList(String name, String userName, String orderType, String status,
-            String createdAtStart, String createdAtEnd, HttpServletRequest request) {
+    public long countProjectList(String name, String userName, String createdAtStart, String createdAtEnd, HttpServletRequest request) {
 
-        return dirRepos.countProjectList(name, userName, orderType, status, createdAtStart, createdAtEnd);
+        return dirRepos.countProjectList(name, userName, createdAtStart, createdAtEnd);
     }
 
     @Override
-    public List<Map<String, Object>> findProjectList(String name, String userName, String orderType, String status,
-            String createdAtStart, String createdAtEnd, int pageNo, int pageSize, HttpServletRequest request) {
+    public List<Map<String, Object>> findProjectList(String name, String userName, String createdAtStart, String createdAtEnd,
+            int pageNo, int pageSize, HttpServletRequest request) {
 
-        return dirRepos.findProjectList(name, userName, orderType, status, createdAtStart, createdAtEnd, pageNo, pageSize);
+        return dirRepos.findProjectList(name, userName, createdAtStart, createdAtEnd, pageNo, pageSize);
     }
 
     @Override

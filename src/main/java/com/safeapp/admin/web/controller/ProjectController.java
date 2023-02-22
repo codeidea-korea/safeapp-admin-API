@@ -101,6 +101,22 @@ public class ProjectController {
     }
     */
 
+    @GetMapping(value = "/find/{id}/doc/list")
+    @ApiOperation(value = "프로젝트 문서 목록 조회", notes = "프로젝트 문서 목록 조회")
+    public ResponseEntity<List<ResponseProjectGroupDTO>> findAllDoc(
+            @PathVariable("id") @ApiParam(value = "프로젝트 PK", required = true) long id,
+            @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            HttpServletRequest request) throws Exception {
+
+        long count = projectService.countDocList(id, request);
+        List<Map<String, Object>> list = projectService.findDocList(id, pageNo, pageSize, request);
+        Pages pages = new Pages(pageNo, pageSize);
+
+        ListResponse docListResponse = new ListResponse(count, list, pages);
+        return ResponseUtil.sendResponse(docListResponse);
+    }
+
     @GetMapping(value = "/find/{id}/group/list")
     @ApiOperation(value = "프로젝트 그룹원 목록 조회", notes = "프로젝트 그룹원 목록 조회")
     public ResponseEntity<List<ResponseProjectGroupDTO>> findAllGroupByCondition(
@@ -126,20 +142,30 @@ public class ProjectController {
     public ResponseEntity<List<Map<String, Object>>> findAll(
             @RequestParam(value = "name", required = false, defaultValue = "") String name,
             @RequestParam(value = "userName", required = false, defaultValue = "") String userName,
+            // 멤버쉽 검색 관련은 주석 처리함
+            /*
             @RequestParam(value = "orderType", required = false, defaultValue = "") String orderType,
             @RequestParam(value = "status", required = false, defaultValue = "") String status,
+            */
             @RequestParam(value = "createdAtStart", required = false, defaultValue = "") String createdAtStart,
             @RequestParam(value = "createdAtEnd", required = false, defaultValue = "") String createdAtEnd,
             @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             HttpServletRequest request) throws Exception {
 
+        // 멤버쉽 검색 관련은 주석 처리함
+        /*
         long count =
             projectService.countProjectList(name, userName, orderType, status, createdAtStart,
             createdAtEnd, request);
         List<Map<String, Object>> list =
             projectService.findProjectList(name, userName, orderType, status, createdAtStart,
             createdAtEnd, pageNo, pageSize, request);
+        */
+        long count =
+            projectService.countProjectList(name, userName, createdAtStart, createdAtEnd, request);
+        List<Map<String, Object>> list =
+            projectService.findProjectList(name, userName, createdAtStart, createdAtEnd, pageNo, pageSize, request);
         Pages pages = new Pages(pageNo, pageSize);
 
         ListResponse projectListResponse = new ListResponse(count, list, pages);

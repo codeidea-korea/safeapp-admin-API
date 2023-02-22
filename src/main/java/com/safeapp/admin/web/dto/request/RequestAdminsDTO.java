@@ -32,7 +32,7 @@ public class RequestAdminsDTO {
     @Schema(description = "메모", example = "메모 1")
     String memo;
 
-    @Schema(description = "마케팅 정보 수신 동의 여부", example = "1")
+    @Schema(description = "마케팅 정보 수신 동의 여부", example = "0")
     YN marketingAllowed;
 
     @Schema(description = "마케팅 정보 수신 동의 시각")
