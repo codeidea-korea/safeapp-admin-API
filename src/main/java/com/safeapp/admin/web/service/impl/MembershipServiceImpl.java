@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -111,7 +112,20 @@ public class MembershipServiceImpl implements MembershipService {
     public List<Map<String, Object>> findMembershipList(String userName, String orderType, String status,
             String createdAtStart, String createdAtEnd, int pageNo, int pageSize, HttpServletRequest request) {
 
-        return dirRepos.findMembershipList(userName, orderType, status, createdAtStart, createdAtEnd, pageNo, pageSize, request);
+        List<Map<String, Object>> membershipList =
+            dirRepos.findMembershipList(userName, orderType, status, createdAtStart, createdAtEnd, pageNo, pageSize, request);
+
+        AtomicReference<Long> totalAmount = new AtomicReference<>(Long.parseLong("0"));
+        membershipList.forEach(m -> {
+            if(m.get("auth_status").toString().equals("ing")) {
+                if(!Objects.isNull(m.get("amount")) && Integer.parseInt(m.get("amount").toString()) > 0) {
+                    totalAmount.updateAndGet(v -> v + Integer.parseInt(m.get("amount").toString()));
+                }
+            }
+        });
+        membershipList.get(0).put("totalAmount", totalAmount);
+
+        return membershipList;
     }
 
     @Override
