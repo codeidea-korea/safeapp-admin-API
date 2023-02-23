@@ -105,12 +105,14 @@ public class ProjectController {
     @ApiOperation(value = "프로젝트 문서 목록 조회", notes = "프로젝트 문서 목록 조회")
     public ResponseEntity<List<ResponseProjectGroupDTO>> findAllDoc(
             @PathVariable("id") @ApiParam(value = "프로젝트 PK", required = true) long id,
+            @RequestParam(value = "userName", required = false, defaultValue = "") String userName,
+            @RequestParam(value = "name", required = false, defaultValue = "") String name,
             @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             HttpServletRequest request) throws Exception {
 
-        long count = projectService.countDocList(id, request);
-        List<Map<String, Object>> list = projectService.findDocList(id, pageNo, pageSize, request);
+        long count = projectService.countDocList(id, userName, name, request);
+        List<Map<String, Object>> list = projectService.findDocList(id, userName, name, pageNo, pageSize, request);
         Pages pages = new Pages(pageNo, pageSize);
 
         ListResponse docListResponse = new ListResponse(count, list, pages);

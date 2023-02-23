@@ -26,6 +26,8 @@ public interface ConcernAccidentExpService extends CRUDService<ConcernAccidentEx
 
     List<Reports> findReport(long id, HttpServletRequest request) throws Exception;
 
+    void removeReport(long id, HttpServletRequest request);
+
     ListResponse<ConcernAccidentExp> findAllReports(ConcernAccidentExp conExp, Pages pages, HttpServletRequest request) throws Exception;
 
 }

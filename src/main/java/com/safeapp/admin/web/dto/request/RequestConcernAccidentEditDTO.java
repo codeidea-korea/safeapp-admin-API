@@ -29,7 +29,7 @@ public class RequestConcernAccidentEditDTO {
     String causeDetail;
 
     @Schema(description = "발생원인")
-    String accidentCause;
+    String accidentReason;
 
     @Schema(description = "관리대책")
     String response;

@@ -165,16 +165,12 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public long countDocList(long id, HttpServletRequest request) {
-
-        return dirRepos.countDocList(id);
-    }
+    public long countDocList(long id, String userName, String name, HttpServletRequest request) { return dirRepos.countDocList(id, userName, name); }
 
     @Override
-    public List<Map<String, Object>> findDocList(long id, int pageNo, int pageSize, HttpServletRequest request) {
+    public List<Map<String, Object>> findDocList(long id, String userName, String name, int pageNo, int pageSize, HttpServletRequest request) {
 
-        return null;
-        //return dirRepos.findDocList(id, pageNo, pageSize);
+        return dirRepos.findDocList(id, userName, name, pageNo, pageSize);
     }
 
     @Override

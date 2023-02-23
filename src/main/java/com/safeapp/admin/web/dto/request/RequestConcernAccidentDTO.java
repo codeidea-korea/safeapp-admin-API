@@ -36,12 +36,18 @@ public class RequestConcernAccidentDTO {
     String causeDetail;
 
     @Schema(description = "발생원인")
-    String accidentCause;
+    String accidentReason;
 
     @Schema(description = "관리대책")
     String response;
 
     @Schema(description = "이미지 첨부")
     String image;
+
+    @Schema(description = "사고경위")
+    String accidentCause;
+
+    @Schema(description = "사고발생일시")
+    LocalDateTime accidentAt;
 
 }

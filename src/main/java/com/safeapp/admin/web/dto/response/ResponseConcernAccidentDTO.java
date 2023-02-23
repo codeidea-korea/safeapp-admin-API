@@ -22,6 +22,10 @@ public class ResponseConcernAccidentDTO {
     @NotBlank(message = NOT_NULL)
     String adminName;
 
+    @Schema(description = "등록자(사용자) 이름")
+    @NotBlank(message = NOT_NULL)
+    String userName;
+
     @Schema(description = "등록일시")
     LocalDateTime createdAt;
 
@@ -48,7 +52,7 @@ public class ResponseConcernAccidentDTO {
     String causeDetail;
 
     @Schema(description = "발생원인")
-    String accidentCause;
+    String accidentReason;
 
     @Schema(description = "관리대책")
     String response;
@@ -59,10 +63,17 @@ public class ResponseConcernAccidentDTO {
     @Schema(description = "조회수")
     Integer views;
 
+    @Schema(description = "사고경위")
+    String accidentCause;
+
+    @Schema(description = "사고발생일시")
+    LocalDateTime accidentAt;
+
     @Builder
     public ResponseConcernAccidentDTO(ConcernAccidentExp conExp) {
         this.id = conExp.getId();
         this.adminName = conExp.getAdmin().getAdminName();
+        this.userName = conExp.getUser().getUserName();
         this.createdAt = conExp.getCreatedAt();
         this.title = conExp.getTitle();
         this.tags = conExp.getTags();
@@ -71,10 +82,12 @@ public class ResponseConcernAccidentDTO {
         this.accidentType = conExp.getAccidentType();
         this.accidentPlace = conExp.getAccidentPlace();
         this.causeDetail = conExp.getCauseDetail();
-        this.accidentCause = conExp.getAccidentCause();
+        this.accidentReason = conExp.getAccidentReason();
         this.response = conExp.getResponse();
         this.image = conExp.getImage();
         this.views = conExp.getViews();
+        this.accidentCause = conExp.getAccidentCause();
+        this.accidentAt = conExp.getAccidentAt();
     }
 
 }

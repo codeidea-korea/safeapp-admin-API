@@ -310,21 +310,18 @@ public class DirectQuery {
                 whereOption = whereOption + "AND p.created_at <= '" + createdAtEnd + "' ";
             }
 
-            /*
             List<Map<String, Object>> projectList =
                 jdbcTemplate.queryForList(
                 "SELECT " +
-                        "A.*, " +
-                        "SELECT SUM(cnt) AS temp_cnt FROM " +
-                        "(" +
-                            "(SELECT COUNT(id) AS cnt FROM checklist_templates WHERE project = A.id AND delete_yn = false) " +
-                            "UNION ALL " +
-                            "(SELECT COUNT(id) AS cnt FROM risk_templates WHERE project = A.id AND delete_yn = false)" +
-                        ") B " +
+                        "A.*, (A.cnt1 + A.cnt2) AS temp_cnt " +
                     "FROM " +
                     "(" +
                         "SELECT " +
                             "p.id, p.name, p.created_at, u.user_name, " +
+                            "(SELECT COUNT(id) FROM checklist_templates ct WHERE ct.project = p.id AND ct.delete_yn = false) AS cnt1, " +
+                            "(SELECT COUNT(id) FROM risk_templates rt WHERE rt.project = p.id AND rt.delete_yn = false) AS cnt2, " +
+                            "(SELECT COUNT(id) FROM checklist_projects c WHERE c.project = p.id AND c.delete_yn = false) AS check_cnt, " +
+                            "(SELECT COUNT(id) FROM risk_checks r WHERE r.project = p.id AND r.delete_yn = false) AS risk_cnt, " +
                             "(SELECT COUNT(pg2.id) FROM project_groups pg2 LEFT JOIN users u2 ON pg2.user = u2.id " +
                             "WHERE pg2.project = p.id AND pg2.delete_yn = false AND u2.delete_yn = false) AS group_cnt " +
                         "FROM projects p " +
@@ -333,28 +330,6 @@ public class DirectQuery {
                         "WHERE p.delete_yn = false " + whereOption +
                     ") A " +
                     "ORDER BY A.id DESC LIMIT " + (pageNo - 1) * pageSize + ", " + pageSize
-                );
-            */
-
-            List<Map<String, Object>> projectList =
-                jdbcTemplate.queryForList(
-                "SELECT " +
-                        "p.id, p.name, p.created_at, u.user_name, " +
-                        /*
-                        "(SELECT SUM(cnt) AS temp_cnt FROM " +
-                        "(" +
-                            "(SELECT COUNT(id) AS cnt FROM checklist_templates ct WHERE ct.project = p.id AND ct.delete_yn = false) " +
-                            "UNION ALL " +
-                            "(SELECT COUNT(id) AS cnt FROM risk_templates rt WHERE rt.project = p.id AND rt.delete_yn = false)" +
-                        ") A), " +
-                        */
-                        "(SELECT COUNT(pg2.id) FROM project_groups pg2 LEFT JOIN users u2 ON pg2.user = u2.id " +
-                        "WHERE pg2.project = p.id AND pg2.delete_yn = false AND u2.delete_yn = false) AS group_cnt " +
-                    "FROM projects p " +
-                    "LEFT JOIN project_groups pg ON p.id = pg.project AND pg.delete_yn = false AND pg.user_auth_type = 'TEAM_MASTER' " +
-                    "LEFT JOIN users u ON pg.user = u.id AND u.delete_yn = false " +
-                    "WHERE p.delete_yn = false " + whereOption +
-                    "ORDER BY p.id DESC LIMIT " + (pageNo - 1) * pageSize + ", " + pageSize
                 );
 
             return projectList;
@@ -368,43 +343,70 @@ public class DirectQuery {
         }
     }
 
-    public long countDocList(long id) {
-        /*
+    public long countDocList(long id, String userName, String name) {
         try {
-            String whereOption = " and rf.delete_yn = 0";
-            if (StringUtils.isNotEmpty(title)) {
-                whereOption = whereOption + " and rf.name like '%" + title + "%' ";
+            String whereOption = " AND delete_yn = false";
+            if(StringUtils.isNotEmpty(userName)) {
+                whereOption = whereOption + " AND cr.userName LIKE '%" + userName + "%' ";
             }
-            if (StringUtils.isNotEmpty(type)) {
-                whereOption = whereOption + " and rf.type = '" + type + "' ";
-            }
-            if (projectId != null) {
-                whereOption = whereOption + " and rf.project = " + projectId + " ";
+            if(StringUtils.isNotEmpty(name)) {
+                whereOption = whereOption + " AND cr.name LIKE '%" + name + "%' ";
             }
 
             Map<String, Object> docMap =
                 jdbcTemplate.queryForMap(
-                "SELECT COUNT(rf.id) cnt FROM " +
+                "SELECT COUNT(cr.id) cnt FROM " +
                     "( " +
-                        "SELECT p.id, p.project, p.name, p.created_at, u.id AS user_id, u1.user_id as user_email_id, u1.user_name, 'checklist' as type, p.delete_yn " +
-                        "FROM checklist_projects c JOIN users u on p.user = u.id " +
-                    "UNION ALL " +
-                    "     select r.id, r.project, r.name, r.created_at, u2.id as user_id, u2.user_id as user_email_id, u2.user_name, 'risk_assessment' as type, r.delete_yn " +
-                    " from risk_checks r join users u2 on r.user = u2.id "
-                    +
+                        "SELECT c.id, c.project, c.created_at, c.name, u1.id AS user_id, u1.user_name, 'checkList' AS type, c.status, c.delete_yn FROM checklist_projects c JOIN users u1 ON c.user = u1.id AND u1.delete_yn = false " +
+                        "UNION ALL " +
+                        "SELECT r.id, r.project, r.created_at, r.name, u2.id AS user_id, u2.user_name, 'riskCheck' AS type, r.status, r.delete_yn FROM risk_checks r JOIN users u2 ON r.user = u2.id AND u2.delete_yn = false" +
                     ") cr " +
-                    "WHERE 1=1 " + whereOption
+                    "WHERE 1 = 1 AND cr.project =" + id + whereOption
                 );
 
             return (long)docMap.get("cnt");
+
         } catch (Exception e) {
             e.getStackTrace();
-            System.out.println(e.getMessage());
+
             System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+
             return 0;
         }
-        */
-        return 0;
+    }
+
+    public List<Map<String, Object>> findDocList(long id, String userName, String name, int pageNo, int pageSize) {
+        try {
+            String whereOption = "AND delete_yn = false ";
+            if(StringUtils.isNotEmpty(userName)) {
+                whereOption = whereOption + "AND cr.user_name LIKE '%" + userName + "%' ";
+            }
+            if(StringUtils.isNotEmpty(name)) {
+                whereOption = whereOption + "AND cr.name LIKE '%" + name + "%' ";
+            }
+
+            List<Map<String, Object>> docList =
+                jdbcTemplate.queryForList(
+            "SELECT cr.* FROM " +
+                "( " +
+                    "SELECT c.id, c.project, c.created_at, c.name, u1.id AS user_id, u1.user_name, 'checkList' AS type, c.status, c.delete_yn FROM checklist_projects c JOIN users u1 ON c.user = u1.id AND u1.delete_yn = false " +
+                    "UNION ALL " +
+                    "SELECT r.id, r.project, r.created_at, r.name, u2.id AS user_id, u2.user_name, 'riskCheck' AS type, r.status, r.delete_yn FROM risk_checks r JOIN users u2 ON r.user = u2.id AND u2.delete_yn = false" +
+                ") cr " +
+                "WHERE 1 = 1 AND cr.project =" + id + " " + whereOption +
+                "ORDER BY cr.id DESC LIMIT " + (pageNo - 1) * pageSize + ", " + pageSize
+                );
+
+            return docList;
+
+        } catch (Exception e) {
+            e.getStackTrace();
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+
+            return null;
+        }
     }
 
     public Map<String, Object> findMembership(long id) {
@@ -496,7 +498,6 @@ public class DirectQuery {
 
             return 0;
         }
-
     }
 
     public List<Map<String, Object>> findMembershipList(String userName, String orderType, String status,
@@ -554,7 +555,6 @@ public class DirectQuery {
 
             return null;
         }
-
     }
 
 }

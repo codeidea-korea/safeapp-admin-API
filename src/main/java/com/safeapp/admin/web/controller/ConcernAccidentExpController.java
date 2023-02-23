@@ -123,6 +123,19 @@ public class ConcernAccidentExpController {
         return new ResponseEntity<>(reports, OK);
     }
 
+    @DeleteMapping(value = "/report/remove/{id}")
+    @ApiOperation(value = "아차사고 신고 삭제", notes = "아차사고 신고 삭제")
+    public ResponseEntity removeReport(@PathVariable("id") @ApiParam(value = "아차사고 PK", required = true) long id,
+            HttpServletRequest request) throws Exception {
+
+        List<Reports> reports = concernAccidentExpService.findReport(id, request);
+        reports.forEach(r -> {
+            concernAccidentExpService.removeReport(r.getId(), request);
+        });
+
+        return ResponseUtil.sendResponse(null);
+    }
+
     @GetMapping(value = "/report/list")
     @ApiOperation(value = "아차사고 신고 목록 조회", notes = "아차사고 신고 목록 조회")
     public ResponseEntity<List<ResponseConcernAccidentDTO>> findAllReport(

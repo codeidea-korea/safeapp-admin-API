@@ -23,6 +23,7 @@ import com.safeapp.admin.web.model.entity.Reports;
 import com.safeapp.admin.web.repos.jpa.AdminRepos;
 import com.safeapp.admin.web.repos.jpa.ConcernAccidentExpRepository;
 import com.safeapp.admin.web.repos.jpa.ReportRepos;
+import com.safeapp.admin.web.repos.jpa.UserRepos;
 import lombok.AllArgsConstructor;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -42,6 +43,7 @@ public class ConcernAccidentExpServiceImpl implements ConcernAccidentExpService 
     private final ConcernAccidentExpRepository conExpRepos;
     private final ConcernAccidentExpDslRepos conExpDslRepos;
     private final AdminRepos adminRepos;
+    private final UserRepos userRepos;
     private final ReportRepos reportRepos;
 
     private final JwtService jwtService;
@@ -59,10 +61,14 @@ public class ConcernAccidentExpServiceImpl implements ConcernAccidentExpService 
         newConExp.setAccidentType(addDto.getAccidentType());
         newConExp.setAccidentPlace(addDto.getAccidentPlace());
         newConExp.setCauseDetail(addDto.getCauseDetail());
-        newConExp.setAccidentCause(addDto.getAccidentCause());
+        newConExp.setAccidentReason(addDto.getAccidentReason());
         newConExp.setResponse(addDto.getResponse());
-        newConExp.setImage(addDto.getImage());
+        newConExp.setImage(null);
         newConExp.setViews(0);
+        newConExp.setAccidentCause(addDto.getAccidentCause());
+        newConExp.setAccidentAt(addDto.getAccidentAt());
+        newConExp.setUserId(Long.parseLong("0"));
+        newConExp.setUser(userRepos.findById(Long.parseLong("2")).orElse(null));
 
         return newConExp;
     }
@@ -103,7 +109,7 @@ public class ConcernAccidentExpServiceImpl implements ConcernAccidentExpService 
         newConExp.setAccidentType(editDto.getAccidentType());
         newConExp.setAccidentPlace(editDto.getAccidentPlace());
         newConExp.setCauseDetail(editDto.getCauseDetail());
-        newConExp.setAccidentCause(editDto.getAccidentCause());
+        newConExp.setAccidentReason(editDto.getAccidentReason());
         newConExp.setResponse(editDto.getResponse());
         newConExp.setImage(editDto.getImage());
 
@@ -162,6 +168,16 @@ public class ConcernAccidentExpServiceImpl implements ConcernAccidentExpService 
         List<Reports> reports = conExpDslRepos.findReport(id);
 
         return reports;
+    }
+
+    @Override
+    public void removeReport(long id, HttpServletRequest request) {
+        Reports report =
+            reportRepos.findById(id)
+            .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 아차사고 신고입니다."));
+
+        report.setDeleteYn(true);
+        reportRepos.save(report);
     }
 
     @Override

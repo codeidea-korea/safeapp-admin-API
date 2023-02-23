@@ -15,6 +15,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.time.LocalDateTime;
+
 import static javax.persistence.FetchType.LAZY;
 
 @Entity(name = "concern_accident_exps")
@@ -52,8 +54,8 @@ public class ConcernAccidentExp extends BaseTimeEntity {
     @Column(name = "cause_detail")
     private String causeDetail;
 
-    @Column(name = "accident_cause")
-    private String accidentCause;
+    @Column(name = "accident_reason")
+    private String accidentReason;
 
     @Column(name = "response")
     private String response;
@@ -64,6 +66,19 @@ public class ConcernAccidentExp extends BaseTimeEntity {
     @Column(name = "views")
     @ColumnDefault("0")
     private Integer views;
+
+    @Column(name = "accident_cause")
+    private String accidentCause;
+
+    @Column(name = "accident_at")
+    private LocalDateTime accidentAt;
+
+    @Column(name = "user_id")
+    private Long userId;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "user")
+    private Users user;
 
     @Transient
     private String detailContents;
