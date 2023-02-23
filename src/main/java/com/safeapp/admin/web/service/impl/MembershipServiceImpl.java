@@ -110,20 +110,13 @@ public class MembershipServiceImpl implements MembershipService {
 
     @Override
     public List<Map<String, Object>> findMembershipList(String userName, String orderType, String status,
-            String createdAtStart, String createdAtEnd, int pageNo, int pageSize, HttpServletRequest request) {
+            String createdAtStart, String createdAtEnd, int pageNo, int pageSize) {
 
         List<Map<String, Object>> membershipList =
-            dirRepos.findMembershipList(userName, orderType, status, createdAtStart, createdAtEnd, pageNo, pageSize, request);
+            dirRepos.findMembershipList(userName, orderType, status, createdAtStart, createdAtEnd, pageNo, pageSize);
 
-        AtomicReference<Long> totalAmount = new AtomicReference<>(Long.parseLong("0"));
-        membershipList.forEach(m -> {
-            if(m.get("auth_status").toString().equals("ing")) {
-                if(!Objects.isNull(m.get("amount")) && Integer.parseInt(m.get("amount").toString()) > 0) {
-                    totalAmount.updateAndGet(v -> v + Integer.parseInt(m.get("amount").toString()));
-                }
-            }
-        });
-        membershipList.get(0).put("totalAmount", totalAmount);
+        Long sumMembershipList = dirRepos.sumMembershipList(userName, orderType, status, createdAtStart, createdAtEnd);
+        membershipList.get(0).put("totalAmount", sumMembershipList);
 
         return membershipList;
     }

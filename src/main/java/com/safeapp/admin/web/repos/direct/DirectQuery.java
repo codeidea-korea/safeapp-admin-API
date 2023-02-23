@@ -37,6 +37,7 @@ public class DirectQuery {
 
         } catch (Exception e) {
             e.getStackTrace();
+
             System.out.println(e.getCause());
             System.out.println(e.getMessage());
 
@@ -69,6 +70,7 @@ public class DirectQuery {
 
         } catch (Exception e) {
             e.getStackTrace();
+
             System.out.println(e.getCause());
             System.out.println(e.getMessage());
 
@@ -103,6 +105,7 @@ public class DirectQuery {
 
         } catch (Exception e) {
             e.getStackTrace();
+
             System.out.println(e.getCause());
             System.out.println(e.getMessage());
 
@@ -138,6 +141,7 @@ public class DirectQuery {
 
         } catch (Exception e) {
             e.getStackTrace();
+
             System.out.println(e.getCause());
             System.out.println(e.getMessage());
 
@@ -174,6 +178,7 @@ public class DirectQuery {
 
         } catch (Exception e) {
             e.getStackTrace();
+
             System.out.println(e.getCause());
             System.out.println(e.getMessage());
 
@@ -200,6 +205,7 @@ public class DirectQuery {
 
         } catch (Exception e) {
             e.getStackTrace();
+
             System.out.println(e.getCause());
             System.out.println(e.getMessage());
 
@@ -269,6 +275,7 @@ public class DirectQuery {
 
         } catch (Exception e) {
             e.getStackTrace();
+
             System.out.println(e.getCause());
             System.out.println(e.getMessage());
 
@@ -336,6 +343,7 @@ public class DirectQuery {
 
         } catch (Exception e) {
             e.getStackTrace();
+
             System.out.println(e.getCause());
             System.out.println(e.getMessage());
 
@@ -402,6 +410,7 @@ public class DirectQuery {
 
         } catch (Exception e) {
             e.getStackTrace();
+
             System.out.println(e.getCause());
             System.out.println(e.getMessage());
 
@@ -428,6 +437,7 @@ public class DirectQuery {
 
         } catch (Exception e) {
             e.getStackTrace();
+
             System.out.println(e.getCause());
             System.out.println(e.getMessage());
 
@@ -445,6 +455,7 @@ public class DirectQuery {
 
         } catch (Exception e) {
             e.getStackTrace();
+
             System.out.println(e.getCause());
             System.out.println(e.getMessage());
         }
@@ -493,6 +504,7 @@ public class DirectQuery {
 
         } catch (Exception e) {
             e.getStackTrace();
+
             System.out.println(e.getCause());
             System.out.println(e.getMessage());
 
@@ -501,7 +513,7 @@ public class DirectQuery {
     }
 
     public List<Map<String, Object>> findMembershipList(String userName, String orderType, String status,
-            String createdAtStart, String createdAtEnd, int pageNo, int pageSize, HttpServletRequest request) {
+            String createdAtStart, String createdAtEnd, int pageNo, int pageSize) {
 
         try {
             String whereOption = "";
@@ -550,10 +562,67 @@ public class DirectQuery {
 
         } catch (Exception e) {
             e.getStackTrace();
+
             System.out.println(e.getCause());
             System.out.println(e.getMessage());
 
             return null;
+        }
+    }
+
+    public long sumMembershipList(String userName, String orderType, String status,
+            String createdAtStart, String createdAtEnd) {
+
+        try {
+            String whereOption = "";
+            String whereOption2 = "";
+            if(StringUtils.isNotEmpty(userName)) {
+                whereOption = whereOption + "AND usr.user_name LIKE '%" + userName + "%' ";
+            }
+            if(StringUtils.isNotEmpty(orderType)) {
+                whereOption = whereOption + "AND auth.order_type LIKE '%" + orderType + "%' ";
+            }
+            if(StringUtils.isNotEmpty(status)) {
+                if(status.equals("unsubscribe")) {
+                    whereOption2 = "AND A.use_yn IS NULL ";
+                } else {
+                    whereOption = whereOption + "AND auth.status LIKE '%" + status + "%' ";
+                }
+            }
+            if(!Objects.isNull(createdAtStart)) {
+                whereOption = whereOption + "AND auth.created_at >= '" + createdAtStart + "' ";
+            }
+            if(!Objects.isNull(createdAtEnd)) {
+                whereOption = whereOption + "AND auth.created_at <= '" + createdAtEnd + "' ";
+            }
+
+            Map<String, Object> membershipMap =
+                jdbcTemplate.queryForMap(
+                "SELECT SUM(A.amount) AS sum, A.use_yn FROM " +
+                    "(" +
+                        "SELECT " +
+                            "auth.id, payment.merchant_uid, usr.user_id, usr.user_name, usr.phone_no, auth.order_type, " +
+                            "auth.status AS auth_status, auth.efective_start_at, auth.efective_end_at, auth.created_at, payment.amount, " +
+                            "payment.pay_method, payment.status AS pay_status, auth.memo, billing.use_yn " +
+                        "FROM user_auths auth " +
+                        "LEFT JOIN if_payments payment ON auth.payment_id = payment.id AND auth.delete_yn = false AND payment.delete_yn = false " +
+                        "LEFT JOIN user_billing billing ON auth.user = billing.user_id AND billing.delete_yn = false AND billing.use_yn = 'Y' " +
+                        "LEFT JOIN users usr ON auth.user = usr.id " +
+                        "WHERE 1 = 1 " +
+                        "AND auth.status NOT IN ('first', 'temp') " + whereOption +
+                    ") A " +
+                    "WHERE 1 = 1 " + whereOption2
+                );
+
+            return Long.parseLong(String.valueOf(membershipMap.get("sum")));
+
+        } catch (Exception e) {
+            e.getStackTrace();
+
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+
+            return 0;
         }
     }
 

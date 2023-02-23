@@ -20,6 +20,6 @@ public interface MembershipService extends CRUDService<UserAuth> {
         String createdAtStart, String createdAtEnd);
 
     List<Map<String, Object>> findMembershipList(String userName, String orderType, String status,
-        String createdAtStart, String createdAtEnd, int pageNo, int pageSize, HttpServletRequest request);
+        String createdAtStart, String createdAtEnd, int pageNo, int pageSize);
 
 }

@@ -93,13 +93,12 @@ public class MembershipController {
             @RequestParam(value = "createdAtStart", required = false) String createdAtStart,
             @RequestParam(value = "createdAtEnd", required = false) String createdAtEnd,
             @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
-            HttpServletRequest request) throws Exception {
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) throws Exception {
 
         Long count =
             membershipService.countMembershipList(userName, orderType, status, createdAtStart, createdAtEnd);
         List<Map<String, Object>> list =
-            membershipService.findMembershipList(userName, orderType, status, createdAtStart, createdAtEnd, pageNo, pageSize, request);
+            membershipService.findMembershipList(userName, orderType, status, createdAtStart, createdAtEnd, pageNo, pageSize);
         Pages pages = new Pages(pageNo, pageSize);
 
         ListResponse membershipList = new ListResponse(count, list, pages);
