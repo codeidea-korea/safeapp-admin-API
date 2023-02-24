@@ -1,5 +1,6 @@
 package com.safeapp.admin.web.service.impl;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,19 +9,23 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.safeapp.admin.web.components.FileUploadProvider;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.dto.request.RequestAccidentCaseDTO;
 import com.safeapp.admin.web.dto.request.RequestAccidentCaseEditDTO;
 import com.safeapp.admin.web.dto.response.ResponseAccidentCaseDTO;
+import com.safeapp.admin.web.dto.response.ResponseConcernAccidentDTO;
 import com.safeapp.admin.web.dto.response.ResponseRiskCheckDTO;
-import com.safeapp.admin.web.model.entity.Admins;
-import com.safeapp.admin.web.model.entity.RiskCheck;
+import com.safeapp.admin.web.model.entity.*;
+import com.safeapp.admin.web.model.entity.cmmn.Files;
+import com.safeapp.admin.web.repos.jpa.AccidentExpFilesRepository;
 import com.safeapp.admin.web.repos.jpa.AccidentExpRepository;
 import com.safeapp.admin.web.repos.jpa.AdminRepos;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
-import com.safeapp.admin.web.model.entity.AccidentExp;
+import com.safeapp.admin.web.repos.jpa.ConcernAccidentExpFilesRepository;
 import com.safeapp.admin.web.repos.jpa.dsl.AccidentExpDslRepos;
+import com.safeapp.admin.web.service.cmmn.FileService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.javassist.NotFoundException;
@@ -30,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpServerErrorException;
 
 import com.safeapp.admin.web.service.AccidentExpService;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @AllArgsConstructor
@@ -37,8 +43,13 @@ import com.safeapp.admin.web.service.AccidentExpService;
 public class AccidentExpServiceImpl implements AccidentExpService {
 
     private final AccidentExpRepository accExpRepos;
+    private final AccidentExpFilesRepository accExpFileRepos;
     private final AccidentExpDslRepos accExpDslRepos;
     private final AdminRepos adminRepos;
+
+    private final FileService fileService;
+
+    private final FileUploadProvider fileUploadProvider;
 
     @Override
     public AccidentExp toAddEntity(RequestAccidentCaseDTO addDto) {
@@ -77,12 +88,46 @@ public class AccidentExpServiceImpl implements AccidentExpService {
     }
 
     @Override
-    public AccidentExp find(long id, HttpServletRequest request) throws Exception {
+    public void addFiles(long id, List<MultipartFile> files, HttpServletRequest request) throws NotFoundException {
+        AccidentExp accExp = accExpRepos.findById(id).orElseThrow(() -> new NotFoundException("존재하지 않는 사고사례입니다."));
+
+        /*
+        List<AccidentExpFiles> prevFiles = accExpFileRepos.findByAccExp(accExp);
+        for(AccidentExpFiles prevFile : prevFiles) {
+            fileUploadProvider.delete(new File("/home/safeapp/api" + prevFile.getUrl()));
+            accExpFileRepos.delete(prevFile);
+        }
+        */
+
+        if(files != null || files.isEmpty() == false) {
+            for(MultipartFile file : files) {
+                Files uploadFile = fileService.uploadAllowedFile(file, request);
+                AccidentExpFiles resultFile =
+                    AccidentExpFiles
+                    .builder()
+                    .accExp(accExp)
+                    .url(uploadFile.getWebFileNm())
+                    .build();
+
+                accExpFileRepos.save(resultFile);
+            }
+        }
+    }
+
+    @Override
+    public ResponseAccidentCaseDTO findAccExp(long id, HttpServletRequest request) {
         AccidentExp accExp =
             accExpRepos.findById(id)
-            .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 사고사례입니다."));
+            .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 아차사고입니다."));
 
-        return accExp;
+        List<AccidentExpFiles> files = accExpFileRepos.findByAccExp(accExp);
+
+        return
+            ResponseAccidentCaseDTO
+            .builder()
+            .accExp(accExp)
+            .files(files)
+            .build();
     }
 
     @Override
@@ -117,7 +162,17 @@ public class AccidentExpServiceImpl implements AccidentExpService {
     }
 
     @Override
-    public void remove(long id, HttpServletRequest httpServletRequest) {
+    public void removeFile(long id, HttpServletRequest request) {
+        AccidentExpFiles accExpFile =
+            accExpFileRepos.findById(id)
+            .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 사고사례 첨부파일입니다."));
+
+        fileUploadProvider.delete(new File("/home/safeapp/api" + accExpFile.getUrl()));
+        accExpFileRepos.delete(accExpFile);
+    }
+
+    @Override
+    public void remove(long id, HttpServletRequest request) {
         AccidentExp accExp =
             accExpRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 사고사례입니다."));
@@ -127,14 +182,36 @@ public class AccidentExpServiceImpl implements AccidentExpService {
     }
 
     @Override
-    public ListResponse<AccidentExp> findAll(AccidentExp accExp, Pages pages, HttpServletRequest request) throws Exception {
+    public ListResponse<ResponseAccidentCaseDTO> findAllByCondition(AccidentExp accExp, Pages pages, HttpServletRequest request) {
         long count = accExpDslRepos.countAll(accExp);
         List<AccidentExp> list = accExpDslRepos.findAll(accExp, pages);
 
-        return new ListResponse<>(count, list, pages);
+        List<ResponseAccidentCaseDTO> resultList = new ArrayList<>();
+        for(AccidentExp each : list) {
+            List<AccidentExpFiles> files = accExpFileRepos.findByAccExp(each);
+            ResponseAccidentCaseDTO resAccExpDTO =
+                ResponseAccidentCaseDTO
+                .builder()
+                .accExp(each)
+                .files(files)
+                .build();
+
+            resultList.add(resAccExpDTO);
+        }
+
+        return new ListResponse<>(count, resultList, pages);
     }
 
     @Override
+    public AccidentExp find(long id, HttpServletRequest request) throws Exception { return null; }
+
+    @Override
     public AccidentExp generate(AccidentExp newAccExp) { return null; }
+
+    @Override
+    public ListResponse<AccidentExp> findAll(AccidentExp accExp, Pages pages, HttpServletRequest request) throws Exception {
+
+        return null;
+    }
 
 }

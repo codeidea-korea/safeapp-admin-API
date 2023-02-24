@@ -29,39 +29,38 @@ public class Files {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "file_no")
-    @ApiModelProperty("리소스 파일 일련번호")
-    private long fileSeq;
+    @ApiModelProperty("파일 PK")
+    private Long fileNo;
 
     @Column(name = "file_nm")
-    @ApiModelProperty("리소스 파일 명")
-    private String fileName;
+    @ApiModelProperty("서버상 파일 경로 + 파일명")
+    private String fileNm;
 
     @Column(name = "web_file_nm")
-    @ApiModelProperty("리소스 파일 웹 경로")
-    private String webPath;
+    @ApiModelProperty("웹상 파일 경로 + 파일명")
+    private String webFileNm;
 
-    // TODO: 추후 공통 코드로 관리되어야 함. -> 우선은 String 으로 이후 enum, 이후 공통 코드로 변경 필.
     @Column(name = "upload_type")
-    @ApiModelProperty("리소스 파일 종류 (확장자)")
-    private String type;
+    @ApiModelProperty("파일 확장자")
+    private String uploadType;
 
     @Column(name = "grp_file_no")
-    @ApiModelProperty("리소스 파일 그룹 식별자 (어떤 상황에 따라 그룹핑이 필요한 경우)")
-    private Integer fileGroupNo;
+    @ApiModelProperty("파일 그룹 PK (그룹핑이 필요한 경우)")
+    private Integer grpFileNo;
 
     @Column(name = "create_dt")
-    @ApiModelProperty("생성 일시")
+    @ApiModelProperty("파일 업로드일시")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createTime;
 
     @Builder
-    public Files(String fileName, String webPath, String type, Integer fileGroupNo) {
-        this.fileName = fileName;
-        this.webPath = webPath;
-        this.type = type;
-        this.fileGroupNo = fileGroupNo;
+    public Files(String fileNm, String webFileNm, String uploadType, Integer grpFileNo) {
+        this.fileNm = fileNm;
+        this.webFileNm = webFileNm;
+        this.uploadType = uploadType;
+        this.grpFileNo = grpFileNo;
     }
 
 }

@@ -355,7 +355,7 @@ public class DirectQuery {
         try {
             String whereOption = " AND delete_yn = false";
             if(StringUtils.isNotEmpty(userName)) {
-                whereOption = whereOption + " AND cr.userName LIKE '%" + userName + "%' ";
+                whereOption = whereOption + " AND cr.user_name LIKE '%" + userName + "%' ";
             }
             if(StringUtils.isNotEmpty(name)) {
                 whereOption = whereOption + " AND cr.name LIKE '%" + name + "%' ";

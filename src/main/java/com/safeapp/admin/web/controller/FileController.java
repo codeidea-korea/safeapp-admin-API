@@ -3,6 +3,7 @@ package com.safeapp.admin.web.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.web.model.entity.cmmn.Files;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,31 +19,24 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-//@RestController
+@RestController
 @RequestMapping("/file")
-@Api(tags = {"File"}, description = "파일 업로드", basePath = "/file")
+@AllArgsConstructor
+@Api(tags = {"File"}, description = "파일 단독 관리")
 public class FileController {
 
     private final FileService fileService;
 
-    @Autowired
-    public FileController(FileService fileService) {
-        this.fileService = fileService;
-    }
-
-    @PostMapping(value = "", consumes = "multipart/form-data")
-    @ApiOperation(value = "파일 업로드", notes = "파일 업로드")
-    public Files uploadAllowedFile(
-        @RequestParam(required = true, value = "file") MultipartFile file,
-        HttpServletRequest request) throws Exception {
+    @PostMapping(value = "/upload", consumes = "multipart/form-data")
+    @ApiOperation(value = "파일 단독 업로드", notes = "파일 단독 업로드")
+    public Files uploadAllowedFile(@RequestParam(value = "file") MultipartFile file, HttpServletRequest request) {
         return fileService.uploadAllowedFile(file, request);
     }
 
-    @GetMapping(value = "/{id}")
-    @ApiOperation(value = "파일 찾기 (단건)", notes = "파일 찾기 (단건)")
-    public Files find(
-        @PathVariable("id") @ApiParam(value = "파일 일련번호", required = true) long id,
-        HttpServletRequest request) throws Exception {
+    @GetMapping(value = "/find/{id}")
+    @ApiOperation(value = "파일 단독 조회", notes = "파일 단독 조회")
+    public Files find(@PathVariable("id") @ApiParam(value = "파일 PK", required = true) long id, HttpServletRequest request) throws Exception {
         return fileService.findById(id, request);
     }
+
 }

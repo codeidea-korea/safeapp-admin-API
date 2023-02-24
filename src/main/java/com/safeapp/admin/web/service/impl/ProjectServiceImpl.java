@@ -15,9 +15,10 @@ import com.safeapp.admin.web.model.entity.*;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.repos.direct.DirectQuery;
-import com.safeapp.admin.web.repos.jpa.ProjectGroupRepos;
-import com.safeapp.admin.web.repos.jpa.UserRepos;
+import com.safeapp.admin.web.repos.jpa.*;
 import com.safeapp.admin.web.repos.mongo.InviteHistoryRepos;
+import com.safeapp.admin.web.service.CheckListProjectService;
+import com.safeapp.admin.web.service.RiskCheckService;
 import com.safeapp.admin.web.service.cmmn.DirectSendAPIService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpServerErrorException;
 
-import com.safeapp.admin.web.repos.jpa.ProjectRepos;
 import com.safeapp.admin.web.service.ProjectService;
 
 @Service
@@ -36,10 +36,12 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepos prjRepos;
     private final ProjectGroupRepos prjGrRepos;
+    private final CheckListProjectRepository chkPrjRepos;
+    private final RiskCheckRepository riskChkRepos;
     private final UserRepos userRepos;
     private final InviteHistoryRepos ivtHstRepos;
-
     private final DirectQuery dirRepos;
+
     private final DateUtil dateUtil;
 
     private final DirectSendAPIService directSendAPIService;
@@ -171,6 +173,30 @@ public class ProjectServiceImpl implements ProjectService {
     public List<Map<String, Object>> findDocList(long id, String userName, String name, int pageNo, int pageSize, HttpServletRequest request) {
 
         return dirRepos.findDocList(id, userName, name, pageNo, pageSize);
+    }
+
+    @Override
+    public void removeDoc(String docType, long id, HttpServletRequest request) {
+        switch(docType) {
+            case "checkList":
+                CheckListProject chkPrj =
+                    chkPrjRepos.findById(id).orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 프로젝트 문서입니다."));
+
+                chkPrj.setDeleteYn(true);
+                chkPrjRepos.save(chkPrj);
+
+                break;
+            case "riskCheck":
+                RiskCheck riskChk =
+                    riskChkRepos.findById(id).orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 프로젝트 문서입니다."));
+
+                riskChk.setDeleteYn(true);
+                riskChkRepos.save(riskChk);
+                
+                break;
+            default:
+                throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 프로젝트 문서 타입입니다.");
+        }
     }
 
     @Override

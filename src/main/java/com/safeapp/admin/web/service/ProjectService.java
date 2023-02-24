@@ -23,6 +23,8 @@ public interface ProjectService extends CRUDService<Project> {
 
     List<Map<String, Object>> findDocList(long id, String userName, String name, int pageNo, int pageSize, HttpServletRequest request) throws Exception;
 
+    void removeDoc(String docType, long id, HttpServletRequest request) throws Exception;
+
     List<ResponseProjectGroupDTO> findAllGroupByCondition(long id, int pageNo, int pageSize, HttpServletRequest request) throws Exception;
 
     /*

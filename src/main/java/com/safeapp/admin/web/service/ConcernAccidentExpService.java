@@ -20,7 +20,15 @@ public interface ConcernAccidentExpService extends CRUDService<ConcernAccidentEx
 
     ConcernAccidentExp toAddEntity(RequestConcernAccidentDTO addDto) throws NotFoundException;
 
+    void addFiles(Long id, List<MultipartFile> files, HttpServletRequest request) throws Exception;
+
+    ResponseConcernAccidentDTO findConExp(long id, HttpServletRequest request) throws NotFoundException;
+
     ConcernAccidentExp toEditEntity(RequestConcernAccidentEditDTO editDto) throws NotFoundException;
+
+    void removeFile(long id, HttpServletRequest request) throws Exception;
+
+    ListResponse<ResponseConcernAccidentDTO> findAllByCondition(ConcernAccidentExp conExp, Pages pages, HttpServletRequest request) throws Exception;
 
     void addReport(long id, String reportReason, HttpServletRequest request);
 

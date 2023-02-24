@@ -142,7 +142,7 @@ public class ConcernAccidentExp extends BaseTimeEntity {
         setAccidentType(newConExp.getAccidentType());
         setAccidentPlace(newConExp.getAccidentPlace());
         setCauseDetail(newConExp.getCauseDetail());
-        setAccidentCause(newConExp.getAccidentCause());
+        setAccidentReason(newConExp.getAccidentReason());
         setResponse(newConExp.getResponse());
         setImage(newConExp.getImage());
     }

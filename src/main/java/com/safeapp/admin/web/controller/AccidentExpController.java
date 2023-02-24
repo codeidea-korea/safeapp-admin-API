@@ -9,35 +9,31 @@ import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.dto.response.ResponseCheckListProjectDTO;
 import com.safeapp.admin.web.dto.response.ResponseCheckListProjectSelectDTO;
+import com.safeapp.admin.web.dto.response.ResponseConcernAccidentDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.AccidentExp;
 import com.safeapp.admin.web.model.entity.CheckListProject;
+import com.safeapp.admin.web.model.entity.ConcernAccidentExp;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.safeapp.admin.web.service.AccidentExpService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -55,13 +51,24 @@ public class AccidentExpController {
         return new ResponseEntity<>(ResponseAccidentCaseDTO.builder().accExp(addedAccExp).build(), OK);
     }
 
+    @PostMapping(value = "/add/{id}/files")
+    @ApiOperation(value = "사고사례 첨부파일 등록")
+    public ResponseEntity addFiles(
+            @PathVariable("id") @ApiParam(value = "사고사례 PK", required = true) long id,
+            @RequestPart(required = false) List<MultipartFile> files,
+            HttpServletRequest request) throws Exception {
+
+        accidentExpService.addFiles(id, files, request);
+        return new ResponseEntity(null, CREATED);
+    }
+
     @GetMapping(value = "/find/{id}")
     @ApiOperation(value = "사고사례 단독 조회", notes = "사고사례 단독 조회")
     public ResponseEntity<ResponseAccidentCaseDTO> find(@PathVariable("id") @ApiParam(value = "사고사례 PK", required = true) long id,
             HttpServletRequest request) throws Exception {
 
-        AccidentExp accExp = accidentExpService.find(id, request);
-        return new ResponseEntity<>(ResponseAccidentCaseDTO.builder().accExp(accExp).build(), OK);
+        ResponseAccidentCaseDTO accExp = accidentExpService.findAccExp(id, request);
+        return new ResponseEntity<>(accExp, OK);
     }
 
     @PutMapping(value = "/edit/{id}")
@@ -74,6 +81,15 @@ public class AccidentExpController {
 
         AccidentExp editedAccExp = accidentExpService.edit(newAccExp, request);
         return new ResponseEntity<>(ResponseAccidentCaseDTO.builder().accExp(editedAccExp).build(), OK);
+    }
+
+    @DeleteMapping(value = "/file/remove/{id}")
+    @ApiOperation(value = "사고사례 첨부파일 삭제", notes = "사고사례 첨부파일 삭제")
+    public ResponseEntity removeFile(@PathVariable("id") @ApiParam(value = "사고사례 첨부파일 PK", required = true) long id,
+            HttpServletRequest request) throws Exception {
+
+        accidentExpService.removeFile(id, request);
+        return ResponseUtil.sendResponse(null);
     }
 
     @DeleteMapping(value = "/remove/{id}")
@@ -101,7 +117,7 @@ public class AccidentExpController {
 
         Pages pages = new Pages(pageNo, pageSize);
         return
-            ResponseUtil.sendResponse(accidentExpService.findAll(
+            ResponseUtil.sendResponse(accidentExpService.findAllByCondition(
                 AccidentExp.builder()
                 .keyword(keyword)
                 .adminName(adminName)

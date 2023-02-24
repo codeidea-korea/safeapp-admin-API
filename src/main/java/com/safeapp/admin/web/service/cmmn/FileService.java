@@ -7,8 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface FileService {
 
-    Files uploadAllowedFile(MultipartFile file, HttpServletRequest httpServletRequest);
+    Files uploadAllowedFile(MultipartFile file, HttpServletRequest request);
 
-    Files findById(long id, HttpServletRequest httpServletRequest);
+    Files findById(long id, HttpServletRequest request);
 
 }

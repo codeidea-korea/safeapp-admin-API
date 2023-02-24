@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.web.model.entity.cmmn.Files;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
 @Component
+@Slf4j
 public class FileUploadProvider {
 
     @Value("${user.upload.path}")
@@ -39,21 +41,18 @@ public class FileUploadProvider {
         String[] allowExtTypes = allowType.split(",");
         String ext = ("" + getExt(file)).toLowerCase();
 
-        for (String allowExtType : allowExtTypes) {
-            if (ext.equals(allowExtType)) {
+        for(String allowExtType : allowExtTypes) {
+            if(ext.equals(allowExtType)) {
                 return true;
             }
         }
+
         return false;
-    }
-    
-    public String getOriginName(MultipartFile file) {
-        return FilenameUtils.getBaseName(file.getOriginalFilename());
     }
 
     public Files save(MultipartFile file) throws Exception {
-        if (!chkFileType(file)) {
-            throw new Exception("허용된 파일 타입이 아닙니다.");
+        if(!chkFileType(file)) {
+            throw new Exception("업로드가 허용된 파일 확장자가 아닙니다.");
         }
 
         StringBuilder serverFilePath = new StringBuilder();
@@ -62,28 +61,29 @@ public class FileUploadProvider {
         serverFilePath.append("/");
         serverFilePath.append(now);
         serverFilePath.append("/");
-
-        if (!new File(serverFilePath.toString()).exists()) {
+        if(!new File(serverFilePath.toString()).exists()) {
             new File(serverFilePath.toString()).mkdirs();
         }
 
-//        serverFilePath.append(getOriginName(file));
         serverFilePath.append(now);
         serverFilePath.append("." + getExt(file));
         file.transferTo(new File(serverFilePath.toString()));
 
-        return Files.builder()
-            .fileGroupNo(1)
-            .webPath(webPath + "/" + now + "/" + now + "." + getExt(file))
-            .fileName(serverFilePath.toString())
-            .type(getExt(file))
+        return
+            Files.builder()
+            .grpFileNo(1)
+            .webFileNm(webPath + "/" + now + "/" + now + "." + getExt(file))
+            .fileNm(serverFilePath.toString())
+            .uploadType(getExt(file))
             .build();
     }
 
-    public boolean delete(File file) throws Exception {
-        if (!file.exists() || !file.isFile() || !file.canWrite()) {
-            throw new HttpServerErrorException(HttpStatus.SERVICE_UNAVAILABLE, "삭제가 불가능합니다.");
+    public boolean delete(File file) {
+        if(!file.exists() || !file.isFile() || !file.canWrite()) {
+            throw new HttpServerErrorException(HttpStatus.SERVICE_UNAVAILABLE, "파일 삭제가 불가능합니다.");
         }
+
         return file.delete();
     }
+
 }

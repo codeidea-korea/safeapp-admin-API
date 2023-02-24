@@ -119,6 +119,17 @@ public class ProjectController {
         return ResponseUtil.sendResponse(docListResponse);
     }
 
+    @DeleteMapping(value = "/doc/remove/{id}")
+    @ApiOperation(value = "프로젝트 문서 삭제", notes = "프로젝트 문서 삭제")
+    public ResponseEntity removeDoc(
+        @RequestParam(value = "docType") @ApiParam(value = "프로젝트 문서 종류", required = true) String docType,
+        @PathVariable("id") @ApiParam(value = "프로젝트 문서 PK") long id,
+        HttpServletRequest request) throws Exception {
+
+        projectService.removeDoc(docType, id, request);
+        return ResponseUtil.sendResponse(null);
+    }
+
     @GetMapping(value = "/find/{id}/group/list")
     @ApiOperation(value = "프로젝트 그룹원 목록 조회", notes = "프로젝트 그룹원 목록 조회")
     public ResponseEntity<List<ResponseProjectGroupDTO>> findAllGroupByCondition(

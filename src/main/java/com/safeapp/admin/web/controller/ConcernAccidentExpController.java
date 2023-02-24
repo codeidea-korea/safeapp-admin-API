@@ -22,6 +22,7 @@ import com.safeapp.admin.web.service.ConcernAccidentExpService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -46,13 +47,24 @@ public class ConcernAccidentExpController {
         return new ResponseEntity<>(ResponseConcernAccidentDTO.builder().conExp(addedConExp).build(), OK);
     }
 
+    @PostMapping(value = "/add/{id}/files", consumes = "multipart/form-data")
+    @ApiOperation(value = "아차사고 첨부파일 등록")
+    public ResponseEntity addFiles(
+            @PathVariable("id") @ApiParam(value = "아차사고 PK", required = true) Long id,
+            @RequestPart List<MultipartFile> files,
+            HttpServletRequest request) throws Exception {
+
+        concernAccidentExpService.addFiles(id, files, request);
+        return new ResponseEntity(null, CREATED);
+    }
+
     @GetMapping(value = "/find/{id}")
     @ApiOperation(value = "아차사고 단독 조회", notes = "아차사고 단독 조회")
     public ResponseEntity<ResponseConcernAccidentDTO> find(@PathVariable("id") @ApiParam(value = "아차사고 PK", required = true) long id,
             HttpServletRequest request) throws Exception {
 
-        ConcernAccidentExp conExp = concernAccidentExpService.find(id, request);
-        return new ResponseEntity<>(ResponseConcernAccidentDTO.builder().conExp(conExp).build(), OK);
+        ResponseConcernAccidentDTO conExp = concernAccidentExpService.findConExp(id, request);
+        return new ResponseEntity<>(conExp, OK);
     }
 
     @PutMapping(value = "/edit/{id}")
@@ -65,6 +77,15 @@ public class ConcernAccidentExpController {
 
         ConcernAccidentExp editedConExp = concernAccidentExpService.edit(newConExp, request);
         return new ResponseEntity<>(ResponseConcernAccidentDTO.builder().conExp(editedConExp).build(), OK);
+    }
+
+    @DeleteMapping(value = "/file/remove/{id}")
+    @ApiOperation(value = "아차사고 첨부파일 삭제", notes = "아차사고 첨부파일 삭제")
+    public ResponseEntity removeFile(@PathVariable("id") @ApiParam(value = "아차사고 첨부파일 PK", required = true) long id,
+            HttpServletRequest request) throws Exception {
+
+        concernAccidentExpService.removeFile(id, request);
+        return ResponseUtil.sendResponse(null);
     }
 
     @DeleteMapping(value = "/remove/{id}")
@@ -92,7 +113,7 @@ public class ConcernAccidentExpController {
 
         Pages pages = new Pages(pageNo, pageSize);
         return
-            ResponseUtil.sendResponse(concernAccidentExpService.findAll(
+            ResponseUtil.sendResponse(concernAccidentExpService.findAllByCondition(
                 ConcernAccidentExp.builder()
                 .keyword(keyword)
                 .adminName(adminName)

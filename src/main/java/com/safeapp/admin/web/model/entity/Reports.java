@@ -26,6 +26,10 @@ public class Reports extends BaseTimeEntity {
     private ConcernAccidentExp concernAccidentExp;
 
     @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "report_user")
+    private Users reportUser;
+
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "report_admin")
     private Admins reportAdmin;
 
@@ -33,8 +37,9 @@ public class Reports extends BaseTimeEntity {
     private String reportReason;
 
     @Builder
-    public Reports(ConcernAccidentExp concernAccidentExp, Admins reportAdmin, String reportReason) {
+    public Reports(ConcernAccidentExp concernAccidentExp, Users reportUser, Admins reportAdmin, String reportReason) {
         this.concernAccidentExp = concernAccidentExp;
+        this.reportUser = reportUser;
         this.reportAdmin = reportAdmin;
         this.reportReason = reportReason;
     }

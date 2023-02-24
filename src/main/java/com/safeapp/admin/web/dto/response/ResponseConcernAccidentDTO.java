@@ -1,11 +1,13 @@
 package com.safeapp.admin.web.dto.response;
 
 import com.safeapp.admin.web.model.entity.ConcernAccidentExp;
+import com.safeapp.admin.web.model.entity.ConcernAccidentExpFiles;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.hibernate.sql.InFragment.NOT_NULL;
@@ -57,8 +59,11 @@ public class ResponseConcernAccidentDTO {
     @Schema(description = "관리대책")
     String response;
 
-    @Schema(description = "이미지 첨부")
+    @Schema(description = "이미지 첨부 단독")
     String image;
+
+    @Schema(description = "이미지 첨부 목록")
+    HashMap<Long, String> images = new HashMap<>();
 
     @Schema(description = "조회수")
     Integer views;
@@ -70,7 +75,7 @@ public class ResponseConcernAccidentDTO {
     LocalDateTime accidentAt;
 
     @Builder
-    public ResponseConcernAccidentDTO(ConcernAccidentExp conExp) {
+    public ResponseConcernAccidentDTO(ConcernAccidentExp conExp, List<ConcernAccidentExpFiles> files) {
         this.id = conExp.getId();
         this.adminName = conExp.getAdmin().getAdminName();
         this.userName = conExp.getUser().getUserName();
@@ -88,6 +93,14 @@ public class ResponseConcernAccidentDTO {
         this.views = conExp.getViews();
         this.accidentCause = conExp.getAccidentCause();
         this.accidentAt = conExp.getAccidentAt();
+
+        if(files != null && files.isEmpty() == false) {
+            this.image = files.get(0).getUrl();
+
+            files.stream().forEach(
+                f -> images.put(f.getId(), f.getUrl())
+            );
+        }
     }
 
 }
