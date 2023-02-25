@@ -51,7 +51,7 @@ public class AccidentExpController {
         return new ResponseEntity<>(ResponseAccidentCaseDTO.builder().accExp(addedAccExp).build(), OK);
     }
 
-    @PostMapping(value = "/add/{id}/files")
+    @PostMapping(value = "/add/{id}/files", consumes = "multipart/form-data")
     @ApiOperation(value = "사고사례 첨부파일 등록")
     public ResponseEntity addFiles(
             @PathVariable("id") @ApiParam(value = "사고사례 PK", required = true) long id,
