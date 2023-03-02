@@ -38,14 +38,12 @@ public class InquiryController {
 
     private final InquiryService inquiryService;
 
-    /*
     @PostMapping(value = "/add")
     @ApiOperation(value = "고객센터 등록", notes = "고객센터 등록")
     public ResponseEntity add(@RequestBody Inquiry newInquiry, HttpServletRequest request) throws Exception {
 
         return ResponseUtil.sendResponse(inquiryService.add(newInquiry, request));
     }
-    */
 
     @GetMapping(value = "/find/{id}")
     @ApiOperation(value = "고객센터 단독 조회", notes = "고객센터 단독 조회")
@@ -53,7 +51,6 @@ public class InquiryController {
             HttpServletRequest request) throws Exception {
 
         Inquiry inquiry = inquiryService.find(id, request);
-        log.error("inquiry: {}", inquiry);
         return new ResponseEntity<>(ResponseInquiryDTO.builder().inquiry(inquiry).build(), OK);
     }
 

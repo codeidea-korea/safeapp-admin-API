@@ -39,6 +39,7 @@ public class NoticeDslReposImpl extends QuerydslRepositorySupport implements Not
         if(!Objects.isNull(notice.getType())) {
             query.where(qNotice.type.eq(notice.getType()));
         }
+        query.where(qNotice.deleteYn.eq(false));
 
         return query;
     }

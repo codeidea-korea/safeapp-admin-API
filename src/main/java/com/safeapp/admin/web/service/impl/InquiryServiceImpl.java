@@ -40,10 +40,11 @@ public class InquiryServiceImpl implements InquiryService {
     @Override
     @Transactional
     public Inquiry add(Inquiry newInquiry, HttpServletRequest request) throws Exception {
-        /*
         if(Objects.isNull(newInquiry)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 고객센터입니다.");
         }
+
+        newInquiry.setInquiryAdmin(adminRepos.findById(newInquiry.getAdminId()).orElse(null));
 
         Inquiry addedInquiry = inquiryRepos.save(newInquiry);
         if(Objects.isNull(addedInquiry)) {
@@ -51,9 +52,6 @@ public class InquiryServiceImpl implements InquiryService {
         }
         
         return addedInquiry;
-        */
-
-        return null;
     }
 
     @Override

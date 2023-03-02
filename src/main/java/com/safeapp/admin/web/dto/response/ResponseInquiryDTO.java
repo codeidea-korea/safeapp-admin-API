@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.persistence.Column;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Schema(description = "고객센터 응답")
 @Data
@@ -36,6 +38,12 @@ public class ResponseInquiryDTO {
     @Schema(description = "내용")
     String contents;
 
+    @Schema(description = "첨부파일 실제경로")
+    private String attachment;
+
+    @Schema(description = "첨부파일 본래파일명")
+    private String attachmentName;
+
 
 
     @Schema(description = "답변 여부")
@@ -55,12 +63,19 @@ public class ResponseInquiryDTO {
     @Builder
     public ResponseInquiryDTO(Inquiry inquiry) {
         this.id = inquiry.getId();
-        this.userName = inquiry.getInquiryUser().getUserName();
+        if(!Objects.isNull(inquiry.getInquiryUser())) {
+            this.userName = inquiry.getInquiryUser().getUserName();
+        }
+        if(!Objects.isNull(inquiry.getInquiryAdmin())) {
+            this.userName = inquiry.getInquiryAdmin().getAdminName();
+        }
         this.createdAt = inquiry.getCreatedAt();
         this.inquiryType = inquiry.getInquiryType();
         this.serviceType = inquiry.getServiceType();
         this.title = inquiry.getTitle();
         this.contents = inquiry.getContents();
+        this.attachment = inquiry.getAttachment();
+        this.attachmentName = inquiry.getAttachmentName();
 
         this.isAnswer = inquiry.getIsAnswer();
         if(this.isAnswer == YN.Y) {

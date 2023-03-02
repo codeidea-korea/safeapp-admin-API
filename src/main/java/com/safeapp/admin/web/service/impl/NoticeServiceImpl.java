@@ -1,6 +1,8 @@
 package com.safeapp.admin.web.service.impl;
 
+import java.io.File;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -8,15 +10,21 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.utils.DateUtil;
 import com.safeapp.admin.utils.PasswordUtil;
+import com.safeapp.admin.web.components.FileUploadProvider;
 import com.safeapp.admin.web.dto.request.RequestAccidentCaseDTO;
 import com.safeapp.admin.web.dto.request.RequestNoticeDTO;
 import com.safeapp.admin.web.dto.request.RequestNoticeEditDTO;
+import com.safeapp.admin.web.dto.response.ResponseAccidentCaseDTO;
+import com.safeapp.admin.web.dto.response.ResponseNoticeDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.AccidentExp;
+import com.safeapp.admin.web.model.entity.AccidentExpFiles;
 import com.safeapp.admin.web.model.entity.Notice;
+import com.safeapp.admin.web.model.entity.NoticeFiles;
 import com.safeapp.admin.web.model.entity.cmmn.Files;
 import com.safeapp.admin.web.repos.jpa.AdminRepos;
+import com.safeapp.admin.web.repos.jpa.NoticeFilesRepository;
 import com.safeapp.admin.web.repos.jpa.NoticeRepos;
 import com.safeapp.admin.web.service.cmmn.FileService;
 import lombok.RequiredArgsConstructor;
@@ -38,8 +46,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class NoticeServiceImpl implements NoticeService {
 
     private final NoticeRepos noticeRepos;
+    private final NoticeFilesRepository noticeFileRepos;
     private final NoticeDslRepos noticeDslRepos;
     private final AdminRepos adminRepos;
+
+    private final FileService fileService;
+
+    private final FileUploadProvider fileUploadProvider;
 
     @Override
     public Notice toAddEntity(RequestNoticeDTO addDto) {
@@ -71,12 +84,38 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public Notice find(long id, HttpServletRequest request) throws Exception {
+    public void addFiles(long id, List<MultipartFile> files, HttpServletRequest request) throws NotFoundException {
+        Notice notice = noticeRepos.findById(id).orElseThrow(() -> new NotFoundException("존재하지 않는 공지사항입니다."));
+
+        if(files != null || files.isEmpty() == false) {
+            for(MultipartFile file : files) {
+                Files uploadFile = fileService.uploadAllowedFile(file, request);
+                NoticeFiles resultFile =
+                    NoticeFiles
+                    .builder()
+                    .notice(notice)
+                    .url(uploadFile.getWebFileNm())
+                    .build();
+
+                noticeFileRepos.save(resultFile);
+            }
+        }
+    }
+
+    @Override
+    public ResponseNoticeDTO findNotice(long id, HttpServletRequest request) {
         Notice notice =
             noticeRepos.findById(id)
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 공지사항입니다."));
 
-        return notice;
+        List<NoticeFiles> files = noticeFileRepos.findByNotice(notice);
+
+        return
+            ResponseNoticeDTO
+            .builder()
+            .notice(notice)
+            .files(files)
+            .build();
     }
 
     @Override
@@ -105,6 +144,16 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
+    public void removeFile(long id, HttpServletRequest request) {
+        NoticeFiles noticeFile =
+            noticeFileRepos.findById(id)
+            .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 공지사항 첨부파일입니다."));
+
+        fileUploadProvider.delete(new File("/home/safeapp/api" + noticeFile.getUrl()));
+        noticeFileRepos.delete(noticeFile);
+    }
+
+    @Override
     public void remove(long id, HttpServletRequest request) {
         Notice notice =
             noticeRepos.findById(id)
@@ -115,14 +164,36 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public ListResponse<Notice> findAll(Notice notice, Pages pages, HttpServletRequest request) throws Exception {
+    public ListResponse<ResponseNoticeDTO> findAllByCondition(Notice notice, Pages pages, HttpServletRequest request) {
         long count = noticeDslRepos.countAll(notice);
         List<Notice> list = noticeDslRepos.findAll(notice, pages);
 
-        return new ListResponse<>(count, list, pages);
+        List<ResponseNoticeDTO> resultList = new ArrayList<>();
+        for(Notice each : list) {
+            List<NoticeFiles> files = noticeFileRepos.findByNotice(each);
+            ResponseNoticeDTO resNotiDTO =
+                ResponseNoticeDTO
+                .builder()
+                .notice(each)
+                .files(files)
+                .build();
+
+            resultList.add(resNotiDTO);
+        }
+
+        return new ListResponse<>(count, resultList, pages);
     }
 
     @Override
+    public Notice find(long id, HttpServletRequest request) throws Exception { return null; }
+
+    @Override
     public Notice generate(Notice newNotice) { return null; }
+
+    @Override
+    public ListResponse<Notice> findAll(Notice notice, Pages pages, HttpServletRequest request) throws Exception {
+
+        return null;
+    }
 
 }

@@ -39,6 +39,10 @@ public class InquiryDslReposImpl extends QuerydslRepositorySupport implements In
         if(!Objects.isNull(inquiry.getIsAnswer())) {
             query.where(qInquiry.isAnswer.eq(inquiry.getIsAnswer()));
         }
+        if(!Objects.isNull(inquiry.getIsAnswer())) {
+            query.where(qInquiry.isAnswer.eq(inquiry.getIsAnswer()));
+        }
+        query.where(qInquiry.deleteYn.eq(false));
 
         return query;
     }

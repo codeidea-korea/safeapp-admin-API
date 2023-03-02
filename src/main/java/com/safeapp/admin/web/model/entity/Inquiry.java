@@ -35,6 +35,10 @@ public class Inquiry extends BaseTimeEntity {
     @JoinColumn(name = "inquiry_user")
     private Users inquiryUser;
 
+    @ManyToOne
+    @JoinColumn(name = "inquiry_admin")
+    private Admins inquiryAdmin;
+
     @Enumerated(STRING)
     @Column(name = "inquiry_type")
     private InquiryNounType inquiryType;
@@ -48,6 +52,12 @@ public class Inquiry extends BaseTimeEntity {
 
     @Column(name = "contents")
     private String contents;
+
+    @Column(name = "attachment")
+    private String attachment;
+
+    @Column(name = "attachment_name")
+    private String attachmentName;
 
 
 
@@ -63,6 +73,13 @@ public class Inquiry extends BaseTimeEntity {
 
     @Column(name = "answer")
     private String answer;
+
+
+
+    @Transient
+    private Long adminId;
+
+
 
     @Builder
     public Inquiry(Long id, InquiryNounType inquiryType, InquiryServiceType serviceType, String title, String contents,
@@ -96,4 +113,5 @@ public class Inquiry extends BaseTimeEntity {
         this.answerAt = newInquiry.getAnswerAt();
         this.answer = newInquiry.getAnswer();
     }
+
 }
