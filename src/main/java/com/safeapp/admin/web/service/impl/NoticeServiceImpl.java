@@ -43,6 +43,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NoticeServiceImpl implements NoticeService {
 
     private final NoticeRepos noticeRepos;
@@ -90,6 +91,7 @@ public class NoticeServiceImpl implements NoticeService {
         if(files != null || files.isEmpty() == false) {
             for(MultipartFile file : files) {
                 Files uploadFile = fileService.uploadAllowedFile(file, request);
+                log.error("uploadFile: {}", uploadFile);
                 NoticeFiles resultFile =
                     NoticeFiles
                     .builder()

@@ -128,10 +128,11 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         Map<String, String> bodyMap = new HashMap<>();
+
         bodyMap.put("name", "인증자");
         bodyMap.put("mailAddress", addedIvtHst.getUserMail());
-        bodyMap.put("subject", "인증번호입니다.");
-        bodyMap.put("body", URLEncoder.encode("안녕하세요, 컨스퀘어에 초대합니다. <a href=\"https://safeapp.codeidea.io/login?code=" + addedIvtHst.getUrlData() + "\">가입하기</a>", "UTF-8"));
+        bodyMap.put("subject", "SAFFY에 초대합니다.");
+        bodyMap.put("body", URLEncoder.encode("안녕하세요, 컨스퀘어에 초대합니다. <a href=\"https://gosaffy.com/login?code=" + addedIvtHst.getUrlData() + "\">가입하기</a>", "UTF-8"));
 
         directSendAPIService.sendMail(newIvtHst.getUserMail(), bodyMap);
 

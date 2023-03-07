@@ -1,6 +1,7 @@
 package com.safeapp.admin.web.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.data.NoticeType;
@@ -11,10 +12,17 @@ import com.safeapp.admin.web.dto.response.ResponseNoticeDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.AccidentExp;
+import com.safeapp.admin.web.model.entity.Inquiry;
 import com.safeapp.admin.web.model.entity.Notice;
+import com.safeapp.admin.web.model.entity.NoticeFiles;
+import com.safeapp.admin.web.model.entity.cmmn.Files;
+import com.safeapp.admin.web.repos.jpa.NoticeFilesRepository;
+import com.safeapp.admin.web.service.cmmn.FileService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +31,11 @@ import com.safeapp.admin.web.service.NoticeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.net.URLEncoder;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -37,6 +48,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class NoticeController {
 
     private final NoticeService noticeService;
+    private final NoticeFilesRepository noticeFileRepos;
 
     @PostMapping(value = "/add")
     @ApiOperation(value = "공지사항 등록", notes = "공지사항 등록")
@@ -63,6 +75,32 @@ public class NoticeController {
 
         ResponseNoticeDTO notice = noticeService.findNotice(id, request);
         return new ResponseEntity<>(notice, OK);
+    }
+
+    @GetMapping(value = "/download/{id}")
+    @ApiOperation(value = "공지사항 첨부파일 다운로드", notes = "공지사항 첨부파일 다운로드")
+    public void download(@PathVariable("id") @ApiParam(value = "공지사항 파일 PK", required = true) long id,
+            HttpServletResponse response) throws Exception {
+
+        NoticeFiles noticeFile =
+            noticeFileRepos.findById(id)
+            .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 공지사항 첨부파일입니다."));
+        String filePath = "/home/safeapp/api" + noticeFile.getUrl();
+
+        File file = new File(filePath);
+        if(!file.exists()) {
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "다운로드할 첨부파일이 존재하지 않습니다.");
+        } else {
+            byte[] fileByte = FileUtils.readFileToByteArray(file);
+
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "attachment; fileName=\"" + URLEncoder.encode(noticeFile.getId().toString(), "UTF-8") + "\";");
+            response.setHeader("Content-Transfer-Encoding", "binary");
+
+            response.getOutputStream().write(fileByte);
+            response.getOutputStream().flush();
+            response.getOutputStream().close();
+        }
     }
 
     @PutMapping(value = "/edit/{id}")

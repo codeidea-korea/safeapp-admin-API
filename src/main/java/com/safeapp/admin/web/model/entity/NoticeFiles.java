@@ -23,11 +23,15 @@ public class NoticeFiles extends BaseTimeEntity {
     @Column(name = "url")
     private String url;
 
+    @Column(name = "real_name")
+    private String realName;
+
     @Builder
-    public NoticeFiles(Long id, Notice notice, String url) {
+    public NoticeFiles(Long id, Notice notice, String url, String realName) {
         this.id = id;
         this.notice = notice;
         this.url = url;
+        this.realName = realName;
     }
 
 }
