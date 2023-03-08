@@ -84,9 +84,9 @@ public class CheckListProjectRepositoryImpl implements CheckListProjectRepositor
             .from(checkListProjectDetail)
             .where
             (
-                checkListProjectDetail.checkListProject.id.eq(checkListId),
+                checkListProjectDetail.checklistProject.id.eq(checkListId),
                 checkListProjectDetail.depth.eq(3),
-                checkListProjectDetail.checkListProject.deleteYn.isFalse()
+                checkListProjectDetail.checklistProject.deleteYn.isFalse()
             )
             .limit(3)
             .fetch()
@@ -99,12 +99,12 @@ public class CheckListProjectRepositoryImpl implements CheckListProjectRepositor
             LocalDateTime createdAtStart, LocalDateTime createdAtEnd) {
 
         try {
-            QueryResults<CheckListProject> count =
+            QueryResults<CheckListProject> result =
                 jpaQueryFactory
                 .selectFrom(checkListProject)
                 .leftJoin(user).on(user.id.eq(checkListProject.user.id))
                 .leftJoin(project).on(project.id.eq(checkListProject.project.id))
-                .innerJoin(checkListProjectDetail).on(checkListProjectDetail.checkListProject.id.eq(checkListProject.id))
+                .innerJoin(checkListProjectDetail).on(checkListProjectDetail.checklistProject.id.eq(checkListProject.id))
                 .where
                 (
                     isKeyword(keyword),
@@ -118,7 +118,7 @@ public class CheckListProjectRepositoryImpl implements CheckListProjectRepositor
                 .groupBy(checkListProject.id)
                 .fetchResults();
 
-            return count.getTotal();
+            return result.getTotal();
 
         } catch(Exception e) {
             e.getStackTrace();
@@ -141,7 +141,7 @@ public class CheckListProjectRepositoryImpl implements CheckListProjectRepositor
                 .selectFrom(checkListProject)
                 .leftJoin(user).on(user.id.eq(checkListProject.user.id))
                 .leftJoin(project).on(project.id.eq(checkListProject.project.id))
-                .innerJoin(checkListProjectDetail).on(checkListProjectDetail.checkListProject.id.eq(checkListProject.id))
+                .innerJoin(checkListProjectDetail).on(checkListProjectDetail.checklistProject.id.eq(checkListProject.id))
                 .where
                 (
                     isKeyword(keyword),

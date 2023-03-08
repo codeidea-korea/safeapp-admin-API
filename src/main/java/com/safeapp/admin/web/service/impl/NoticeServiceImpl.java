@@ -91,12 +91,13 @@ public class NoticeServiceImpl implements NoticeService {
         if(files != null || files.isEmpty() == false) {
             for(MultipartFile file : files) {
                 Files uploadFile = fileService.uploadAllowedFile(file, request);
-                log.error("uploadFile: {}", uploadFile);
+
                 NoticeFiles resultFile =
                     NoticeFiles
                     .builder()
                     .notice(notice)
                     .url(uploadFile.getWebFileNm())
+                    .realName(uploadFile.getRealName())
                     .build();
 
                 noticeFileRepos.save(resultFile);

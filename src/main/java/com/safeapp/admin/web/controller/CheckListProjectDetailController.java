@@ -34,9 +34,8 @@ public class CheckListProjectDetailController {
     @ApiOperation(value = "체크리스트 상세 등록", notes = "체크리스트 상세 등록")
     public ResponseEntity<ResponseCheckListProjectDetailDTO> add(@PathVariable("id") @ApiParam(value = "체크리스트 PK", readOnly = true) long id,
             @RequestBody RequestCheckListProjectDetailDTO addDto, HttpServletRequest request) throws Exception {
-
         CheckListProjectDetail chkPrjDet = checkListProjectDetailService.toEntity(addDto);
-        chkPrjDet.setCheckListProject(checkListProjectService.find(id, request));
+        chkPrjDet.setChecklistProject(checkListProjectService.find(id, request));
 
         CheckListProjectDetail addedChkPrjDet = checkListProjectDetailService.add(chkPrjDet, request);
         return new ResponseEntity<>(ResponseCheckListProjectDetailDTO.builder().detail(addedChkPrjDet).build(), OK);
@@ -46,7 +45,6 @@ public class CheckListProjectDetailController {
     @ApiOperation(value = "체크리스트 상세 단독 조회", notes = "체크리스트 상세 단독 조회")
     public ResponseEntity<ResponseCheckListProjectDetailDTO> find(@PathVariable("id") @ApiParam(value = "체크리스트 상세 PK", required = true) long id,
             HttpServletRequest request) throws Exception {
-
         CheckListProjectDetail chkPrjDet = checkListProjectDetailService.find(id, request);
         return new ResponseEntity<>(ResponseCheckListProjectDetailDTO.builder().detail(chkPrjDet).build(), OK);
     }
@@ -55,7 +53,6 @@ public class CheckListProjectDetailController {
     @ApiOperation(value = "체크리스트 상세 수정", notes = "체크리스트 상세 수정")
     public ResponseEntity<ResponseCheckListProjectDetailDTO> edit(@PathVariable("id") @ApiParam(value = "체크리스트 상세 PK", required = true) long id,
             @RequestBody RequestCheckListProjectDetailDTO editDto, HttpServletRequest request) throws Exception {
-
         CheckListProjectDetail chkPrjDet = checkListProjectDetailService.toEntity(editDto);
         chkPrjDet.setId(id);
 
@@ -67,7 +64,6 @@ public class CheckListProjectDetailController {
     @ApiOperation(value = "체크리스트 상세 삭제", notes = "체크리스트 상세 삭제")
     public ResponseEntity remove(@PathVariable("id") @ApiParam(value = "체크리스트 상세 PK", required = true) long id,
                 HttpServletRequest request) throws Exception {
-
         checkListProjectDetailService.remove(id, request);
         return ResponseUtil.sendResponse(null);
     }
@@ -76,9 +72,16 @@ public class CheckListProjectDetailController {
     @GetMapping(value = "/list")
     @ApiOperation(value = "체크리스트 상세 목록 조회", notes = "체크리스트 상세 목록 조회")
     public ListResponse findAll(Pages pages, HttpServletRequest request) throws Exception {
-
         return checkListProjectDetailService.findAll(CheckListProjectDetail.builder().build(), pages, request);
     }
     */
+
+    @DeleteMapping(value = "/removeAll/{id}")
+    @ApiOperation(value = "체크리스트 상세 목록 삭제", notes = "체크리스트 상세 목록 삭제")
+    public ResponseEntity removeAll(@PathVariable("id") @ApiParam(value = "체크리스트 PK", required = true) long id,
+            HttpServletRequest request) throws Exception {
+        checkListProjectDetailService.removeAll(id, request);
+        return ResponseUtil.sendResponse(null);
+    }
 
 }

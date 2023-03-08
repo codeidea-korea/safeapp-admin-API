@@ -39,8 +39,11 @@ public class ResponseNoticeDTO {
     @Schema(description = "내용")
     String contents;
 
-    @Schema(description = "파일 첨부 단독")
+    @Schema(description = "파일 첨부 단독 (파일경로)")
     String file;
+
+    @Schema(description = "파일 첨부 단독 (파일명)")
+    String realName;
 
     @Schema(description = "파일 첨부 목록")
     HashMap<Long, String> notiFiles = new HashMap<>();
@@ -57,10 +60,13 @@ public class ResponseNoticeDTO {
 
         if(files != null && files.isEmpty() == false) {
             this.file = files.get(0).getUrl();
+            this.realName = files.get(0).getRealName();
 
+            /*
             files.stream().forEach(
                 f -> notiFiles.put(f.getId(), f.getUrl())
             );
+            */
         }
     }
 

@@ -1,5 +1,6 @@
 package com.safeapp.admin.web.dto.response;
 
+import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.entity.RiskCheck;
 import com.safeapp.admin.web.model.entity.RiskCheckDetail;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -47,6 +48,9 @@ public class ResponseRiskCheckDTO {
     @Schema(description = "검토자 3 검토일시")
     LocalDateTime reviewer_at3;
 
+    @Schema(description = "공개여부")
+    YN visibled;
+
     @Builder
     public ResponseRiskCheckDTO(RiskCheck riskCheck, List<String> contents) {
         this.id = riskCheck.getId();
@@ -59,6 +63,8 @@ public class ResponseRiskCheckDTO {
         this.reviewer_at1 = riskCheck.getReview1_at();
         this.reviewer_at2 = riskCheck.getReview2_at();
         this.reviewer_at3 = riskCheck.getReview3_at();
+
+        this.visibled = riskCheck.getVisibled();
 
         if(riskCheck.getProject() != null) {
             this.projectId = riskCheck.getProject().getId();

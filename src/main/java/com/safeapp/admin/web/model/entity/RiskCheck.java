@@ -129,30 +129,40 @@ public class RiskCheck extends BaseTimeEntity {
 
     @Column(name = "recheck_reason")
     private String recheckReason;
-
-    @Transient
-    private YN liked;
-    
-    @Transient
-    private YN createdAtDescended;
-    
-    @Transient
-    private YN viewsDescended;
-    
-    @Transient
-    private YN likesDescended;
     
     @Transient
     private String detailContents;
+
+    @Transient
+    private String keyword;
+
+    @Transient
+    private String userName;
+
+    @Transient
+    private String phoneNo;
+
+    @Transient
+    private String createdAtStart;
+
+    @Transient
+    private String createdAtEnd;
+
+    @Transient
+    private YN createdAtDesc;
+
+    @Transient
+    private YN viewsDesc;
 
     @OneToMany(mappedBy = "riskCheck")
     private List<RiskCheckDetail> riskCheckDetailList = new ArrayList<>();
 
     @Builder
-    public RiskCheck(Long id, Project project, Users user, String name, int views, int likes, String tag, String relatedAcidNo,
+    public RiskCheck(Long id, Project project, Users user, String name, Integer views, Integer likes, String tag, String relatedAcidNo,
             Users checker, Users approver, YN visibled, String instructWork, Users reviewer1, Users reviewer2, Users reviewer3,
             String instructDetail, LocalDateTime workStartAt, LocalDateTime workEndAt, String etcRiskMemo,
-            YN liked, YN createdAtDescended, YN viewsDescended, YN likesDescended, String detailContents) {
+            String detailContents, String keyword, String userName, String phoneNo, String createdAtStart,
+            String createdAtEnd, YN createdAtDesc, YN viewsDesc) {
 
         super();
 
@@ -172,11 +182,14 @@ public class RiskCheck extends BaseTimeEntity {
         this.workStartAt = workStartAt;
         this.workEndAt = workEndAt;
         this.etcRiskMemo = etcRiskMemo;
-        this.liked = liked;
-        this.createdAtDescended = createdAtDescended;
-        this.viewsDescended = viewsDescended;
-        this.likesDescended = likesDescended;
         this.detailContents = detailContents;
+        this.keyword = keyword;
+        this.userName = userName;
+        this.phoneNo = phoneNo;
+        this.createdAtStart = createdAtStart;
+        this.createdAtEnd = createdAtEnd;
+        this.createdAtDesc = createdAtDesc;
+        this.viewsDesc = viewsDesc;
 
         if(checker != null) {
             this.checker = checker;

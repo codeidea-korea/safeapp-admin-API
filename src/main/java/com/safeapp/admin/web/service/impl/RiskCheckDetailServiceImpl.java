@@ -1,10 +1,14 @@
 package com.safeapp.admin.web.service.impl;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.web.dto.request.RequestRiskCheckDetailDTO;
+import com.safeapp.admin.web.model.entity.CheckListProject;
+import com.safeapp.admin.web.model.entity.CheckListProjectDetail;
+import com.safeapp.admin.web.model.entity.RiskCheck;
 import com.safeapp.admin.web.repos.jpa.RiskCheckRepository;
 import com.safeapp.admin.web.repos.jpa.UserRepos;
 import com.safeapp.admin.utils.DateUtil;
@@ -14,6 +18,7 @@ import com.safeapp.admin.web.model.cmmn.Pages;
 import com.safeapp.admin.web.model.entity.RiskCheckDetail;
 import com.safeapp.admin.web.repos.jpa.RiskCheckDetailRepos;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,13 +30,13 @@ import com.safeapp.admin.web.service.cmmn.JwtService;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class RiskCheckDetailServiceImpl implements RiskCheckDetailService {
 
+    private final RiskCheckRepository riskChkRepos;
     private final RiskCheckDetailRepos riskChkDetRepos;
-
-    private final UserRepos userRepos;
-
     private final RiskCheckRepository riskCheckRepository;
+    private final UserRepos userRepos;
 
     @Override
     public RiskCheckDetail toEntity(RequestRiskCheckDetailDTO dto) throws NotFoundException {
@@ -49,8 +54,12 @@ public class RiskCheckDetailServiceImpl implements RiskCheckDetailService {
         detail.setRiskType(dto.getRiskType());
         detail.setReduceResponse(dto.getReduceResponse());
         detail.setCheckMemo(dto.getCheckMemo());
-        detail.setDueUser(userRepos.findById(dto.getDueUserId()).orElseThrow(() -> new NotFoundException("Input Checker ID: " + dto.getDueUserId())));
-        detail.setCheckUser(userRepos.findById(dto.getCheckerUserId()).orElseThrow(() -> new NotFoundException("Input Checker ID: " + dto.getDueUserId())));
+        if(dto.getDueUserId() != null) {
+            detail.setDueUser(userRepos.findById(dto.getDueUserId()).orElseThrow(() -> new NotFoundException("Input Due ID: " + dto.getDueUserId())));
+        }
+        if(dto.getCheckerUserId() != null) {
+            detail.setCheckUser(userRepos.findById(dto.getCheckerUserId()).orElseThrow(() -> new NotFoundException("Input Checker ID: " + dto.getCheckerUserId())));
+        }
         detail.setStatus(dto.getStatus());
         detail.setParentOrders(dto.getParentOrders());
         detail.setOrders(dto.getOrders());
@@ -105,6 +114,18 @@ public class RiskCheckDetailServiceImpl implements RiskCheckDetailService {
 
         riskChkDet.setDeleteYn(true);
         riskChkDetRepos.save(riskChkDet);
+    }
+
+    @Override
+    public void removeAll(long id, HttpServletRequest request) {
+        RiskCheck riskChk =
+            riskChkRepos.findById(id)
+            .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 위험성 평가표입니다."));
+
+        List<RiskCheckDetail> riskChkDetList = riskChkDetRepos.findAllByRiskCheck(riskChk);
+        riskChkDetList.forEach(each -> {
+            riskChkDetRepos.delete(each);
+        });
     }
 
     @Override

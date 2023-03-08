@@ -111,6 +111,9 @@ public class ResponseRiskCheckSelectDTO {
     @Schema(description = "작업개요 - 세부공종")
     String instructWork;
 
+    @Schema(description = "공개여부")
+    YN visibled;
+
     @Schema(description = "작업개요 - 작업공종")
     String instructDetail;
 
@@ -168,6 +171,7 @@ public class ResponseRiskCheckSelectDTO {
         this.tag = riskCheck.getTag();
         this.relatedAcidNo = riskCheck.getRelatedAcidNo();
 
+        this.visibled = riskCheck.getVisibled();
         this.instructWork = riskCheck.getInstructWork();
         this.instructDetail = riskCheck.getInstructDetail();
         this.workStartAt = riskCheck.getWorkStartAt();

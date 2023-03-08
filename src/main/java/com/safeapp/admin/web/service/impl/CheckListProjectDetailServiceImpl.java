@@ -1,5 +1,6 @@
 package com.safeapp.admin.web.service.impl;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
@@ -7,8 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import com.safeapp.admin.web.dto.request.RequestCheckListProjectDetailDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
+import com.safeapp.admin.web.model.entity.CheckListProject;
 import com.safeapp.admin.web.model.entity.CheckListProjectDetail;
 import com.safeapp.admin.web.repos.jpa.CheckListProjectDetailRepository;
+import com.safeapp.admin.web.repos.jpa.CheckListProjectRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +26,7 @@ import com.safeapp.admin.web.service.CheckListProjectDetailService;
 public class CheckListProjectDetailServiceImpl implements CheckListProjectDetailService {
 
     private final CheckListProjectDetailRepository chkPrjDetRepos;
+    private final CheckListProjectRepository chkPrjRepos;
 
     @Override
     public CheckListProjectDetail toEntity(RequestCheckListProjectDetailDTO dto) {
@@ -79,14 +83,15 @@ public class CheckListProjectDetailServiceImpl implements CheckListProjectDetail
 
     @Override
     public CheckListProjectDetail edit(CheckListProjectDetail newChkPrjDet, HttpServletRequest request) throws Exception {
-        CheckListProjectDetail editedChkPrjDet =
-            chkPrjDetRepos.findById(newChkPrjDet.getId())
+        CheckListProjectDetail chkPrjDet = chkPrjDetRepos.findById(newChkPrjDet.getId())
             .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 체크리스트 상세입니다."));
-        if(Objects.isNull(editedChkPrjDet)) {
+        if(Objects.isNull(chkPrjDet)) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 체크리스트 상세입니다.");
         }
 
-        editedChkPrjDet = chkPrjDetRepos.save(generate(newChkPrjDet));
+        chkPrjDet.edit(newChkPrjDet);
+
+        CheckListProjectDetail editedChkPrjDet = chkPrjDetRepos.save(chkPrjDet);
         return editedChkPrjDet;
     }
 
@@ -100,9 +105,20 @@ public class CheckListProjectDetailServiceImpl implements CheckListProjectDetail
     }
 
     @Override
+    public void removeAll(long id, HttpServletRequest request) {
+        CheckListProject chkPrj =
+            chkPrjRepos.findById(id)
+            .orElseThrow(() -> new HttpServerErrorException(HttpStatus.BAD_REQUEST, "존재하지 않는 체크리스트입니다."));
+
+        List<CheckListProjectDetail> chkPrjDetList = chkPrjDetRepos.findAllByChecklistProject(chkPrj);
+        chkPrjDetList.forEach(each -> {
+            chkPrjDetRepos.delete(each);
+        });
+    }
+
+    @Override
     public ListResponse<CheckListProjectDetail> findAll(CheckListProjectDetail chkPrjDet, Pages pages,
             HttpServletRequest request) throws Exception {
-
         return null;
     }
 

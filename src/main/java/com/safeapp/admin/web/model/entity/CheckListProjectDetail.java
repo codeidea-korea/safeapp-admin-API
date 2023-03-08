@@ -7,6 +7,7 @@ import com.safeapp.admin.web.data.YN;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import static javax.persistence.FetchType.LAZY;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CheckListProjectDetail {
+public class CheckListProjectDetail extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +51,7 @@ public class CheckListProjectDetail {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "checklist_project")
     @JsonManagedReference
-    private CheckListProject checkListProject;
+    private CheckListProject checklistProject;
 
     @Builder
     public CheckListProjectDetail(Long id, Integer depth, YN isDepth, Integer parentDepth, String contents,
@@ -69,6 +70,7 @@ public class CheckListProjectDetail {
     }
 
     public void edit(CheckListProjectDetail chkPrjDet) {
+        setUpdatedAt(LocalDateTime.now());
         setDepth(chkPrjDet.getDepth());
         setIsDepth(chkPrjDet.getIsDepth());
         setParentDepth(chkPrjDet.getParentDepth());

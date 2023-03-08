@@ -40,6 +40,10 @@ public class Files {
     @ApiModelProperty("웹상 파일 경로 + 파일명")
     private String webFileNm;
 
+    @Column(name = "real_name")
+    @ApiModelProperty("본래 파일명")
+    private String realName;
+
     @Column(name = "upload_type")
     @ApiModelProperty("파일 확장자")
     private String uploadType;
@@ -56,9 +60,10 @@ public class Files {
     private LocalDateTime createTime;
 
     @Builder
-    public Files(String fileNm, String webFileNm, String uploadType, Integer grpFileNo) {
+    public Files(String fileNm, String webFileNm, String realName, String uploadType, Integer grpFileNo) {
         this.fileNm = fileNm;
         this.webFileNm = webFileNm;
+        this.realName = realName;
         this.uploadType = uploadType;
         this.grpFileNo = grpFileNo;
     }

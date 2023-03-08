@@ -74,6 +74,7 @@ public class FileUploadProvider {
             .grpFileNo(1)
             .webFileNm(webPath + "/" + now + "/" + now + "." + getExt(file))
             .fileNm(serverFilePath.toString())
+            .realName(file.getOriginalFilename())
             .uploadType(getExt(file))
             .build();
     }

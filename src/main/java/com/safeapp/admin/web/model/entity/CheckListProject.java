@@ -96,7 +96,7 @@ public class CheckListProject extends BaseTimeEntity {
     private String detailContents;
 
     // 자식 테이블 매핑
-    @OneToMany(mappedBy = "checkListProject")
+    @OneToMany(mappedBy = "checklistProject")
     @JsonManagedReference
     private List<CheckListProjectDetail> checkListProjectDetailList = new ArrayList<>();
 

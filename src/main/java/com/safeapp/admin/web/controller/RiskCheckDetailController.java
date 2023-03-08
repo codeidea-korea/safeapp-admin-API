@@ -2,6 +2,7 @@ package com.safeapp.admin.web.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.safeapp.admin.utils.ResponseUtil;
 import com.safeapp.admin.web.dto.request.RequestRiskCheckDetailDTO;
 import com.safeapp.admin.web.dto.response.ResponseRiskCheckDetailDTO;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
@@ -32,7 +33,6 @@ public class RiskCheckDetailController {
     @ApiOperation(value = "위험성 평가표 상세 등록", notes = "위험성 평가표 상세 등록")
     public ResponseEntity<ResponseRiskCheckDetailDTO> add(@RequestBody RequestRiskCheckDetailDTO addDto,
             HttpServletRequest request) throws Exception {
-
         RiskCheckDetail riskChkDet = riskCheckDetailService.toEntity(addDto);
 
         RiskCheckDetail addedRiskChkDet = riskCheckDetailService.add(riskChkDet, request);
@@ -43,7 +43,6 @@ public class RiskCheckDetailController {
     @ApiOperation(value = "위험성 평가표 상세 단독 조회", notes = "위험성 평가표 상세 단독 조회")
     public RiskCheckDetail find(@PathVariable("id") @ApiParam(value = "위험성 평가표 상세 PK", required = true) long id,
             HttpServletRequest request) throws Exception {
-
         return riskCheckDetailService.find(id, request);
     }
 
@@ -51,7 +50,6 @@ public class RiskCheckDetailController {
     @ApiOperation(value = "위험성 평가표 상세 수정", notes = "위험성 평가표 상세 수정")
     public ResponseEntity<ResponseRiskCheckDetailDTO> edit(@PathVariable("id") @ApiParam(value = "위험성 평가표 상세 PK", required = true) long id,
             @RequestBody RequestRiskCheckDetailDTO editDto, HttpServletRequest request) throws Exception {
-
         RiskCheckDetail riskChkDet = riskCheckDetailService.toEntity(editDto);
         riskChkDet.setId(id);
 
@@ -63,7 +61,6 @@ public class RiskCheckDetailController {
     @ApiOperation(value = "위험성 평가표 상세 삭제", notes = "위험성 평가표 상세 삭제")
     public void remove(@PathVariable("id") @ApiParam(value = "위험성 평가표 상세 PK", required = true) long id,
             HttpServletRequest request) throws Exception {
-
         riskCheckDetailService.remove(id, request);
     }
 
@@ -71,9 +68,16 @@ public class RiskCheckDetailController {
     @GetMapping(value = "/list")
     @ApiOperation(value = "위험성 평가표 목록 조회", notes = "위험성 평가표 목록 조회")
     public ListResponse findAll(Pages pages, HttpServletRequest request) throws Exception {
-
         return riskCheckDetailService.findAll(RiskCheckDetail.builder().build(), pages,request);
     }
     */
+
+    @DeleteMapping(value = "/removeAll/{id}")
+    @ApiOperation(value = "위험성 평가표 상세 목록 삭제", notes = "위험성 평가표 상세 목록 삭제")
+    public ResponseEntity removeAll(@PathVariable("id") @ApiParam(value = "위험성 평가표 PK", required = true) long id,
+            HttpServletRequest request) throws Exception {
+        riskCheckDetailService.removeAll(id, request);
+        return ResponseUtil.sendResponse(null);
+    }
 
 }

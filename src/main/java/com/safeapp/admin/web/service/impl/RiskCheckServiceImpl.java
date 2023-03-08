@@ -1,6 +1,5 @@
 package com.safeapp.admin.web.service.impl;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -9,10 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.safeapp.admin.web.data.StatusType;
 import com.safeapp.admin.web.dto.request.RequestRiskCheckDTO;
+import com.safeapp.admin.web.dto.response.ResponseAccidentCaseDTO;
 import com.safeapp.admin.web.dto.response.ResponseCheckListProjectDTO;
 import com.safeapp.admin.web.dto.response.ResponseRiskCheckDTO;
-import com.safeapp.admin.web.model.entity.Admins;
-import com.safeapp.admin.web.model.entity.CheckListProject;
+import com.safeapp.admin.web.model.entity.*;
 import com.safeapp.admin.web.repos.jpa.ProjectRepos;
 import com.safeapp.admin.web.repos.jpa.RiskCheckRepository;
 import com.safeapp.admin.web.repos.jpa.UserRepos;
@@ -21,7 +20,7 @@ import com.safeapp.admin.utils.PasswordUtil;
 import com.safeapp.admin.web.data.YN;
 import com.safeapp.admin.web.model.cmmn.ListResponse;
 import com.safeapp.admin.web.model.cmmn.Pages;
-import com.safeapp.admin.web.model.entity.RiskCheck;
+import com.safeapp.admin.web.repos.jpa.dsl.RiskChkDslRepos;
 import lombok.AllArgsConstructor;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +36,7 @@ import com.safeapp.admin.web.service.cmmn.JwtService;
 public class RiskCheckServiceImpl implements RiskCheckService {
 
     private final RiskCheckRepository riskChkRepos;
+    private final RiskChkDslRepos riskChkDslRepos;
     private final ProjectRepos prjRepos;
     private final UserRepos userRepos;
 
@@ -144,36 +144,25 @@ public class RiskCheckServiceImpl implements RiskCheckService {
     }
 
     @Override
-    public Long countAllByCondition(String keyword, String userName, String phoneNo, YN visibled,
-            LocalDateTime createdAtStart, LocalDateTime createdAtEnd) {
-
-        return riskChkRepos.countAllByCondition(keyword, userName, phoneNo, visibled, createdAtStart, createdAtEnd);
-    }
-
-    @Override
-    public List<ResponseRiskCheckDTO> findAllByConditionAndOrderBy(String keyword, String userName, String phoneNo,
-            YN visibled, LocalDateTime createdAtStart, LocalDateTime createdAtEnd, YN createdAtDesc, YN likesDesc, YN viewsDesc,
-            int pageNo, int pageSize, HttpServletRequest request) {
-
-        List<RiskCheck> list =
-            riskChkRepos.findAllByConditionAndOrderBy(keyword, userName, phoneNo,
-            visibled, createdAtStart, createdAtEnd, createdAtDesc, likesDesc, viewsDesc,
-            pageNo, pageSize);
+    public ListResponse<ResponseRiskCheckDTO> findAllByCondition(RiskCheck riskChk, Pages pages, HttpServletRequest request) {
+        long count = riskChkDslRepos.countAll(riskChk);
+        List<RiskCheck> list = riskChkDslRepos.findAll(riskChk, pages);
 
         List<ResponseRiskCheckDTO> resultList = new ArrayList<>();
-        for(RiskCheck riskChk : list) {
-            List<String> contents = riskChkRepos.findContentsByRiskChecktId(riskChk.getId());
-            ResponseRiskCheckDTO result =
+        for(RiskCheck each : list) {
+            List<String> contents = riskChkRepos.findContentsByRiskCheckId(each.getId());
+
+            ResponseRiskCheckDTO resRiskChkDTO =
                 ResponseRiskCheckDTO
                 .builder()
-                .riskCheck(riskChk)
+                .riskCheck(each)
                 .contents(contents)
                 .build();
 
-            resultList.add(result);
+            resultList.add(resRiskChkDTO);
         }
 
-        return resultList;
+        return new ListResponse<>(count, resultList, pages);
     }
 
     @Override

@@ -127,7 +127,7 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
                 newChkPrjDet.setOrders(detailEditDto.getOrders());
                 newChkPrjDet.setParentOrders(detailEditDto.getParentOrders());
                 newChkPrjDet.setTypes(detailEditDto.getTypes());
-                newChkPrjDet.setCheckListProject(newChkPrj);
+                newChkPrjDet.setChecklistProject(newChkPrj);
 
                 if(detailEditDto.getId() != null) {
                     newChkPrjDet.setId(detailEditDto.getId());
