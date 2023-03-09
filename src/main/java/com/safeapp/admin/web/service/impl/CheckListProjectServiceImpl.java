@@ -12,6 +12,7 @@ import com.safeapp.admin.web.dto.request.RequestCheckListProjectEditDTO;
 import com.safeapp.admin.web.dto.response.ResponseCheckListProjectDTO;
 import com.safeapp.admin.web.model.entity.CheckListProject;
 import com.safeapp.admin.web.model.entity.CheckListProjectDetail;
+import com.safeapp.admin.web.repos.jpa.AdminRepos;
 import com.safeapp.admin.web.repos.jpa.CheckListProjectRepository;
 import com.safeapp.admin.web.repos.jpa.ProjectRepos;
 import com.safeapp.admin.web.data.YN;
@@ -32,13 +33,19 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
 
     private final CheckListProjectRepository chkPrjRepos;
     private final ProjectRepos prjRepos;
+    private final AdminRepos adminRepos;
     private final UserRepos userRepos;
 
     @Override
     public CheckListProject toAddEntity(RequestCheckListProjectDTO addDto) throws NotFoundException {
         CheckListProject newChkPrj = new CheckListProject();
 
-        newChkPrj.setUser(userRepos.findById(addDto.getUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + addDto.getUserId())));
+        if(addDto.getAdminId() != null) {
+            newChkPrj.setAdmin(adminRepos.findById(addDto.getAdminId()).orElseThrow(() -> new NotFoundException("Input Admin ID: " + addDto.getAdminId())));
+        }
+        if(addDto.getUserId() != null) {
+            newChkPrj.setUser(userRepos.findById(addDto.getUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + addDto.getUserId())));
+        }
         newChkPrj.setName(addDto.getName());
         newChkPrj.setVisibled(addDto.getVisibled());
         newChkPrj.setTag(addDto.getTag());
@@ -92,7 +99,14 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
     public CheckListProject toEditEntity(RequestCheckListProjectEditDTO editDto) throws NotFoundException {
         CheckListProject newChkPrj = new CheckListProject();
 
-        newChkPrj.setUser(userRepos.findById(editDto.getUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + editDto.getUserId())));
+        /*
+        if(editDto.getAdminId() != null) {
+            newChkPrj.setAdmin(adminRepos.findById(editDto.getAdminId()).orElseThrow(() -> new NotFoundException("Input Admin ID: " + editDto.getAdminId())));
+        }
+        if(editDto.getUserId() != null) {
+            newChkPrj.setUser(userRepos.findById(editDto.getUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + editDto.getUserId())));
+        }
+        */
         newChkPrj.setName(editDto.getName());
         newChkPrj.setVisibled(editDto.getVisibled());
         newChkPrj.setTag(editDto.getTag());
@@ -111,7 +125,7 @@ public class CheckListProjectServiceImpl implements CheckListProjectService {
             newChkPrj.setReviewAt(LocalDateTime.now());
         }
         if(editDto.getApproverId() != null) {
-            newChkPrj.setApprover(userRepos.findById(editDto.getApproverId()).orElseThrow(() -> new NotFoundException("Input User ID: " + editDto.getUserId())));
+            newChkPrj.setApprover(userRepos.findById(editDto.getApproverId()).orElseThrow(() -> new NotFoundException("Input User ID: " + editDto.getApproverId())));
             newChkPrj.setApproveAt(LocalDateTime.now());
         }
 

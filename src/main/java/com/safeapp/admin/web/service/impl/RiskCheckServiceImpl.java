@@ -12,6 +12,7 @@ import com.safeapp.admin.web.dto.response.ResponseAccidentCaseDTO;
 import com.safeapp.admin.web.dto.response.ResponseCheckListProjectDTO;
 import com.safeapp.admin.web.dto.response.ResponseRiskCheckDTO;
 import com.safeapp.admin.web.model.entity.*;
+import com.safeapp.admin.web.repos.jpa.AdminRepos;
 import com.safeapp.admin.web.repos.jpa.ProjectRepos;
 import com.safeapp.admin.web.repos.jpa.RiskCheckRepository;
 import com.safeapp.admin.web.repos.jpa.UserRepos;
@@ -38,13 +39,19 @@ public class RiskCheckServiceImpl implements RiskCheckService {
     private final RiskCheckRepository riskChkRepos;
     private final RiskChkDslRepos riskChkDslRepos;
     private final ProjectRepos prjRepos;
+    private final AdminRepos adminRepos;
     private final UserRepos userRepos;
 
     @Override
     public RiskCheck toEntity(RequestRiskCheckDTO dto) throws NotFoundException{
         RiskCheck newRiskChk = new RiskCheck();
 
-        newRiskChk.setUser(userRepos.findById(dto.getUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + dto.getUserId())));
+        if(dto.getAdminId() != null) {
+            newRiskChk.setAdmin(adminRepos.findById(dto.getAdminId()).orElseThrow(() -> new NotFoundException("Input Admin ID: " + dto.getAdminId())));
+        }
+        if(dto.getUserId() != null) {
+            newRiskChk.setUser(userRepos.findById(dto.getUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + dto.getUserId())));
+        }
         newRiskChk.setName(dto.getName());
         newRiskChk.setVisibled(dto.getVisibled());
         newRiskChk.setTag(dto.getTag());
@@ -63,22 +70,22 @@ public class RiskCheckServiceImpl implements RiskCheckService {
             newRiskChk.setChecker(userRepos.findById(dto.getCheckerId()).orElseThrow(() -> new NotFoundException("Input Checker ID: " + dto.getCheckerId())));
         }
         if(dto.getApproverId() != null) {
-            newRiskChk.setApprover(userRepos.findById(dto.getApproverId()).orElseThrow(() -> new NotFoundException("Input User ID: " + dto.getApproverId())));
+            newRiskChk.setApprover(userRepos.findById(dto.getApproverId()).orElseThrow(() -> new NotFoundException("Input Approver ID: " + dto.getApproverId())));
         }
         if(dto.getReviewer1Id() != null) {
-            newRiskChk.setReviewer1(userRepos.findById(dto.getReviewer1Id()).orElseThrow(() -> new NotFoundException("Input User ID: " + dto.getReviewer1Id())));
+            newRiskChk.setReviewer1(userRepos.findById(dto.getReviewer1Id()).orElseThrow(() -> new NotFoundException("Input Reviewer ID: " + dto.getReviewer1Id())));
         }
         if(dto.getReviewer2Id() != null) {
-            newRiskChk.setReviewer2(userRepos.findById(dto.getReviewer2Id()).orElseThrow(() -> new NotFoundException("Input User ID: " + dto.getReviewer2Id())));
+            newRiskChk.setReviewer2(userRepos.findById(dto.getReviewer2Id()).orElseThrow(() -> new NotFoundException("Input Reviewer2 ID: " + dto.getReviewer2Id())));
         }
         if(dto.getReviewer3Id() != null) {
-            newRiskChk.setReviewer3(userRepos.findById(dto.getReviewer1Id()).orElseThrow(() -> new NotFoundException("Input User ID: " + dto.getReviewer3Id())));
+            newRiskChk.setReviewer3(userRepos.findById(dto.getReviewer1Id()).orElseThrow(() -> new NotFoundException("Input Reviewer3 ID: " + dto.getReviewer3Id())));
         }
         if(dto.getCheckUserId() != null) {
-            newRiskChk.setCheckUser(userRepos.findById(dto.getCheckUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + dto.getCheckUserId())));
+            newRiskChk.setCheckUser(userRepos.findById(dto.getCheckUserId()).orElseThrow(() -> new NotFoundException("Input CheckUser ID: " + dto.getCheckUserId())));
         }
         if(dto.getDueUserId() != null) {
-            newRiskChk.setDueUser(userRepos.findById(dto.getDueUserId()).orElseThrow(() -> new NotFoundException("Input User ID: " + dto.getDueUserId())));
+            newRiskChk.setDueUser(userRepos.findById(dto.getDueUserId()).orElseThrow(() -> new NotFoundException("Input DueUser ID: " + dto.getDueUserId())));
         }
 
         return newRiskChk;

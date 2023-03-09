@@ -24,7 +24,10 @@ public class ResponseRiskCheckDTO {
     @Schema(description = "제목")
     String name;
 
-    @Schema(description = "등록자 ID")
+    @Schema(description = "등록자(관리자) ID")
+    String adminId;
+
+    @Schema(description = "등록자(사용자) ID")
     String userId;
 
     @Schema(description = "등록일시")
@@ -55,7 +58,12 @@ public class ResponseRiskCheckDTO {
     public ResponseRiskCheckDTO(RiskCheck riskCheck, List<String> contents) {
         this.id = riskCheck.getId();
         this.name = riskCheck.getName();
-        this.userId = riskCheck.getUser().getUserId();
+        if(riskCheck.getAdmin() != null) {
+            this.adminId = riskCheck.getAdmin().getAdminId();
+        }
+        if(riskCheck.getUser() != null) {
+            this.userId = riskCheck.getUser().getUserId();
+        }
         this.createdDate = riskCheck.getCreatedAt();
         this.views = riskCheck.getViews();
         this.likeCount = riskCheck.getLikes();

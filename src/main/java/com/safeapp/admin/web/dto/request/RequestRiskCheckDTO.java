@@ -19,7 +19,11 @@ public class RequestRiskCheckDTO {
     @NotBlank(message = NOT_NULL)
     Long projectId;
 
-    @Schema(description = "유저 PK")
+    @Schema(description = "관리자 PK")
+    @NotBlank(message = NOT_NULL)
+    Long adminId;
+
+    @Schema(description = "사용자 PK")
     @NotBlank(message = NOT_NULL)
     Long userId;
 

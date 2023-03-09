@@ -39,6 +39,9 @@ public class ResponseNoticeDTO {
     @Schema(description = "내용")
     String contents;
 
+    @Schema(description = "파일 첨부 단독 PK")
+    Long fileId;
+
     @Schema(description = "파일 첨부 단독 (파일경로)")
     String file;
 
@@ -59,6 +62,7 @@ public class ResponseNoticeDTO {
         this.contents = notice.getContents();
 
         if(files != null && files.isEmpty() == false) {
+            this.fileId = files.get(0).getId();
             this.file = files.get(0).getUrl();
             this.realName = files.get(0).getRealName();
 

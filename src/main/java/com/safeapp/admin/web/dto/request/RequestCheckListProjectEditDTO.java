@@ -21,9 +21,15 @@ public class RequestCheckListProjectEditDTO {
     @NotBlank(message = NOT_NULL)
     Long projectId;
 
-    @Schema(description = "회원 PK")
+    /*
+    @Schema(description = "관리자 PK")
+    @NotBlank(message = NOT_NULL)
+    Long adminId;
+
+    @Schema(description = "사용자 PK")
     @NotBlank(message = NOT_NULL)
     Long userId;
+    */
 
     @Schema(description = "제목")
     @NotBlank(message = NOT_NULL)

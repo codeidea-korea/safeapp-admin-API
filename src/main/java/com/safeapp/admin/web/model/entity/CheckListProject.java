@@ -3,6 +3,7 @@ package com.safeapp.admin.web.model.entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.*;
 
@@ -29,6 +30,10 @@ public class CheckListProject extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "project")
     private Project project;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "admin")
+    private Admins admin;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user")
@@ -101,14 +106,19 @@ public class CheckListProject extends BaseTimeEntity {
     private List<CheckListProjectDetail> checkListProjectDetailList = new ArrayList<>();
 
     @Builder
-    public CheckListProject(Long id, Project project, Users user, String name, YN visibled, String tag, String relatedAcidNo,
+    public CheckListProject(Long id, Project project, Admins admin, Users user, String name, YN visibled, String tag, String relatedAcidNo,
             Users checker, Users reviewer, Users approver, List<CheckListProjectDetail> checkListProjectDetailList, String detailContents) {
 
         super();
 
         this.id = id;
         this.project = project;
-        this.user = user;
+        if(!Objects.isNull(admin)) {
+            this.admin = admin;
+        }
+        if(!Objects.isNull(user)) {
+            this.user = user;
+        }
         this.name = name;
         this.visibled = visibled;
         this.tag = tag;
@@ -129,7 +139,6 @@ public class CheckListProject extends BaseTimeEntity {
 
     public void edit(CheckListProject newChkPrj) {
         setProject(newChkPrj.getProject());
-        setUser(newChkPrj.getUser());
         setName(newChkPrj.getName());
         setVisibled(newChkPrj.getVisibled());
         setTag(newChkPrj.getTag());

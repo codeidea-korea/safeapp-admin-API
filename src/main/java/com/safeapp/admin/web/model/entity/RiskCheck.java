@@ -3,6 +3,7 @@ package com.safeapp.admin.web.model.entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.*;
 
@@ -36,6 +37,10 @@ public class RiskCheck extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "project")
     private Project project;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "admin")
+    private Admins admin;
 
     @ManyToOne
     @JoinColumn(name = "user")
@@ -158,7 +163,7 @@ public class RiskCheck extends BaseTimeEntity {
     private List<RiskCheckDetail> riskCheckDetailList = new ArrayList<>();
 
     @Builder
-    public RiskCheck(Long id, Project project, Users user, String name, Integer views, Integer likes, String tag, String relatedAcidNo,
+    public RiskCheck(Long id, Project project, Admins admin, Users user, String name, Integer views, Integer likes, String tag, String relatedAcidNo,
             Users checker, Users approver, YN visibled, String instructWork, Users reviewer1, Users reviewer2, Users reviewer3,
             String instructDetail, LocalDateTime workStartAt, LocalDateTime workEndAt, String etcRiskMemo,
             String detailContents, String keyword, String userName, String phoneNo, String createdAtStart,
@@ -167,7 +172,12 @@ public class RiskCheck extends BaseTimeEntity {
         super();
 
         this.id = id;
-        this.user = user;
+        if(!Objects.isNull(admin)) {
+            this.admin = admin;
+        }
+        if(!Objects.isNull(user)) {
+            this.user = user;
+        }
         this.name = name;
         this.project = project;
 
@@ -223,7 +233,6 @@ public class RiskCheck extends BaseTimeEntity {
         setVisibled(riskCheck.getVisibled());
         setWorkEndAt(riskCheck.getWorkEndAt());
         setWorkStartAt(riskCheck.getWorkStartAt());
-        setUser(riskCheck.getUser());
     }
 
 }
