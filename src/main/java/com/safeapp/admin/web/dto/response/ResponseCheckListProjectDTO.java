@@ -27,8 +27,14 @@ public class ResponseCheckListProjectDTO {
     @Schema(description = "등록자(관리자) ID")
     String adminId;
 
+    @Schema(description = "등록자(관리자) 이름")
+    String adminName;
+
     @Schema(description = "등록자(사용자) ID")
     String userId;
+
+    @Schema(description = "등록자(사용자) 이름")
+    String userName;
 
     @Schema(description = "등록일시")
     LocalDateTime createdAt;
@@ -51,9 +57,11 @@ public class ResponseCheckListProjectDTO {
         this.name = checkListProject.getName();
         if(checkListProject.getAdmin() != null) {
             this.adminId = checkListProject.getAdmin().getAdminId();
+            this.adminName = checkListProject.getAdmin().getAdminName();
         }
         if(checkListProject.getUser() != null) {
             this.userId = checkListProject.getUser().getUserId();
+            this.userName = checkListProject.getUser().getUserName();
         }
         this.createdAt = checkListProject.getCreatedAt();
         this.views = checkListProject.getViews();

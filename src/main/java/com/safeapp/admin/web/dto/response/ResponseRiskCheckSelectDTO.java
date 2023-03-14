@@ -21,10 +21,16 @@ public class ResponseRiskCheckSelectDTO {
     @Schema(description = "위험성 평가표 PK")
     Long id;
 
-    @Schema(description = "등록자 ID")
+    @Schema(description = "등록자(관리자) ID")
+    String adminId;
+
+    @Schema(description = "등록자(관리자) 이름")
+    String adminName;
+
+    @Schema(description = "등록자(사용자) ID")
     String userId;
 
-    @Schema(description = "등록자 이름")
+    @Schema(description = "등록자(사용자) 이름")
     String userName;
 
     @Schema(description = "등록자 프로필 이미지")
@@ -163,8 +169,15 @@ public class ResponseRiskCheckSelectDTO {
     public ResponseRiskCheckSelectDTO(RiskCheck riskCheck) {
         this.id = riskCheck.getId();
         this.name = riskCheck.getName();
-        this.userId = riskCheck.getUser().getUserId();
-        this.userName = riskCheck.getUser().getUserName();
+        if(riskCheck.getAdmin() != null) {
+            this.adminId = riskCheck.getAdmin().getAdminId();
+            this.adminName = riskCheck.getAdmin().getAdminName();
+        }
+        if(riskCheck.getUser() != null) {
+            this.userId = riskCheck.getUser().getUserId();
+            this.userName = riskCheck.getUser().getUserName();
+            this.image = riskCheck.getUser().getImage();
+        }
         this.createdDate = riskCheck.getCreatedAt();
         this.views = riskCheck.getViews();
         this.likes = riskCheck.getLikes();
@@ -181,7 +194,6 @@ public class ResponseRiskCheckSelectDTO {
         this.recheckReason = riskCheck.getRecheckReason();
         this.checkAt = riskCheck.getCheckAt();
         this.approveAt = riskCheck.getApproveAt();
-        this.image = riskCheck.getUser().getImage();
 
         if(riskCheck.getProject() != null) {
             this.projectId = riskCheck.getProject().getId();

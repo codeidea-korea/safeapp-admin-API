@@ -24,10 +24,16 @@ public class ResponseCheckListProjectSelectDTO {
     @Schema(description = "제목")
     String name;
 
-    @Schema(description = "등록자 PK")
+    @Schema(description = "등록자(관리자) PK")
+    Long adminId;
+
+    @Schema(description = "등록자(관리자) 이름")
+    String adminName;
+
+    @Schema(description = "등록자(사용자) PK")
     Long userId;
 
-    @Schema(description = "등록자 이름")
+    @Schema(description = "등록자(사용자) 이름")
     String userName;
 
     @Schema(description = "프로젝트 PK")
@@ -94,8 +100,14 @@ public class ResponseCheckListProjectSelectDTO {
     public ResponseCheckListProjectSelectDTO(CheckListProject checkListProject) {
         this.id = checkListProject.getId();
         this.name = checkListProject.getName();
-        this.userId = checkListProject.getUser().getId();
-        this.userName = checkListProject.getUser().getUserName();
+        if(checkListProject.getAdmin() != null) {
+            this.adminId = checkListProject.getAdmin().getId();
+            this.adminName = checkListProject.getAdmin().getAdminName();
+        }
+        if(checkListProject.getUser() != null) {
+            this.userId = checkListProject.getUser().getId();
+            this.userName = checkListProject.getUser().getUserName();
+        }
         this.createdDate = checkListProject.getCreatedAt();
         this.views = checkListProject.getViews();
         this.likeCount = checkListProject.getLikes();

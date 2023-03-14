@@ -64,7 +64,7 @@ public class CheckListProjectController {
     @PutMapping(value = "/edit/{id}")
     @ApiOperation(value = "체크리스트 수정", notes = "체크리스트 수정")
     public ResponseEntity<ResponseCheckListProjectDTO> edit(@PathVariable("id") @ApiParam(value = "체크리스트 PK", required = true) long id,
-                                                            @RequestBody RequestCheckListProjectEditDTO editDto, HttpServletRequest request) throws Exception {
+            @RequestBody RequestCheckListProjectEditDTO editDto, HttpServletRequest request) throws Exception {
 
         CheckListProject newChkPrj = checkListProjectService.toEditEntity(editDto);
         newChkPrj.setId(id);

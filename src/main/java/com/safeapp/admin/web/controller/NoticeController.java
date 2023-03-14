@@ -78,7 +78,7 @@ public class NoticeController {
     }
 
     @GetMapping(value = "/download/{id}")
-    @ApiOperation(value = "공지사항 첨부파일 다운로드", notes = "공지사항 첨부파일 다운로드")
+    @ApiOperation(value = "공지사항 단독 파일 다운로드", notes = "공지사항 단독 파일 다운로드")
     public void download(@PathVariable("id") @ApiParam(value = "공지사항 파일 PK", required = true) long id,
             HttpServletResponse response) throws Exception {
 
@@ -94,7 +94,7 @@ public class NoticeController {
             byte[] fileByte = FileUtils.readFileToByteArray(file);
 
             response.setContentType("application/octet-stream");
-            response.setHeader("Content-Disposition", "attachment; fileName=\"" + URLEncoder.encode(noticeFile.getId().toString(), "UTF-8") + "\";");
+            response.setHeader("Content-Disposition", "attachment; fileName=\"" + URLEncoder.encode(noticeFile.getRealName(), "UTF-8") + "\";");
             response.setHeader("Content-Transfer-Encoding", "binary");
 
             response.getOutputStream().write(fileByte);

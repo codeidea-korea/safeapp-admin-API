@@ -27,8 +27,14 @@ public class ResponseRiskCheckDTO {
     @Schema(description = "등록자(관리자) ID")
     String adminId;
 
+    @Schema(description = "등록자(관리자) 이름")
+    String adminName;
+
     @Schema(description = "등록자(사용자) ID")
     String userId;
+
+    @Schema(description = "등록자(사용자) 이름")
+    String userName;
 
     @Schema(description = "등록일시")
     LocalDateTime createdDate;
@@ -60,9 +66,11 @@ public class ResponseRiskCheckDTO {
         this.name = riskCheck.getName();
         if(riskCheck.getAdmin() != null) {
             this.adminId = riskCheck.getAdmin().getAdminId();
+            this.adminName = riskCheck.getAdmin().getAdminName();
         }
         if(riskCheck.getUser() != null) {
             this.userId = riskCheck.getUser().getUserId();
+            this.userName = riskCheck.getUser().getUserName();
         }
         this.createdDate = riskCheck.getCreatedAt();
         this.views = riskCheck.getViews();
