@@ -171,6 +171,7 @@ public class UsersController {
             @RequestParam(value = "userId", required = false, defaultValue = "") String userId,
             @RequestParam(value = "userName", required = false, defaultValue = "") String userName,
             @RequestParam(value = "phoneNo", required = false, defaultValue = "") String phoneNo,
+            @RequestParam(value = "email", required = false, defaultValue = "") String email,
             @RequestParam(value = "pageNo", defaultValue = "1") @Parameter(description = "현재 페이지 번호") int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "10") @Parameter(description = "1 페이지 당 목록 수") int pageSize,
             HttpServletRequest request) throws Exception {
@@ -183,6 +184,7 @@ public class UsersController {
                     .userId(userId)
                     .userName(userName)
                     .phoneNo(phoneNo)
+                    .email(email)
                     .build(),
                 pages, request)
             );

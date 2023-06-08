@@ -125,6 +125,9 @@ public class DirectQuery {
             if(StringUtils.isNotEmpty(user.getPhoneNo())) {
                 whereOption = whereOption + "AND A.phone_no LIKE '%" + user.getPhoneNo() + "%' ";
             }
+            if(StringUtils.isNotEmpty(user.getEmail())) {
+                whereOption = whereOption + "AND A.email LIKE '%" + user.getEmail() + "%' ";
+            }
 
             Map<String, Object> userMap =
                 jdbcTemplate.queryForMap(
@@ -160,6 +163,9 @@ public class DirectQuery {
             }
             if(StringUtils.isNotEmpty(user.getPhoneNo())) {
                 whereOption = whereOption + "AND phone_no LIKE '%" + user.getPhoneNo() + "%' ";
+            }
+            if(StringUtils.isNotEmpty(user.getEmail())) {
+                whereOption = whereOption + "AND email LIKE '%" + user.getEmail() + "%' ";
             }
 
             List<Map<String, Object>> userList =
