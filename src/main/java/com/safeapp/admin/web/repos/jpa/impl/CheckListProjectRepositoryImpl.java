@@ -99,26 +99,24 @@ public class CheckListProjectRepositoryImpl implements CheckListProjectRepositor
             LocalDateTime createdAtStart, LocalDateTime createdAtEnd) {
 
         try {
-            QueryResults<CheckListProject> result =
+            return
                 jpaQueryFactory
-                .selectFrom(checkListProject)
-                .leftJoin(user).on(user.id.eq(checkListProject.user.id))
-                .leftJoin(project).on(project.id.eq(checkListProject.project.id))
-                .innerJoin(checkListProjectDetail).on(checkListProjectDetail.checklistProject.id.eq(checkListProject.id))
-                .where
-                (
-                    isKeyword(keyword),
-                    isUserName(userName),
-                    isPhoneNo(phoneNo),
-                    isVisibled(visibled),
-                    isCreatedAtStart(createdAtStart),
-                    isCreatedAtEnd(createdAtEnd),
-                    checkListProject.deleteYn.isFalse()
-                )
-                .groupBy(checkListProject.id)
-                .fetchResults();
-
-            return result.getTotal();
+                    .selectFrom(checkListProject)
+                    .leftJoin(user).on(user.id.eq(checkListProject.user.id))
+                    .leftJoin(project).on(project.id.eq(checkListProject.project.id))
+                    .innerJoin(checkListProjectDetail).on(checkListProjectDetail.checklistProject.id.eq(checkListProject.id))
+                    .where
+                        (
+                            isKeyword(keyword),
+                            isUserName(userName),
+                            isPhoneNo(phoneNo),
+                            isVisibled(visibled),
+                            isCreatedAtStart(createdAtStart),
+                            isCreatedAtEnd(createdAtEnd),
+                            checkListProject.deleteYn.isFalse()
+                        )
+                    .groupBy(checkListProject.id)
+                    .fetchCount();
 
         } catch(Exception e) {
             e.getStackTrace();

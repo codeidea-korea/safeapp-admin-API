@@ -105,15 +105,15 @@ public class CheckListProjectController {
             checkListProjectService.countAllByCondition(keyword, userName, phoneNo, visibled,
             LocalDateTime.parse(createdAtStart, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")),
             LocalDateTime.parse(createdAtEnd, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")).plusDays(1));
+
         List<ResponseCheckListProjectDTO> list =
             checkListProjectService.findAllByConditionAndOrderBy(keyword, userName, phoneNo, visibled,
             LocalDateTime.parse(createdAtStart, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")),
             LocalDateTime.parse(createdAtEnd, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")).plusDays(1),
             createdAtDesc, likesDesc, viewsDesc, pageNo, pageSize, request);
-        Pages pages = new Pages(pageNo, pageSize);
 
-        ListResponse chkPrjList = new ListResponse(count, list, pages);
-        return ResponseUtil.sendResponse(chkPrjList);
+        Pages pages = new Pages(pageNo, pageSize);
+        return ResponseUtil.sendResponse(new ListResponse(count, list, pages));
     }
 
 }
