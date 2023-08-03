@@ -173,7 +173,9 @@ public class DirectQuery {
                 "SELECT A.* FROM " +
                     "(" +
                         "SELECT u.*, ua.efective_start_at, ua.efective_end_at, ua.order_type FROM users u " +
-                        "LEFT JOIN user_auths ua ON u.id = ua.user AND ua.created_at = (SELECT MAX(ua2.created_at) FROM user_auths ua2 WHERE ua2.user = u.id) " +
+                        "LEFT JOIN user_auths ua ON u.id = ua.user AND ua.status = 'ing'" +
+                        // 2023-08-03 수정 이전 코드(왜 created_at를 이용했는지 이유는 모르겠음)
+                        // "LEFT JOIN user_auths ua ON u.id = ua.user AND ua.created_at = (SELECT MAX(ua2.created_at) FROM user_auths ua2 WHERE ua2.user = u.id) " +
                         "WHERE u.delete_yn = false" +
                      ") A " +
                     "WHERE 1 = 1 " + whereOption +
